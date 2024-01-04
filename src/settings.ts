@@ -92,7 +92,7 @@ app.get('/videos/:id', (req: RequestParamType<Param>, res: Response) => {
         res.sendStatus(404);
         return;
     } else {
-        res.status(200).send(video);
+        res.send(video);
     }
 });
 
@@ -145,8 +145,8 @@ app.put('/videos/:id', (req: RequestBodyWithParamsType<Param, Partial<VideoType>
             return;
         }
 
-        video.title = title ? title : video.title;
-        video.author = author ? author : video.author;
+        video.title = title!;
+        video.author = author!;
         video.availableResolutions = availableResolutions ? availableResolutions : video.availableResolutions;
         video.minAgeRestriction = minAgeRestriction ? minAgeRestriction : video.minAgeRestriction;
         video.canBeDownloaded = canBeDownloaded ? canBeDownloaded : video.canBeDownloaded;

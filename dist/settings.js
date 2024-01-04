@@ -57,7 +57,7 @@ exports.app.get('/videos/:id', (req, res) => {
         return;
     }
     else {
-        res.status(200).send(video);
+        res.send(video);
     }
 });
 exports.app.post('/videos', (req, res) => {
@@ -96,8 +96,8 @@ exports.app.put('/videos/:id', (req, res) => {
             res.status(400).send(errors);
             return;
         }
-        video.title = title ? title : video.title;
-        video.author = author ? author : video.author;
+        video.title = title;
+        video.author = author;
         video.availableResolutions = availableResolutions ? availableResolutions : video.availableResolutions;
         video.minAgeRestriction = minAgeRestriction ? minAgeRestriction : video.minAgeRestriction;
         video.canBeDownloaded = canBeDownloaded ? canBeDownloaded : video.canBeDownloaded;
