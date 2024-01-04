@@ -74,7 +74,7 @@ exports.app.post('/videos', (req, res) => {
         id: +(new Date()),
         title,
         author,
-        canBeDownloaded: true,
+        canBeDownloaded: false,
         minAgeRestriction: null,
         createdAt: createdAt.toISOString(),
         publicationDate: publicationDate.toISOString(),
@@ -102,7 +102,7 @@ exports.app.put('/videos/:id', (req, res) => {
         video.author = author;
         video.availableResolutions = availableResolutions ? availableResolutions : video.availableResolutions;
         video.minAgeRestriction = minAgeRestriction ? minAgeRestriction : video.minAgeRestriction;
-        video.canBeDownloaded = typeof canBeDownloaded === 'boolean' ? canBeDownloaded : video.canBeDownloaded;
+        video.canBeDownloaded = canBeDownloaded ? canBeDownloaded : video.canBeDownloaded;
         video.publicationDate = publicationDate ? publicationDate : video.publicationDate;
         res.sendStatus(204);
     }

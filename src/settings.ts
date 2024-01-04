@@ -21,7 +21,7 @@ export type VideoType = {
     title: string
     author: string
     canBeDownloaded: boolean
-    minAgeRestriction: null
+    minAgeRestriction: null | number
     createdAt: string
     publicationDate: string
     availableResolutions: EAvailableResolutions[]
@@ -114,7 +114,7 @@ app.post('/videos', (req: RequestBodyType<BodyType>, res: Response) => {
         id: +(new Date()),
         title,
         author,
-        canBeDownloaded: true,
+        canBeDownloaded: false,
         minAgeRestriction: null,
         createdAt: createdAt.toISOString(),
         publicationDate: publicationDate.toISOString(),
