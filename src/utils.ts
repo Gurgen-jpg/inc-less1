@@ -16,7 +16,7 @@ export type ValidationType = (payload:PayloadType) => { errors: ErrorsMessageTyp
 
 
 
-export function validation(payload: PayloadType): { tempVideo: Partial<VideoType>; errors: ErrorType[] } {
+export function validation(payload: PayloadType): { errorsMessages: ErrorType[]; tempVideo: Partial<VideoType> } {
     let {
         title,
         author,
@@ -82,5 +82,5 @@ export function validation(payload: PayloadType): { tempVideo: Partial<VideoType
         });
     }
 
-    return ({errors, tempVideo});
+    return ({errorsMessages: errors, tempVideo});
 }

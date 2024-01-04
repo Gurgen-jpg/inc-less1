@@ -64,6 +64,6 @@ function validation(payload) {
             field: "publicationDate"
         });
     }
-    return ({ errors, tempVideo });
+    return ({ errorsMessages: errors, tempVideo });
 }
 exports.validation = validation;

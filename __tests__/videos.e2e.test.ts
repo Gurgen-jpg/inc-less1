@@ -84,10 +84,10 @@ describe(' test videos api', () => {
             availableResolutions: [900, 780],
         });
         expect(response.status).toBe(400);
-        expect(response.body).toBeInstanceOf(Array<ErrorType>);
-        expect(response.body.length).toBe(4);
-        expect(response.body[3].field).toBe('availableResolutions');
-        expect(response.body[3].message).toContain('780');
+        expect(response.body.errorsMessages).toBeInstanceOf(Array<ErrorType>);
+        expect(response.body.errorsMessages.length).toBe(4);
+        expect(response.body.errorsMessages[3].field).toBe('availableResolutions');
+        expect(response.body.errorsMessages[3].message).toContain('780');
     })
 
     it('- invalid put body', async () => {
@@ -101,9 +101,9 @@ describe(' test videos api', () => {
             canBeDownloaded: 1,
         });
         expect(response.status).toBe(400);
-        expect(response.body).toBeInstanceOf(Array<ErrorType>);
-        expect(response.body.length).toBe(5);
-        expect(response.body).toEqual([
+        expect(response.body.errorsMessages).toBeInstanceOf(Array<ErrorType>);
+        expect(response.body.errorsMessages.length).toBe(5);
+        expect(response.body.errorsMessages).toEqual([
             {"field": "title", "message": "Incorrect title"},
             {
                 "field": "author",

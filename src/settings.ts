@@ -99,9 +99,9 @@ app.get('/videos/:id', (req: RequestParamType<Param>, res: Response) => {
 
 app.post('/videos', (req: RequestBodyType<BodyType>, res: Response) => {
     let {title, author, availableResolutions} = req.body;
-    let {errors, tempVideo} = validation({body: req.body});
-    if (errors.length > 0) {
-        res.status(400).send({errorsMessages: errors});
+    let {errorsMessages, tempVideo} = validation({body: req.body});
+    if (errorsMessages.length > 0) {
+        res.status(400).send({errorsMessages});
         return;
     }
 
@@ -142,10 +142,10 @@ app.put('/videos/:id', (req: RequestBodyWithParamsType<Param, Partial<VideoType>
             publicationDate
         } = req.body;
 
-        let {errors} = validation({body: req.body});
+        let {errorsMessages} = validation({body: req.body});
 
-        if (errors.length > 0) {
-            res.status(400).send({errorsMessages: errors});
+        if (errorsMessages.length > 0) {
+            res.status(400).send({errorsMessages});
             return;
         }
 

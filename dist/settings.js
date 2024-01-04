@@ -62,9 +62,9 @@ exports.app.get('/videos/:id', (req, res) => {
 });
 exports.app.post('/videos', (req, res) => {
     let { title, author, availableResolutions } = req.body;
-    let { errors, tempVideo } = (0, utils_1.validation)({ body: req.body });
-    if (errors.length > 0) {
-        res.status(400).send({ errorsMessages: errors });
+    let { errorsMessages, tempVideo } = (0, utils_1.validation)({ body: req.body });
+    if (errorsMessages.length > 0) {
+        res.status(400).send({ errorsMessages });
         return;
     }
     const publicationDate = new Date();
@@ -93,9 +93,9 @@ exports.app.put('/videos/:id', (req, res) => {
     }
     else {
         let { title, author, availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate } = req.body;
-        let { errors } = (0, utils_1.validation)({ body: req.body });
-        if (errors.length > 0) {
-            res.status(400).send({ errorsMessages: errors });
+        let { errorsMessages } = (0, utils_1.validation)({ body: req.body });
+        if (errorsMessages.length > 0) {
+            res.status(400).send({ errorsMessages });
             return;
         }
         video.title = title;
