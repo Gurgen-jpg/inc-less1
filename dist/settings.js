@@ -68,7 +68,8 @@ exports.app.post('/videos', (req, res) => {
         return;
     }
     const createdAt = new Date();
-    const publicationDate = new Date();
+    const publicationDate = new Date(createdAt);
+    publicationDate.setHours(createdAt.getHours() + 1);
     const newVideo = {
         id: +(new Date()),
         title,
@@ -80,7 +81,8 @@ exports.app.post('/videos', (req, res) => {
         availableResolutions: availableResolutions ? availableResolutions : tempVideo.availableResolutions
     };
     videos.push(newVideo);
-    res.sendStatus(201);
+    res.status(201);
+    res.send(newVideo);
 });
 exports.app.put('/videos/:id', (req, res) => {
     const id = +req.params.id;

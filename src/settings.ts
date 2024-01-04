@@ -66,6 +66,7 @@ type BodyType = {
     title: string
     author: string
     availableResolutions?: EAvailableResolutions[]
+    createdAt?: string;
 }
 
 type RequestParamType<P> = Request<P, unknown, unknown, unknown>;
@@ -105,7 +106,8 @@ app.post('/videos', (req: RequestBodyType<BodyType>, res: Response) => {
     }
 
     const createdAt = new Date();
-    const publicationDate = new Date();
+    const publicationDate = new Date(createdAt);
+    publicationDate.setHours(createdAt.getHours() + 1);
 
     const newVideo: VideoType = {
         id: +(new Date()),
@@ -119,7 +121,8 @@ app.post('/videos', (req: RequestBodyType<BodyType>, res: Response) => {
     }
 
     videos.push(newVideo);
-    res.sendStatus(201);
+    res.status(201);
+    res.send(newVideo);
 })
 
 app.put('/videos/:id', (req: RequestBodyWithParamsType<Param, Partial<VideoType>>, res: Response) => {
