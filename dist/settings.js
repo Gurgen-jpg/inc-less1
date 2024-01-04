@@ -57,19 +57,19 @@ exports.app.get('/videos/:id', (req, res) => {
         return;
     }
     else {
-        res.send(video);
+        res.status(200).send(video);
     }
 });
 exports.app.post('/videos', (req, res) => {
     let { title, author, availableResolutions } = req.body;
     let { errors, tempVideo } = (0, utils_1.validation)({ body: req.body });
     if (errors.length > 0) {
-        res.status(400).send(errors);
+        res.status(400).send({ errorsMessages: errors });
         return;
     }
-    const createdAt = new Date();
-    const publicationDate = new Date(createdAt);
-    publicationDate.setHours(createdAt.getHours() + 1);
+    const publicationDate = new Date();
+    const createdAt = new Date(publicationDate);
+    createdAt.setHours(createdAt.getHours() - 1);
     const newVideo = {
         id: +(new Date()),
         title,
@@ -95,7 +95,7 @@ exports.app.put('/videos/:id', (req, res) => {
         let { title, author, availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate } = req.body;
         let { errors } = (0, utils_1.validation)({ body: req.body });
         if (errors.length > 0) {
-            res.status(400).send(errors);
+            res.status(400).send({ errorsMessages: errors });
             return;
         }
         video.title = title;

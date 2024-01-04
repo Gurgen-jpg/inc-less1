@@ -101,7 +101,7 @@ app.post('/videos', (req: RequestBodyType<BodyType>, res: Response) => {
     let {title, author, availableResolutions} = req.body;
     let {errors, tempVideo} = validation({body: req.body});
     if (errors.length > 0) {
-        res.status(400).send(errors);
+        res.status(400).send({errorsMessages: errors});
         return;
     }
 
@@ -145,7 +145,7 @@ app.put('/videos/:id', (req: RequestBodyWithParamsType<Param, Partial<VideoType>
         let {errors} = validation({body: req.body});
 
         if (errors.length > 0) {
-            res.status(400).send(errors);
+            res.status(400).send({errorsMessages: errors});
             return;
         }
 
