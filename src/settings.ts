@@ -1,5 +1,5 @@
 import express, {Request, Response} from "express";
-import {validation} from "../dist/utils";
+import {validation} from "./utils";
 
 export const app = express();
 app.use(express.json());
@@ -29,31 +29,31 @@ export type VideoType = {
 
 
 let videos: VideoType[] = [
-    {
-        "id": 0,
-        "title": "string",
-        "author": "string",
-        "canBeDownloaded": true,
-        "minAgeRestriction": null,
-        "createdAt": "2024-01-03T20:07:39.656Z",
-        "publicationDate": "2024-01-03T20:07:39.656Z",
-        "availableResolutions": [
-            EAvailableResolutions.P144,
-        ]
-    },
-    {
-        "id": 1,
-        "title": "Sample Title 2",
-        "author": "Author 2",
-        "canBeDownloaded": false,
-        "minAgeRestriction": null,
-        "createdAt": "2024-01-03T21:15:00.000Z",
-        "publicationDate": "2024-01-03T21:15:00.000Z",
-        "availableResolutions": [
-            EAvailableResolutions.P144,
-            EAvailableResolutions.P360
-        ]
-    }
+    // {
+    //     "id": 0,
+    //     "title": "string",
+    //     "author": "string",
+    //     "canBeDownloaded": true,
+    //     "minAgeRestriction": null,
+    //     "createdAt": "2024-01-03T20:07:39.656Z",
+    //     "publicationDate": "2024-01-03T20:07:39.656Z",
+    //     "availableResolutions": [
+    //         EAvailableResolutions.P144,
+    //     ]
+    // },
+    // {
+    //     "id": 1,
+    //     "title": "Sample Title 2",
+    //     "author": "Author 2",
+    //     "canBeDownloaded": false,
+    //     "minAgeRestriction": null,
+    //     "createdAt": "2024-01-03T21:15:00.000Z",
+    //     "publicationDate": "2024-01-03T21:15:00.000Z",
+    //     "availableResolutions": [
+    //         EAvailableResolutions.P144,
+    //         EAvailableResolutions.P360
+    //     ]
+    // }
 
 ]
 

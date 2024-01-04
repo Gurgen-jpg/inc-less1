@@ -1,36 +1,19 @@
-import {EAvailableResolutions, ErrorsMessageType, ErrorType, VideoType} from "../src/settings";
-import {Response} from "express";
-
-export function isValidISODate(dateString: string): boolean {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validation = exports.isValidISODate = void 0;
+const settings_1 = require("./settings");
+function isValidISODate(dateString) {
     if (typeof dateString !== 'string') {
         return false;
     }
     const date = new Date(dateString);
     return !isNaN(date.getTime()) && dateString === date.toISOString();
 }
-
-export type PayloadType = {
-    body: Partial<VideoType>
-};
-
-export type ValidationType = (payload:PayloadType) => { errors: ErrorsMessageType, tempVideo: Partial<VideoType> };
-
-
-
-export function validation(payload: PayloadType): { tempVideo: Partial<VideoType>; errors: ErrorType[] } {
-    let {
-        title,
-        author,
-        availableResolutions,
-        minAgeRestriction,
-        canBeDownloaded,
-        publicationDate
-    } = payload.body;
-
-    let tempVideo: Partial<VideoType> = {};
-
-    const errors: ErrorsMessageType = [] as ErrorsMessageType;
-
+exports.isValidISODate = isValidISODate;
+function validation(payload) {
+    let { title, author, availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate } = payload.body;
+    let tempVideo = {};
+    const errors = [];
     if (!title || typeof title !== 'string' || title.trim().length > 40) {
         errors.push({
             message: "Incorrect title",
@@ -44,19 +27,19 @@ export function validation(payload: PayloadType): { tempVideo: Partial<VideoType
         });
     }
     if (availableResolutions && Array.isArray(availableResolutions) && availableResolutions.length > 0) {
-        availableResolutions?.forEach(resolution => {
-            if (!Object.values(EAvailableResolutions).includes(resolution)) {
+        availableResolutions === null || availableResolutions === void 0 ? void 0 : availableResolutions.forEach(resolution => {
+            if (!Object.values(settings_1.EAvailableResolutions).includes(resolution)) {
                 errors.push({
                     message: `Incorrect resolution: ${resolution}`,
                     field: "availableResolutions"
                 });
                 return;
             }
-        })
-    } else {
+        });
+    }
+    else {
         tempVideo.availableResolutions = [];
     }
-
     if (minAgeRestriction && (typeof minAgeRestriction !== 'number' || minAgeRestriction < 1 || minAgeRestriction > 18)) {
         errors.push({
             message: "Incorrect min age restriction",
@@ -69,7 +52,6 @@ export function validation(payload: PayloadType): { tempVideo: Partial<VideoType
             field: "canBeDownloaded"
         });
     }
-
     if (canBeDownloaded && typeof canBeDownloaded !== 'boolean') {
         errors.push({
             message: "Incorrect can be downloaded",
@@ -82,6 +64,6 @@ export function validation(payload: PayloadType): { tempVideo: Partial<VideoType
             field: "publicationDate"
         });
     }
-
-    return ({errors, tempVideo});
+    return ({ errors, tempVideo });
 }
+exports.validation = validation;

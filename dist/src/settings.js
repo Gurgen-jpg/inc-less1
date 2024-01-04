@@ -20,31 +20,31 @@ var EAvailableResolutions;
     EAvailableResolutions["P2160"] = "P2160";
 })(EAvailableResolutions || (exports.EAvailableResolutions = EAvailableResolutions = {}));
 let videos = [
-    {
-        "id": 0,
-        "title": "string",
-        "author": "string",
-        "canBeDownloaded": true,
-        "minAgeRestriction": null,
-        "createdAt": "2024-01-03T20:07:39.656Z",
-        "publicationDate": "2024-01-03T20:07:39.656Z",
-        "availableResolutions": [
-            EAvailableResolutions.P144,
-        ]
-    },
-    {
-        "id": 1,
-        "title": "Sample Title 2",
-        "author": "Author 2",
-        "canBeDownloaded": false,
-        "minAgeRestriction": null,
-        "createdAt": "2024-01-03T21:15:00.000Z",
-        "publicationDate": "2024-01-03T21:15:00.000Z",
-        "availableResolutions": [
-            EAvailableResolutions.P144,
-            EAvailableResolutions.P360
-        ]
-    }
+// {
+//     "id": 0,
+//     "title": "string",
+//     "author": "string",
+//     "canBeDownloaded": true,
+//     "minAgeRestriction": null,
+//     "createdAt": "2024-01-03T20:07:39.656Z",
+//     "publicationDate": "2024-01-03T20:07:39.656Z",
+//     "availableResolutions": [
+//         EAvailableResolutions.P144,
+//     ]
+// },
+// {
+//     "id": 1,
+//     "title": "Sample Title 2",
+//     "author": "Author 2",
+//     "canBeDownloaded": false,
+//     "minAgeRestriction": null,
+//     "createdAt": "2024-01-03T21:15:00.000Z",
+//     "publicationDate": "2024-01-03T21:15:00.000Z",
+//     "availableResolutions": [
+//         EAvailableResolutions.P144,
+//         EAvailableResolutions.P360
+//     ]
+// }
 ];
 exports.app.get('/videos', (req, res) => {
     res.status(200).send(videos);
@@ -91,7 +91,7 @@ exports.app.put('/videos/:id', (req, res) => {
     }
     else {
         let { title, author, availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate } = req.body;
-        let { errors, tempVideo } = (0, utils_1.validation)({ body: req.body });
+        let { errors } = (0, utils_1.validation)({ body: req.body });
         if (errors.length > 0) {
             res.status(400).send(errors);
             return;
@@ -117,7 +117,8 @@ exports.app.delete('/videos/:id', (req, res) => {
         res.sendStatus(204);
     }
 });
-exports.app.delete('/videos', (req, res) => {
+exports.app.delete('/testing/all-data', (req, res) => {
+    debugger;
     videos.length = 0;
     res.sendStatus(204);
 });
