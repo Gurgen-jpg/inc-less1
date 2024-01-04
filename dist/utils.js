@@ -46,13 +46,7 @@ function validation(payload) {
             field: "minAgeRestriction"
         });
     }
-    if (canBeDownloaded && typeof canBeDownloaded !== 'boolean') {
-        errors.push({
-            message: "Incorrect can be downloaded",
-            field: "canBeDownloaded"
-        });
-    }
-    if (typeof canBeDownloaded !== 'boolean') {
+    if (canBeDownloaded !== undefined && typeof canBeDownloaded !== 'boolean') {
         errors.push({
             message: "Incorrect can be downloaded",
             field: "canBeDownloaded"

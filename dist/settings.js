@@ -68,8 +68,8 @@ exports.app.post('/videos', (req, res) => {
         return;
     }
     const publicationDate = new Date();
-    const createdAt = new Date(publicationDate);
-    createdAt.setHours(createdAt.getHours() - 1);
+    const createdAt = new Date();
+    publicationDate.setDate(createdAt.getDate() + 1);
     const newVideo = {
         id: +(new Date()),
         title,

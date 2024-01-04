@@ -106,9 +106,9 @@ app.post('/videos', (req: RequestBodyType<BodyType>, res: Response) => {
     }
 
     const publicationDate = new Date();
-    const createdAt = new Date(publicationDate);
+    const createdAt = new Date();
 
-    createdAt.setHours(createdAt.getHours() - 1);
+    publicationDate.setDate(createdAt.getDate() + 1);
 
     const newVideo: VideoType = {
         id: +(new Date()),
