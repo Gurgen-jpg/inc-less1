@@ -69,7 +69,7 @@ export function validation(payload: PayloadType): { errorsMessages: ErrorType[];
         });
     }
 
-    if (canBeDownloaded && typeof canBeDownloaded !== 'boolean') {
+    if (typeof canBeDownloaded !== 'boolean') {
         errors.push({
             message: "Incorrect can be downloaded",
             field: "canBeDownloaded"

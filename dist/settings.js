@@ -102,7 +102,7 @@ exports.app.put('/videos/:id', (req, res) => {
         video.author = author;
         video.availableResolutions = availableResolutions ? availableResolutions : video.availableResolutions;
         video.minAgeRestriction = minAgeRestriction ? minAgeRestriction : video.minAgeRestriction;
-        video.canBeDownloaded = canBeDownloaded ? canBeDownloaded : video.canBeDownloaded;
+        video.canBeDownloaded = typeof canBeDownloaded === 'boolean' ? canBeDownloaded : video.canBeDownloaded;
         video.publicationDate = publicationDate ? publicationDate : video.publicationDate;
         res.sendStatus(204);
     }

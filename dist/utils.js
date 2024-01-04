@@ -52,7 +52,7 @@ function validation(payload) {
             field: "canBeDownloaded"
         });
     }
-    if (canBeDownloaded && typeof canBeDownloaded !== 'boolean') {
+    if (typeof canBeDownloaded !== 'boolean') {
         errors.push({
             message: "Incorrect can be downloaded",
             field: "canBeDownloaded"
