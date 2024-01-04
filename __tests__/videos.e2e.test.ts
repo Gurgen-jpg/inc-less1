@@ -6,7 +6,7 @@ describe(' test videos api', () => {
 
     let id: number;
     beforeAll(async () => {
-        await request(app).delete('/videos');
+        await request(app).delete('/testing/all-data');
     })
 
     let newVideo = {

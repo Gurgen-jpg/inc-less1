@@ -138,7 +138,7 @@ app.put('/videos/:id', (req: RequestBodyWithParamsType<Param, Partial<VideoType>
             publicationDate
         } = req.body;
 
-        let {errors, tempVideo} = validation({body: req.body});
+        let {errors} = validation({body: req.body});
 
         if (errors.length > 0) {
             res.status(400).send(errors);
@@ -168,7 +168,7 @@ app.delete('/videos/:id', (req: RequestParamType<Param>, res: Response) => {
     }
 })
 
-app.delete('/videos', (req: Request, res: Response) => {
+app.delete('/testing/all-data', (req: Request, res: Response) => {
     videos.length = 0;
     res.sendStatus(204);
 })
