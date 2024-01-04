@@ -80,7 +80,7 @@ exports.app.post('/videos', (req, res) => {
         availableResolutions: availableResolutions ? availableResolutions : tempVideo.availableResolutions
     };
     videos.push(newVideo);
-    res.status(201).send(newVideo);
+    res.sendStatus(201);
 });
 exports.app.put('/videos/:id', (req, res) => {
     const id = +req.params.id;
