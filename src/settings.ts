@@ -119,7 +119,7 @@ app.post('/videos', (req: RequestBodyType<BodyType>, res: Response) => {
     }
 
     videos.push(newVideo);
-    res.status(201).send(newVideo);
+    res.sendStatus(201);
 })
 
 app.put('/videos/:id', (req: RequestBodyWithParamsType<Param, Partial<VideoType>>, res: Response) => {
