@@ -12,8 +12,7 @@ export type PayloadType = {
     body: Partial<VideoType>
 };
 
-export type ValidationType = (payload:PayloadType) => { errors: ErrorsMessageType, tempVideo: Partial<VideoType> };
-
+export type ValidationType = (payload: PayloadType) => { errors: ErrorsMessageType, tempVideo: Partial<VideoType> };
 
 
 export function validation(payload: PayloadType): { errorsMessages: ErrorType[]; tempVideo: Partial<VideoType> } {
@@ -62,19 +61,13 @@ export function validation(payload: PayloadType): { errorsMessages: ErrorType[];
             field: "minAgeRestriction"
         });
     }
-    if (canBeDownloaded && typeof canBeDownloaded !== 'boolean') {
+    if (canBeDownloaded !== undefined && typeof canBeDownloaded !== 'boolean') {
         errors.push({
             message: "Incorrect can be downloaded",
             field: "canBeDownloaded"
         });
     }
 
-    if (typeof canBeDownloaded !== 'boolean') {
-        errors.push({
-            message: "Incorrect can be downloaded",
-            field: "canBeDownloaded"
-        });
-    }
     if (publicationDate && (!isValidISODate(publicationDate))) {
         errors.push({
             message: "Incorrect publication date",
