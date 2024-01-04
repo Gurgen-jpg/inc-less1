@@ -93,7 +93,7 @@ app.get('/videos/:id', (req: RequestParamType<Param>, res: Response) => {
         res.sendStatus(404);
         return;
     } else {
-        res.send(video);
+        res.status(200).send(video);
     }
 });
 
@@ -105,9 +105,10 @@ app.post('/videos', (req: RequestBodyType<BodyType>, res: Response) => {
         return;
     }
 
-    const createdAt = new Date();
-    const publicationDate = new Date(createdAt);
-    publicationDate.setHours(createdAt.getHours() + 1);
+    const publicationDate = new Date();
+    const createdAt = new Date(publicationDate);
+
+    createdAt.setHours(createdAt.getHours() - 1);
 
     const newVideo: VideoType = {
         id: +(new Date()),
