@@ -1,7 +1,12 @@
 import {app, EAvailableResolutions, ErrorType, VideoType} from "../src/settings";
 import request from 'supertest';
 import 'jest';
+import {HTTP_STATUSES} from "../src/utils";
 
+
+const {
+     NOT_FOUND
+} = HTTP_STATUSES;
 describe(' test videos api', () => {
 
     let id: number;
@@ -66,15 +71,15 @@ describe(' test videos api', () => {
             title: 'title',
             author: 'author',
             availableResolutions: ['P144', 'P720'],
-        }).expect(404);
+        }).expect(NOT_FOUND);
     })
 
     it('- invalid get Param', async () => {
-        await request(app).get('/videos/45').expect(404);
+        await request(app).get('/videos/45').expect(NOT_FOUND);
     })
 
     it('- invalid delete Param', async () => {
-        await request(app).delete('/videos/45').expect(404);
+        await request(app).delete('/videos/45').expect(NOT_FOUND);
     })
 
     it('- invalid post body', async () => {
@@ -102,19 +107,24 @@ describe(' test videos api', () => {
         });
         expect(response.status).toBe(400);
         expect(response.body.errorsMessages).toBeInstanceOf(Array<ErrorType>);
-        expect(response.body.errorsMessages.length).toBe(5);
+        expect(response.body.errorsMessages.length).toBe(4);
         expect(response.body.errorsMessages).toEqual([
-            {"field": "title", "message": "Incorrect title"},
+            {
+                "field": "title",
+                "message": "Incorrect title"
+            },
             {
                 "field": "author",
                 "message": "Incorrect author"
             },
-            {"field": "availableResolutions", "message": "Incorrect resolution: 900"},
+            {
+                "field": "availableResolutions",
+                "message": "Incorrect resolution: 900"
+            },
             {
                 "field": "canBeDownloaded",
                 "message": "Incorrect can be downloaded"
-            },
-            {"field": "canBeDownloaded", "message": "Incorrect can be downloaded"}
+            }
         ]);
     })
 })

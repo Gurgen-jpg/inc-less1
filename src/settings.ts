@@ -1,5 +1,5 @@
 import express, {Request, Response} from "express";
-import {validation} from "./utils";
+import {HTTP_STATUSES, validation} from "./utils";
 
 export const app = express();
 app.use(express.json());
@@ -15,6 +15,10 @@ export enum EAvailableResolutions {
     P1440 = "P1440",
     P2160 = "P2160",
 }
+
+const {
+    OK, CREATED, NO_CONTENT, BAD_REQUEST, NOT_FOUND
+} = HTTP_STATUSES;
 
 export type VideoType = {
     id: number
@@ -83,17 +87,17 @@ export type ErrorType = {
 export type ErrorsMessageType = ErrorType[];
 
 app.get('/videos', (req: Request, res: Response) => {
-    res.status(200).send(videos);
+    res.status(OK).send(videos);
 });
 
 app.get('/videos/:id', (req: RequestParamType<Param>, res: Response) => {
     const id = +req.params.id;
     const video = videos.find(video => video.id === id);
     if (!video) {
-        res.sendStatus(404);
+        res.sendStatus(NOT_FOUND);
         return;
     } else {
-        res.status(200).send(video);
+        res.status(OK).send(video);
     }
 });
 
@@ -101,7 +105,7 @@ app.post('/videos', (req: RequestBodyType<BodyType>, res: Response) => {
     let {title, author, availableResolutions} = req.body;
     let {errorsMessages, tempVideo} = validation({body: req.body});
     if (errorsMessages.length > 0) {
-        res.status(400).send({errorsMessages});
+        res.status(BAD_REQUEST).send({errorsMessages});
         return;
     }
 
@@ -122,7 +126,7 @@ app.post('/videos', (req: RequestBodyType<BodyType>, res: Response) => {
     }
 
     videos.push(newVideo);
-    res.status(201);
+    res.status(CREATED);
     res.send(newVideo);
 })
 
@@ -130,7 +134,7 @@ app.put('/videos/:id', (req: RequestBodyWithParamsType<Param, Partial<VideoType>
     const id = +req.params.id;
     const video = videos.find(video => video.id === id);
     if (!video) {
-        res.sendStatus(404);
+        res.sendStatus(NOT_FOUND);
         return;
     } else {
         let {
@@ -145,7 +149,7 @@ app.put('/videos/:id', (req: RequestBodyWithParamsType<Param, Partial<VideoType>
         let {errorsMessages} = validation({body: req.body});
 
         if (errorsMessages.length > 0) {
-            res.status(400).send({errorsMessages});
+            res.status(BAD_REQUEST).send({errorsMessages});
             return;
         }
 
@@ -156,7 +160,7 @@ app.put('/videos/:id', (req: RequestBodyWithParamsType<Param, Partial<VideoType>
         video.canBeDownloaded = canBeDownloaded ? canBeDownloaded : video.canBeDownloaded;
         video.publicationDate = publicationDate ? publicationDate : video.publicationDate;
 
-        res.sendStatus(204);
+        res.sendStatus(NO_CONTENT);
     }
 })
 
@@ -164,17 +168,17 @@ app.delete('/videos/:id', (req: RequestParamType<Param>, res: Response) => {
     const id = +req.params.id;
     const video = videos.find(video => video.id === id);
     if (!video) {
-        res.sendStatus(404);
+        res.sendStatus(NOT_FOUND);
         return;
     } else {
         videos = videos.filter(video => video.id !== id);
-        res.sendStatus(204);
+        res.sendStatus(NO_CONTENT);
     }
 })
 
 app.delete('/testing/all-data', (req: Request, res: Response) => {
     videos.length = 0;
-    res.sendStatus(204);
+    res.sendStatus(NO_CONTENT);
 })
 
 

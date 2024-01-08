@@ -19,6 +19,7 @@ var EAvailableResolutions;
     EAvailableResolutions["P1440"] = "P1440";
     EAvailableResolutions["P2160"] = "P2160";
 })(EAvailableResolutions || (exports.EAvailableResolutions = EAvailableResolutions = {}));
+const { OK, CREATED, NO_CONTENT, BAD_REQUEST, NOT_FOUND } = utils_1.HTTP_STATUSES;
 let videos = [
 // {
 //     "id": 0,
@@ -47,24 +48,24 @@ let videos = [
 // }
 ];
 exports.app.get('/videos', (req, res) => {
-    res.status(200).send(videos);
+    res.status(OK).send(videos);
 });
 exports.app.get('/videos/:id', (req, res) => {
     const id = +req.params.id;
     const video = videos.find(video => video.id === id);
     if (!video) {
-        res.sendStatus(404);
+        res.sendStatus(NOT_FOUND);
         return;
     }
     else {
-        res.status(200).send(video);
+        res.status(OK).send(video);
     }
 });
 exports.app.post('/videos', (req, res) => {
     let { title, author, availableResolutions } = req.body;
     let { errorsMessages, tempVideo } = (0, utils_1.validation)({ body: req.body });
     if (errorsMessages.length > 0) {
-        res.status(400).send({ errorsMessages });
+        res.status(BAD_REQUEST).send({ errorsMessages });
         return;
     }
     const publicationDate = new Date();
@@ -81,21 +82,21 @@ exports.app.post('/videos', (req, res) => {
         availableResolutions: availableResolutions ? availableResolutions : tempVideo.availableResolutions
     };
     videos.push(newVideo);
-    res.status(201);
+    res.status(CREATED);
     res.send(newVideo);
 });
 exports.app.put('/videos/:id', (req, res) => {
     const id = +req.params.id;
     const video = videos.find(video => video.id === id);
     if (!video) {
-        res.sendStatus(404);
+        res.sendStatus(NOT_FOUND);
         return;
     }
     else {
         let { title, author, availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate } = req.body;
         let { errorsMessages } = (0, utils_1.validation)({ body: req.body });
         if (errorsMessages.length > 0) {
-            res.status(400).send({ errorsMessages });
+            res.status(BAD_REQUEST).send({ errorsMessages });
             return;
         }
         video.title = title;
@@ -104,22 +105,22 @@ exports.app.put('/videos/:id', (req, res) => {
         video.minAgeRestriction = minAgeRestriction ? minAgeRestriction : video.minAgeRestriction;
         video.canBeDownloaded = canBeDownloaded ? canBeDownloaded : video.canBeDownloaded;
         video.publicationDate = publicationDate ? publicationDate : video.publicationDate;
-        res.sendStatus(204);
+        res.sendStatus(NO_CONTENT);
     }
 });
 exports.app.delete('/videos/:id', (req, res) => {
     const id = +req.params.id;
     const video = videos.find(video => video.id === id);
     if (!video) {
-        res.sendStatus(404);
+        res.sendStatus(NOT_FOUND);
         return;
     }
     else {
         videos = videos.filter(video => video.id !== id);
-        res.sendStatus(204);
+        res.sendStatus(NO_CONTENT);
     }
 });
 exports.app.delete('/testing/all-data', (req, res) => {
     videos.length = 0;
-    res.sendStatus(204);
+    res.sendStatus(NO_CONTENT);
 });
