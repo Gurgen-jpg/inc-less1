@@ -25,7 +25,7 @@ exports.postRoute.put("/:id", auth_middleware_1.authMiddleware, post_validators_
     post_repository_1.PostRepository.updatePost(req.params.id, req.body);
     res.sendStatus(NO_CONTENT);
 });
-exports.postRoute.delete("/:id", auth_middleware_1.authMiddleware, post_validators_1.checkId, (0, post_validators_1.postInputValidation)(), (req, res) => {
+exports.postRoute.delete("/:id", auth_middleware_1.authMiddleware, post_validators_1.checkId, input_validation_middleware_1.inputValidationMiddleware, (req, res) => {
     post_repository_1.PostRepository.deletePost(req.params.id);
     res.sendStatus(NO_CONTENT);
 });

@@ -28,7 +28,7 @@ postRoute.put("/:id", authMiddleware, checkId, postInputValidation(), (req: Requ
     res.sendStatus(NO_CONTENT);
 });
 
-postRoute.delete("/:id", authMiddleware, checkId, postInputValidation(), (req: Request, res: Response) => {
+postRoute.delete("/:id", authMiddleware, checkId, inputValidationMiddleware, (req: Request, res: Response) => {
     PostRepository.deletePost(req.params.id);
     res.sendStatus(NO_CONTENT);
 })
