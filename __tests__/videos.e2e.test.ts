@@ -1,8 +1,7 @@
-import {app, EAvailableResolutions, ErrorType, VideoType} from "../src/settings";
+import {app} from "../src/settings";
 import request from 'supertest';
 import 'jest';
-import {HTTP_STATUSES} from "../src/utils";
-
+import {EAvailableResolutions, ErrorType, HTTP_STATUSES, VideoType} from "../src/models/common";
 
 const {
      NOT_FOUND

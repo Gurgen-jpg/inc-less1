@@ -1,17 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validation = exports.isValidISODate = exports.HTTP_STATUSES = void 0;
-const settings_1 = require("./settings");
-exports.HTTP_STATUSES = {
-    OK: 200,
-    CREATED: 201,
-    NO_CONTENT: 204,
-    BAD_REQUEST: 400,
-    UNAUTHORIZED: 401,
-    FORBIDDEN: 403,
-    NOT_FOUND: 404,
-    INTERNAL_SERVER_ERROR: 500
-};
+exports.validation = exports.isValidISODate = void 0;
+const common_1 = require("./models/common");
 function isValidISODate(dateString) {
     if (typeof dateString !== 'string') {
         return false;
@@ -38,7 +28,7 @@ function validation(payload) {
     }
     if (availableResolutions && Array.isArray(availableResolutions) && availableResolutions.length > 0) {
         availableResolutions === null || availableResolutions === void 0 ? void 0 : availableResolutions.forEach(resolution => {
-            if (!Object.values(settings_1.EAvailableResolutions).includes(resolution)) {
+            if (!Object.values(common_1.EAvailableResolutions).includes(resolution)) {
                 errors.push({
                     message: `Incorrect resolution: ${resolution}`,
                     field: "availableResolutions"

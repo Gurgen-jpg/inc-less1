@@ -3,124 +3,112 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EAvailableResolutions = exports.app = void 0;
+exports.app = void 0;
 const express_1 = __importDefault(require("express"));
-const utils_1 = require("./utils");
+const blog_route_1 = require("./routes/blog-route");
+const posts_route_1 = require("./routes/posts-route");
+const db_1 = require("./db/db");
 exports.app = (0, express_1.default)();
 exports.app.use(express_1.default.json());
-var EAvailableResolutions;
-(function (EAvailableResolutions) {
-    EAvailableResolutions["P144"] = "P144";
-    EAvailableResolutions["P240"] = "P240";
-    EAvailableResolutions["P360"] = "P360";
-    EAvailableResolutions["P480"] = "P480";
-    EAvailableResolutions["P720"] = "P720";
-    EAvailableResolutions["P1080"] = "P1080";
-    EAvailableResolutions["P1440"] = "P1440";
-    EAvailableResolutions["P2160"] = "P2160";
-})(EAvailableResolutions || (exports.EAvailableResolutions = EAvailableResolutions = {}));
-const { OK, CREATED, NO_CONTENT, BAD_REQUEST, NOT_FOUND } = utils_1.HTTP_STATUSES;
-let videos = [
-// {
-//     "id": 0,
-//     "title": "string",
-//     "author": "string",
-//     "canBeDownloaded": true,
-//     "minAgeRestriction": null,
-//     "createdAt": "2024-01-03T20:07:39.656Z",
-//     "publicationDate": "2024-01-03T20:07:39.656Z",
-//     "availableResolutions": [
-//         EAvailableResolutions.P144,
-//     ]
-// },
-// {
-//     "id": 1,
-//     "title": "Sample Title 2",
-//     "author": "Author 2",
-//     "canBeDownloaded": false,
-//     "minAgeRestriction": null,
-//     "createdAt": "2024-01-03T21:15:00.000Z",
-//     "publicationDate": "2024-01-03T21:15:00.000Z",
-//     "availableResolutions": [
-//         EAvailableResolutions.P144,
-//         EAvailableResolutions.P360
-//     ]
-// }
-];
-exports.app.get('/videos', (req, res) => {
-    res.status(OK).send(videos);
-});
-exports.app.get('/videos/:id', (req, res) => {
-    const id = +req.params.id;
-    const video = videos.find(video => video.id === id);
-    if (!video) {
-        res.sendStatus(NOT_FOUND);
-        return;
-    }
-    else {
-        res.status(OK).send(video);
-    }
-});
-exports.app.post('/videos', (req, res) => {
-    let { title, author, availableResolutions } = req.body;
-    let { errorsMessages, tempVideo } = (0, utils_1.validation)({ body: req.body });
-    if (errorsMessages.length > 0) {
-        res.status(BAD_REQUEST).send({ errorsMessages });
-        return;
-    }
-    const publicationDate = new Date();
-    const createdAt = new Date();
-    publicationDate.setDate(createdAt.getDate() + 1);
-    const newVideo = {
-        id: +(new Date()),
-        title,
-        author,
-        canBeDownloaded: false,
-        minAgeRestriction: null,
-        createdAt: createdAt.toISOString(),
-        publicationDate: publicationDate.toISOString(),
-        availableResolutions: availableResolutions ? availableResolutions : tempVideo.availableResolutions
-    };
-    videos.push(newVideo);
-    res.status(CREATED);
-    res.send(newVideo);
-});
-exports.app.put('/videos/:id', (req, res) => {
-    const id = +req.params.id;
-    const video = videos.find(video => video.id === id);
-    if (!video) {
-        res.sendStatus(NOT_FOUND);
-        return;
-    }
-    else {
-        let { title, author, availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate } = req.body;
-        let { errorsMessages } = (0, utils_1.validation)({ body: req.body });
-        if (errorsMessages.length > 0) {
-            res.status(BAD_REQUEST).send({ errorsMessages });
-            return;
-        }
-        video.title = title;
-        video.author = author;
-        video.availableResolutions = availableResolutions ? availableResolutions : video.availableResolutions;
-        video.minAgeRestriction = minAgeRestriction ? minAgeRestriction : video.minAgeRestriction;
-        video.canBeDownloaded = canBeDownloaded ? canBeDownloaded : video.canBeDownloaded;
-        video.publicationDate = publicationDate ? publicationDate : video.publicationDate;
-        res.sendStatus(NO_CONTENT);
-    }
-});
-exports.app.delete('/videos/:id', (req, res) => {
-    const id = +req.params.id;
-    const video = videos.find(video => video.id === id);
-    if (!video) {
-        res.sendStatus(NOT_FOUND);
-        return;
-    }
-    else {
-        videos = videos.filter(video => video.id !== id);
-        res.sendStatus(NO_CONTENT);
-    }
-});
+exports.app.use('/blogs', blog_route_1.blogRoute);
+exports.app.use('/posts', posts_route_1.postRoute);
+// let videos: VideoType[] = []
+//
+// const {
+//     OK, CREATED, NO_CONTENT, BAD_REQUEST, NOT_FOUND
+// } = HTTP_STATUSES;
+// app.get('/videos', (req: Request, res: Response) => {
+//     res.status(OK).send(videos);
+// });
+//
+// app.get('/videos/:id', (req: RequestParamType<Param>, res: Response) => {
+//     const id = +req.params.id;
+//     const video = videos.find(video => video.id === id);
+//     if (!video) {
+//         res.sendStatus(NOT_FOUND);
+//         return;
+//     } else {
+//         res.status(OK).send(video);
+//     }
+// });
+//
+// app.post('/videos', (req: RequestBodyType<BodyType>, res: Response) => {
+//     let {title, author, availableResolutions} = req.body;
+//     let {errorsMessages, tempVideo} = validation({body: req.body});
+//     if (errorsMessages.length > 0) {
+//         res.status(BAD_REQUEST).send({errorsMessages});
+//         return;
+//     }
+//
+//     const publicationDate = new Date();
+//     const createdAt = new Date();
+//
+//     publicationDate.setDate(createdAt.getDate() + 1);
+//
+//     const newVideo: VideoType = {
+//         id: +(new Date()),
+//         title,
+//         author,
+//         canBeDownloaded: false,
+//         minAgeRestriction: null,
+//         createdAt: createdAt.toISOString(),
+//         publicationDate: publicationDate.toISOString(),
+//         availableResolutions: availableResolutions ? availableResolutions : tempVideo.availableResolutions!
+//     }
+//
+//     videos.push(newVideo);
+//     res.status(CREATED);
+//     res.send(newVideo);
+// })
+//
+// app.put('/videos/:id', (req: RequestBodyWithParamsType<Param, Partial<VideoType>>, res: Response) => {
+//     const id = +req.params.id;
+//     const video = videos.find(video => video.id === id);
+//     if (!video) {
+//         res.sendStatus(NOT_FOUND);
+//         return;
+//     } else {
+//         let {
+//             title,
+//             author,
+//             availableResolutions,
+//             minAgeRestriction,
+//             canBeDownloaded,
+//             publicationDate
+//         } = req.body;
+//
+//         let {errorsMessages} = validation({body: req.body});
+//
+//         if (errorsMessages.length > 0) {
+//             res.status(BAD_REQUEST).send({errorsMessages});
+//             return;
+//         }
+//
+//         video.title = title!;
+//         video.author = author!;
+//         video.availableResolutions = availableResolutions ? availableResolutions : video.availableResolutions;
+//         video.minAgeRestriction = minAgeRestriction ? minAgeRestriction : video.minAgeRestriction;
+//         video.canBeDownloaded = canBeDownloaded ? canBeDownloaded : video.canBeDownloaded;
+//         video.publicationDate = publicationDate ? publicationDate : video.publicationDate;
+//
+//         res.sendStatus(NO_CONTENT);
+//     }
+// })
+//
+// app.delete('/videos/:id', (req: RequestParamType<Param>, res: Response) => {
+//     const id = +req.params.id;
+//     const video = videos.find(video => video.id === id);
+//     if (!video) {
+//         res.sendStatus(NOT_FOUND);
+//         return;
+//     } else {
+//         videos = videos.filter(video => video.id !== id);
+//         res.sendStatus(NO_CONTENT);
+//     }
+// })
+//
 exports.app.delete('/testing/all-data', (req, res) => {
-    videos.length = 0;
-    res.sendStatus(NO_CONTENT);
+    db_1.db.blogs.length = 0;
+    db_1.db.posts.length = 0;
+    res.sendStatus(204);
 });
