@@ -1,30 +1,94 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlogRepository = void 0;
 const db_1 = require("../db/db");
+const mapper_1 = require("../models/blogs/mappers/mapper");
+const mongodb_1 = require("mongodb");
 class BlogRepository {
     static getAllBlogs() {
-        return db_1.db.blogs;
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield db_1.blogCollection.find({}).toArray()
+                    .then(res => res.map(mapper_1.blogMapper));
+            }
+            catch (error) {
+                console.log(error);
+                return null;
+            }
+        });
     }
     static getBlogById(id) {
-        return db_1.db.blogs.find(blog => blog.id === id);
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const blog = yield db_1.blogCollection
+                    .findOne({ _id: mongodb_1.ObjectId.createFromHexString(id) });
+                if (blog) {
+                    return (0, mapper_1.blogMapper)(blog);
+                }
+                return null;
+            }
+            catch (error) {
+                console.error('Error in getBlogById:', error);
+                return null;
+            }
+        });
     }
     static addBlog(blog) {
-        const newBlog = Object.assign({ id: new Date().getTime().toString() }, blog);
-        db_1.db.blogs.push(newBlog);
-        return newBlog;
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const newBlog = {
+                    name: blog.name,
+                    description: blog.description,
+                    websiteUrl: blog.websiteUrl,
+                    createdAt: new Date().toISOString(),
+                    isMembership: false,
+                };
+                const blogId = yield db_1.blogCollection.insertOne(newBlog);
+                return yield this.getBlogById(blogId.insertedId.toString());
+            }
+            catch (e) {
+                console.log('Error in addBlog:', e);
+                return null;
+            }
+        });
     }
     static updateBlog(id, blog) {
-        const blogToUpdate = db_1.db.blogs.find(blog => blog.id === id);
-        if (blogToUpdate) {
-            blogToUpdate.name = blog.name;
-            blogToUpdate.description = blog.description;
-            blogToUpdate.websiteUrl = blog.websiteUrl;
-        }
-        return;
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const blogId = mongodb_1.ObjectId.createFromHexString(id);
+                yield db_1.blogCollection.updateOne({ _id: blogId }, {
+                    name: blog.name,
+                    description: blog.description,
+                    websiteUrl: blog.websiteUrl
+                });
+                return true;
+            }
+            catch (error) {
+                console.error('Can not update blog:', error);
+                return false;
+            }
+        });
     }
     static deleteBlog(id) {
-        db_1.db.blogs = db_1.db.blogs.filter(blog => blog.id !== id);
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const result = yield db_1.blogCollection.deleteOne({ _id: mongodb_1.ObjectId.createFromHexString(id) });
+                return result.deletedCount === 1;
+            }
+            catch (error) {
+                console.error('Error in deleteBlogById:', error);
+                return false;
+            }
+        });
     }
 }
 exports.BlogRepository = BlogRepository;

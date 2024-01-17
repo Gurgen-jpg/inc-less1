@@ -1,7 +1,7 @@
 import {body, param, validationResult} from "express-validator";
 import {inputValidationMiddleware} from "../middlewares/inputValidation/input-validation-middleware";
-import {db} from "../db/db";
-import {NextFunction} from "express";
+import {blogCollection} from "../db/db";
+import {ObjectId} from "mongodb";
 
 const BLOG_VALIDATION_FIELDS = {
     name: 'name',
@@ -45,12 +45,12 @@ export const blogsValidation = () => {
     ]
 }
 
-export const checkId =  param(id)
+export const checkId = param(id)
     .isString()
     .withMessage('id must be a string')
     .notEmpty()
     .withMessage('id is required')
-    .custom((id) => {
-        return !!db.blogs.find(blog => blog.id === id);
+    .custom(async (id) => {
+        return await blogCollection.findOne({_id: ObjectId.createFromHexString(id)})
     })
     .withMessage('blog not found');

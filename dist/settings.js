@@ -7,11 +7,12 @@ exports.app = void 0;
 const express_1 = __importDefault(require("express"));
 const blog_route_1 = require("./routes/blog-route");
 const posts_route_1 = require("./routes/posts-route");
-const db_1 = require("./db/db");
+const testing_route_1 = require("./routes/testing-route");
 exports.app = (0, express_1.default)();
 exports.app.use(express_1.default.json());
 exports.app.use('/blogs', blog_route_1.blogRoute);
 exports.app.use('/posts', posts_route_1.postRoute);
+exports.app.use('/testing', testing_route_1.testingRoute);
 // let videos: VideoType[] = []
 //
 // const {
@@ -107,8 +108,3 @@ exports.app.use('/posts', posts_route_1.postRoute);
 //     }
 // })
 //
-exports.app.delete('/testing/all-data', (req, res) => {
-    db_1.db.blogs.length = 0;
-    db_1.db.posts.length = 0;
-    res.sendStatus(204);
-});

@@ -44,6 +44,9 @@ describe('Testing blogs', () => {
             })
 
         state.setState(response.body);
+//todo !!!! переписать по новому
+
+        expect.setState({body: response.body})
         expect(response.status).toBe(CREATED);
 
         const blogs = await request(app).get('/blogs');
@@ -57,6 +60,8 @@ describe('Testing blogs', () => {
     })
 
     it('-all post validation errors', async () => {
+//todo !!!! переписать по новому
+        const {body} = expect.getState()
         const blog = await request(app).post('/blogs')
             .set('Authorization', `Basic ${auth}`)
             .send({

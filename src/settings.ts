@@ -1,14 +1,14 @@
 import express, {Request, Response} from "express";
 import {blogRoute} from "./routes/blog-route";
-import {VideoType} from "./models/common";
 import {postRoute} from "./routes/posts-route";
-import {db} from "./db/db";
+import {testingRoute} from "./routes/testing-route";
 
 export const app = express();
 app.use(express.json());
 
 app.use('/blogs', blogRoute);
 app.use('/posts', postRoute);
+app.use('/testing', testingRoute);
 
 
 // let videos: VideoType[] = []
@@ -110,11 +110,6 @@ app.use('/posts', postRoute);
 //     }
 // })
 //
-app.delete('/testing/all-data', (req: Request, res: Response) => {
-    db.blogs.length = 0;
-    db.posts.length = 0;
-    res.sendStatus(204);
-})
 
 
 

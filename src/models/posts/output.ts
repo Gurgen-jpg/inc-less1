@@ -5,6 +5,8 @@ export type PostViewModel = {
     content: string;
     blogId: string;
     blogName: string;
+    createdAt: string
+    isMembership: boolean
 }
 
 export type Posts = PostViewModel[];

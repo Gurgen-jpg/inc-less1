@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogRoute = void 0;
 const express_1 = require("express");
@@ -7,14 +16,14 @@ const common_1 = require("../models/common");
 const blog_repository_1 = require("../repositories/blog-repository");
 const blog_validators_1 = require("../validators/blog-validators");
 const input_validation_middleware_1 = require("../middlewares/inputValidation/input-validation-middleware");
-exports.blogRoute = (0, express_1.Router)({});
+exports.blogRoute = (0, express_1.Router)();
 const { OK, CREATED, NO_CONTENT, BAD_REQUEST, NOT_FOUND } = common_1.HTTP_STATUSES;
-exports.blogRoute.get("/", (req, res) => {
-    const allBlogs = blog_repository_1.BlogRepository.getAllBlogs();
+exports.blogRoute.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const allBlogs = yield blog_repository_1.BlogRepository.getAllBlogs();
     res.status(OK).send(allBlogs);
-});
-exports.blogRoute.get("/:id", blog_validators_1.checkId, input_validation_middleware_1.inputValidationMiddleware, (req, res) => {
-    const blog = blog_repository_1.BlogRepository.getBlogById(req.params.id);
+}));
+exports.blogRoute.get("/:id", blog_validators_1.checkId, input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const blog = yield blog_repository_1.BlogRepository.getBlogById(req.params.id);
     if (!blog) {
         res.sendStatus(NOT_FOUND);
         return;
@@ -22,16 +31,16 @@ exports.blogRoute.get("/:id", blog_validators_1.checkId, input_validation_middle
     else {
         res.status(OK).send(blog);
     }
-});
-exports.blogRoute.post("/", auth_middleware_1.authMiddleware, (0, blog_validators_1.blogsValidation)(), (req, res) => {
-    let newBlog = blog_repository_1.BlogRepository.addBlog(req.body);
+}));
+exports.blogRoute.post("/", auth_middleware_1.authMiddleware, (0, blog_validators_1.blogsValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let newBlog = yield blog_repository_1.BlogRepository.addBlog(req.body);
     res.status(CREATED).send(newBlog);
-});
-exports.blogRoute.put("/:id", auth_middleware_1.authMiddleware, blog_validators_1.checkId, (0, blog_validators_1.blogsValidation)(), (req, res) => {
-    blog_repository_1.BlogRepository.updateBlog(req.params.id, req.body);
+}));
+exports.blogRoute.put("/:id", auth_middleware_1.authMiddleware, blog_validators_1.checkId, (0, blog_validators_1.blogsValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield blog_repository_1.BlogRepository.updateBlog(req.params.id, req.body);
     res.sendStatus(NO_CONTENT);
-});
-exports.blogRoute.delete("/:id", auth_middleware_1.authMiddleware, blog_validators_1.checkId, input_validation_middleware_1.inputValidationMiddleware, (req, res) => {
-    blog_repository_1.BlogRepository.deleteBlog(req.params.id);
+}));
+exports.blogRoute.delete("/:id", auth_middleware_1.authMiddleware, blog_validators_1.checkId, input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    yield blog_repository_1.BlogRepository.deleteBlog(req.params.id);
     res.sendStatus(NO_CONTENT);
-});
+}));

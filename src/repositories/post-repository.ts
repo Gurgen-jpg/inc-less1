@@ -1,8 +1,7 @@
-import {db} from "../db/db";
 import {PostInputModel, PostUpdateModel} from "../models/posts/input";
 
 export class PostRepository {
-    static getAllPosts() {
+    static async getAllPosts(): Promise<PostInputModel[]> {
         return db.posts;
     }
 
