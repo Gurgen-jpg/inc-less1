@@ -1,6 +1,7 @@
 import {body, param} from "express-validator";
-import {db} from "../db/db";
 import {inputValidationMiddleware} from "../middlewares/inputValidation/input-validation-middleware";
+import {BlogRepository} from "../repositories/blog-repository";
+import {PostRepository} from "../repositories/post-repository";
 
 
 const POST_VALIDATION_FIELDS = {
@@ -40,8 +41,8 @@ const checkBlogId = body(blogId)
     .withMessage('blogId must be a string')
     .notEmpty()
     .withMessage('blogId is required')
-    .custom((blogId) => {
-        return !!db.blogs.find(blog => blog.id === blogId);
+    .custom(async (blogId) => {
+        return await BlogRepository.getBlogById(blogId);
     })
     .withMessage('blog name not found, wrong blogId or blog not exists');
 
@@ -60,7 +61,7 @@ export const checkId = param(id)
     .withMessage('id must be a string')
     .notEmpty()
     .withMessage('id is required')
-    .custom((id) => {
-        return !!db.posts.find(post => post.id === id);
+    .custom(async (id) => {
+        return await PostRepository.getPostById(id);
     })
     .withMessage('post not found');

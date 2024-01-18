@@ -1,11 +1,11 @@
 import {blogCollection} from "../db/db";
 import {BlogInputModel} from "../models/blogs/input";
 import {blogMapper} from "../models/blogs/mappers/mapper";
-import {BlogModel} from "../models/blogs/output";
 import {ObjectId} from "mongodb";
+import {BlogViewModel} from "../models/blogs/output";
 
 export class BlogRepository {
-    static async getAllBlogs(): Promise<BlogModel[] | null> {
+    static async getAllBlogs(): Promise<BlogViewModel[] | null> {
         try {
             return await blogCollection.find({}).toArray()
                 .then(res => res.map(blogMapper));
@@ -15,21 +15,21 @@ export class BlogRepository {
         }
     }
 
-    static async getBlogById(id: string): Promise<BlogModel | null> {
+    static async getBlogById(id: string): Promise<BlogViewModel | boolean> {
         try {
             const blog = await blogCollection
                 .findOne({_id: ObjectId.createFromHexString(id)})
             if (blog) {
                 return blogMapper(blog);
             }
-            return null;
+            return false;
         } catch (error) {
             console.error('Error in getBlogById:', error);
-            return null;
+            return false;
         }
     }
 
-    static async addBlog(blog: BlogInputModel): Promise<BlogModel | null> {
+    static async addBlog(blog: BlogInputModel): Promise<BlogViewModel | boolean> {
         try {
             const newBlog = {
                 name: blog.name,
@@ -42,21 +42,32 @@ export class BlogRepository {
             return await this.getBlogById(blogId.insertedId.toString());
         } catch (e) {
             console.log('Error in addBlog:', e);
-            return null;
+            return false;
         }
     }
 
     static async updateBlog(id: string, blog: BlogInputModel): Promise<Boolean> {
         try {
             const blogId = ObjectId.createFromHexString(id);
-            await blogCollection.updateOne({_id: blogId}, {
-                name: blog.name,
-                description: blog.description,
-                websiteUrl: blog.websiteUrl
-            })
-            return true;
+            const result = await blogCollection.updateOne(
+                { _id: blogId },
+                {
+                    $set: {
+                        name: blog.name,
+                        description: blog.description,
+                        websiteUrl: blog.websiteUrl
+                    }
+                }
+            );
+
+            if (result.modifiedCount === 1) {
+                return true;
+            } else {
+                console.warn('No document found for the provided id.');
+                return false;
+            }
         } catch (error) {
-            console.error('Can not update blog:', error);
+            console.error('Error updating blog:', error);
             return false;
         }
     }

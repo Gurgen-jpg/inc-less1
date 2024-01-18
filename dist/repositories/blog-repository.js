@@ -34,11 +34,11 @@ class BlogRepository {
                 if (blog) {
                     return (0, mapper_1.blogMapper)(blog);
                 }
-                return null;
+                return false;
             }
             catch (error) {
                 console.error('Error in getBlogById:', error);
-                return null;
+                return false;
             }
         });
     }
@@ -57,7 +57,7 @@ class BlogRepository {
             }
             catch (e) {
                 console.log('Error in addBlog:', e);
-                return null;
+                return false;
             }
         });
     }
@@ -65,15 +65,23 @@ class BlogRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const blogId = mongodb_1.ObjectId.createFromHexString(id);
-                yield db_1.blogCollection.updateOne({ _id: blogId }, {
-                    name: blog.name,
-                    description: blog.description,
-                    websiteUrl: blog.websiteUrl
+                const result = yield db_1.blogCollection.updateOne({ _id: blogId }, {
+                    $set: {
+                        name: blog.name,
+                        description: blog.description,
+                        websiteUrl: blog.websiteUrl
+                    }
                 });
-                return true;
+                if (result.modifiedCount === 1) {
+                    return true;
+                }
+                else {
+                    console.warn('No document found for the provided id.');
+                    return false;
+                }
             }
             catch (error) {
-                console.error('Can not update blog:', error);
+                console.error('Error updating blog:', error);
                 return false;
             }
         });

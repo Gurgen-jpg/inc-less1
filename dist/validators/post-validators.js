@@ -1,9 +1,19 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkId = exports.postInputValidation = void 0;
 const express_validator_1 = require("express-validator");
-const db_1 = require("../db/db");
 const input_validation_middleware_1 = require("../middlewares/inputValidation/input-validation-middleware");
+const blog_repository_1 = require("../repositories/blog-repository");
+const post_repository_1 = require("../repositories/post-repository");
 const POST_VALIDATION_FIELDS = {
     title: 'title',
     shortDescription: 'shortDescription',
@@ -35,9 +45,9 @@ const checkBlogId = (0, express_validator_1.body)(blogId)
     .withMessage('blogId must be a string')
     .notEmpty()
     .withMessage('blogId is required')
-    .custom((blogId) => {
-    return !!db_1.db.blogs.find(blog => blog.id === blogId);
-})
+    .custom((blogId) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield blog_repository_1.BlogRepository.getBlogById(blogId);
+}))
     .withMessage('blog name not found, wrong blogId or blog not exists');
 const postInputValidation = () => {
     return [
@@ -54,7 +64,7 @@ exports.checkId = (0, express_validator_1.param)(id)
     .withMessage('id must be a string')
     .notEmpty()
     .withMessage('id is required')
-    .custom((id) => {
-    return !!db_1.db.posts.find(post => post.id === id);
-})
+    .custom((id) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield post_repository_1.PostRepository.getPostById(id);
+}))
     .withMessage('post not found');
