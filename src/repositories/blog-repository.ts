@@ -1,4 +1,4 @@
-import {blogCollection} from "../db/db";
+import {blogCollection, postCollection} from "../db/db";
 import {BlogInputModel} from "../models/blogs/input";
 import {blogMapper} from "../models/blogs/mappers/mapper";
 import {ObjectId} from "mongodb";
@@ -72,13 +72,13 @@ export class BlogRepository {
         }
     }
 
-    static async deleteBlog(id: string): Promise<Boolean> {
+    static async deleteBlog(id: string) {
         try {
-            const result = await blogCollection.deleteOne({_id: ObjectId.createFromHexString(id)});
-            return result.deletedCount === 1;
+            await blogCollection.deleteOne({_id: ObjectId.createFromHexString(id)});
+
+            await postCollection.deleteMany({blogId: id});
         } catch (error) {
             console.error('Error in deleteBlogById:', error);
-            return false;
         }
     }
 }

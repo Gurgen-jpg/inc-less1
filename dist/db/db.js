@@ -17,7 +17,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const mongodb_1 = require("mongodb");
 dotenv_1.default.config();
 const PORT = 80;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
+const MONGODB_URI = process.env.MONGODB_URI;
 const client = new mongodb_1.MongoClient(MONGODB_URI);
 exports.client = client;
 exports.database = client.db('blogs-hws');

@@ -5,7 +5,7 @@ import {BlogDBModel, PostDBModel} from "../models/db";
 dotenv.config();
 const PORT = 80;
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
+const MONGODB_URI = process.env.MONGODB_URI!;
 
 const client = new MongoClient(MONGODB_URI);
 
