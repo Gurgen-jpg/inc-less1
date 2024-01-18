@@ -4,3 +4,4 @@ node_modules/
 
 # Игнорировать файлы конфигурации npm
 package-lock.json
+.env
