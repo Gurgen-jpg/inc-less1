@@ -89,11 +89,13 @@ class BlogRepository {
     static deleteBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield db_1.blogCollection.deleteOne({ _id: mongodb_1.ObjectId.createFromHexString(id) });
+                const blogIsDeleted = yield db_1.blogCollection.deleteOne({ _id: mongodb_1.ObjectId.createFromHexString(id) });
                 yield db_1.postCollection.deleteMany({ blogId: id });
+                return blogIsDeleted.deletedCount === 1;
             }
             catch (error) {
                 console.error('Error in deleteBlogById:', error);
+                return false;
             }
         });
     }

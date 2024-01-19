@@ -8,7 +8,7 @@ const inputValidationMiddleware = (req, res, next) => {
     // кейс для проверки наличия ошибки параметра поиска по id
     (0, express_validator_1.validationResult)(req).array().forEach((error) => {
         if (error.type === 'field' && error.path === 'id') {
-            res.sendStatus(NOT_FOUND);
+            res.status(NOT_FOUND).send({ errorsMessages: [{ message: 'Not found', field: 'id' }] });
             return;
         }
     });
@@ -19,6 +19,7 @@ const inputValidationMiddleware = (req, res, next) => {
     if (!formattedErrors.isEmpty()) {
         const errorMessage = formattedErrors.array({ onlyFirstError: true });
         const errors = { errorsMessages: errorMessage };
+        console.log(errors);
         res.status(BAD_REQUEST).send(errors);
         return;
     }

@@ -74,11 +74,12 @@ export class BlogRepository {
 
     static async deleteBlog(id: string) {
         try {
-            await blogCollection.deleteOne({_id: ObjectId.createFromHexString(id)});
-
+            const blogIsDeleted = await blogCollection.deleteOne({_id: ObjectId.createFromHexString(id)});
             await postCollection.deleteMany({blogId: id});
+            return blogIsDeleted.deletedCount === 1;
         } catch (error) {
             console.error('Error in deleteBlogById:', error);
+            return false;
         }
     }
 }

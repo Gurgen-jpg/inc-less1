@@ -9,11 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkId = exports.postInputValidation = void 0;
+exports.postInputValidation = void 0;
 const express_validator_1 = require("express-validator");
 const input_validation_middleware_1 = require("../middlewares/inputValidation/input-validation-middleware");
 const blog_repository_1 = require("../repositories/blog-repository");
-const post_repository_1 = require("../repositories/post-repository");
 const POST_VALIDATION_FIELDS = {
     title: 'title',
     shortDescription: 'shortDescription',
@@ -46,7 +45,9 @@ const checkBlogId = (0, express_validator_1.body)(blogId)
     .notEmpty()
     .withMessage('blogId is required')
     .custom((blogId) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield blog_repository_1.BlogRepository.getBlogById(blogId);
+    const blog = yield blog_repository_1.BlogRepository.getBlogById(blogId);
+    console.log(blog);
+    return blog;
 }))
     .withMessage('blog name not found, wrong blogId or blog not exists');
 const postInputValidation = () => {
@@ -59,12 +60,12 @@ const postInputValidation = () => {
     ];
 };
 exports.postInputValidation = postInputValidation;
-exports.checkId = (0, express_validator_1.param)(id)
-    .isString()
-    .withMessage('id must be a string')
-    .notEmpty()
-    .withMessage('id is required')
-    .custom((id) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield post_repository_1.PostRepository.getPostById(id);
-}))
-    .withMessage('post not found');
+// export const checkId = param(id)
+//     .isString()
+//     .withMessage('id must be a string')
+//     .notEmpty()
+//     .withMessage('id is required')
+//     .custom(async (id) => {
+//         return await PostRepository.getPostById(id);
+//     })
+//     .withMessage('post not found');

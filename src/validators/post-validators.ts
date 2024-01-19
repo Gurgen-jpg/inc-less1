@@ -1,8 +1,6 @@
-import {body, param} from "express-validator";
+import {body} from "express-validator";
 import {inputValidationMiddleware} from "../middlewares/inputValidation/input-validation-middleware";
 import {BlogRepository} from "../repositories/blog-repository";
-import {PostRepository} from "../repositories/post-repository";
-
 
 const POST_VALIDATION_FIELDS = {
     title: 'title',
@@ -42,7 +40,9 @@ const checkBlogId = body(blogId)
     .notEmpty()
     .withMessage('blogId is required')
     .custom(async (blogId) => {
-        return await BlogRepository.getBlogById(blogId);
+        const blog = await BlogRepository.getBlogById(blogId);
+        console.log(blog)
+        return blog;
     })
     .withMessage('blog name not found, wrong blogId or blog not exists');
 
@@ -56,12 +56,12 @@ export const  postInputValidation = () => {
     ]
 }
 
-export const checkId = param(id)
-    .isString()
-    .withMessage('id must be a string')
-    .notEmpty()
-    .withMessage('id is required')
-    .custom(async (id) => {
-        return await PostRepository.getPostById(id);
-    })
-    .withMessage('post not found');
+// export const checkId = param(id)
+//     .isString()
+//     .withMessage('id must be a string')
+//     .notEmpty()
+//     .withMessage('id is required')
+//     .custom(async (id) => {
+//         return await PostRepository.getPostById(id);
+//     })
+//     .withMessage('post not found');

@@ -17,24 +17,24 @@ const post_validators_1 = require("../validators/post-validators");
 const input_validation_middleware_1 = require("../middlewares/inputValidation/input-validation-middleware");
 const auth_middleware_1 = require("../middlewares/authValidation/auth-middleware");
 exports.postRoute = (0, express_1.Router)({});
-const { OK, CREATED, NO_CONTENT, BAD_REQUEST, NOT_FOUND } = common_1.HTTP_STATUSES;
+const { OK, CREATED, NO_CONTENT, NOT_FOUND } = common_1.HTTP_STATUSES;
 exports.postRoute.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const posts = yield post_repository_1.PostRepository.getAllPosts();
     res.status(OK).send(posts);
 }));
-exports.postRoute.get("/:id", post_validators_1.checkId, input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postRoute.get("/:id", input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield post_repository_1.PostRepository.getPostById(req.params.id);
-    res.status(200).send(post);
+    return post ? res.status(200).send(post) : res.sendStatus(NOT_FOUND);
 }));
 exports.postRoute.post("/", auth_middleware_1.authMiddleware, (0, post_validators_1.postInputValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const newPost = yield post_repository_1.PostRepository.addPost(req.body);
     res.status(CREATED).send(newPost);
 }));
-exports.postRoute.put("/:id", auth_middleware_1.authMiddleware, post_validators_1.checkId, (0, post_validators_1.postInputValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield post_repository_1.PostRepository.updatePost(req.params.id, req.body);
-    res.sendStatus(NO_CONTENT);
+exports.postRoute.put("/:id", auth_middleware_1.authMiddleware, (0, post_validators_1.postInputValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const postIsUpdate = yield post_repository_1.PostRepository.updatePost(req.params.id, req.body);
+    return postIsUpdate ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 }));
-exports.postRoute.delete("/:id", auth_middleware_1.authMiddleware, post_validators_1.checkId, input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield post_repository_1.PostRepository.deletePost(req.params.id);
-    res.sendStatus(NO_CONTENT);
+exports.postRoute.delete("/:id", auth_middleware_1.authMiddleware, input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const postIsDelete = yield post_repository_1.PostRepository.deletePost(req.params.id);
+    return postIsDelete ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 }));

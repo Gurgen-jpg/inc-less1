@@ -11,6 +11,6 @@ export const allPostsMapper = (post: WithId<PostDBModel>): PostViewModel => {
         blogId: post.blogId,
         blogName: post.blogName,
         createdAt: post.createdAt,
-        isMembership: post.isMembership
+        isMembership: false
     })
 }
