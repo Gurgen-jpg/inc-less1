@@ -34,7 +34,7 @@ exports.postRoute.put("/:id", auth_middleware_1.authMiddleware, (0, post_validat
     const postIsUpdate = yield post_repository_1.PostRepository.updatePost(req.params.id, req.body);
     return postIsUpdate ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 }));
-exports.postRoute.delete("/:id", auth_middleware_1.authMiddleware, input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postRoute.delete("/:id", auth_middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postIsDelete = yield post_repository_1.PostRepository.deletePost(req.params.id);
     return postIsDelete ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 }));

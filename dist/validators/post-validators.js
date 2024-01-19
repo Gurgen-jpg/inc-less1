@@ -40,12 +40,11 @@ const contentValidation = (0, express_validator_1.body)(content)
     .isLength({ min: 1, max: 1000 })
     .withMessage('content must be between 1 and 1000 characters');
 const checkBlogId = (0, express_validator_1.body)(blogId)
-    .isString()
-    .withMessage('blogId must be a string')
-    .notEmpty()
-    .withMessage('blogId is required')
     .custom((blogId) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield blog_repository_1.BlogRepository.getBlogById(blogId);
+    const blog = yield blog_repository_1.BlogRepository.getBlogById(blogId);
+    if (!blog) {
+        throw new Error('blog name not found, wrong blogId or blog not exists');
+    }
 }))
     .withMessage('blog name not found, wrong blogId or blog not exists');
 const postInputValidation = () => {

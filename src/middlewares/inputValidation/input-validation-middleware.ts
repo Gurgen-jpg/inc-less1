@@ -10,12 +10,12 @@ const {NOT_FOUND, BAD_REQUEST} = HTTP_STATUSES
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
     // кейс для проверки наличия ошибки параметра поиска по id
-    validationResult(req).array().forEach((error: ValidationError) => {
-        if (error.type === 'field' && error.path === 'id') {
-            res.status(NOT_FOUND).send({errorsMessages: [{message: 'Not found', field: 'id'}]});
-            return;
-        }
-    });
+    // validationResult(req).array().forEach((error: ValidationError) => {
+    //     if (error.type === 'field' && error.path === 'id') {
+    //         res.status(NOT_FOUND).send({errorsMessages: [{message: 'Not found', field: 'id'}]});
+    //         return;
+    //     }
+    // });
 
     // формирование массива ошибок
     const formattedErrors = validationResult(req).formatWith((error: ValidationError) => {

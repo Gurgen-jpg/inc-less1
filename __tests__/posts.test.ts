@@ -58,7 +58,7 @@ describe('Post api', () => {
         expect(response.status).toBe(BAD_REQUEST);
         const errors = response.body.errorsMessages;
         expect(errors).toBeInstanceOf(Array<ErrorType>);
-        expect(errors).toHaveLength(3);
+        expect(errors).toHaveLength(4);
         expect(errors).toEqual([
             {
                 "message": "title must be between 1 and 30 characters",
@@ -72,6 +72,10 @@ describe('Post api', () => {
                 "message": "content must be between 1 and 1000 characters",
                 "field": "content"
             },
+            {
+                "message": expect.any(String),
+                field: "blogId"
+            }
         ])
     });
 
@@ -120,6 +124,32 @@ describe('Post api', () => {
             })
         expect(response.status).toBe(NOT_FOUND);
     });
+    it('update post validation errors', async () => {
+        const response = await request(app)
+            .put(`/posts/${postID}`)
+            .set('authorization', `Basic ${auth}`)
+            .send({
+                title: 'title2n',
+                shortDescription: '',
+                content: 'content2n',
+                blogId: '123df',
+            })
+
+        expect(response.status).toBe(BAD_REQUEST);
+        const errors = response.body.errorsMessages;
+        expect(errors).toBeInstanceOf(Array<ErrorType>);
+        expect(errors).toHaveLength(2);
+        expect(errors).toEqual([
+            {
+                message: expect.any(String),
+                field: "shortDescription"
+            },
+            {
+                message: expect.any(String),
+                field: "blogId"
+            }
+        ])
+    })
 
     it('+delete post', async () => {
         const response = await request(app).delete(`/posts/${postID}`)

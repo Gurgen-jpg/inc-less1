@@ -35,12 +35,11 @@ const contentValidation = body(content)
 
 
 const checkBlogId = body(blogId)
-    .isString()
-    .withMessage('blogId must be a string')
-    .notEmpty()
-    .withMessage('blogId is required')
     .custom(async (blogId) => {
-        return await BlogRepository.getBlogById(blogId);
+        const blog = await BlogRepository.getBlogById(blogId);
+        if (!blog) {
+            throw new Error('blog name not found, wrong blogId or blog not exists');
+        }
     })
     .withMessage('blog name not found, wrong blogId or blog not exists');
 
