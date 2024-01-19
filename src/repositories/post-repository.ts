@@ -41,7 +41,6 @@ export class PostRepository {
                 blogId: post.blogId,
                 blogName: blog.name,
                 createdAt: new Date().toISOString(),
-                isMembership: false
             }
             const postId = await postCollection.insertOne(newPost);
             return await this.getPostById(postId.insertedId.toString());
