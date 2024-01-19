@@ -122,7 +122,7 @@ describe('Post api', () => {
                 content: 'content2',
                 blogId: '12',
             })
-        expect(response.status).toBe(NOT_FOUND);
+        expect(response.status).toBe(BAD_REQUEST);
     });
     it('update post validation errors', async () => {
         const response = await request(app)
