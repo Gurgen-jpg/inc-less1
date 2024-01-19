@@ -56,7 +56,6 @@ class PostRepository {
                     blogId: post.blogId,
                     blogName: blog.name,
                     createdAt: new Date().toISOString(),
-                    isMembership: false
                 };
                 const postId = yield db_1.postCollection.insertOne(newPost);
                 return yield this.getPostById(postId.insertedId.toString());

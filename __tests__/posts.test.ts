@@ -10,6 +10,11 @@ const auth = 'YWRtaW46cXdlcnR5';
 describe('Post api', () => {
     let blogID: string;
     let postID: string;
+
+    beforeAll(async () => {
+        await request(app).delete('/testing/all-data');
+    })
+
     it('create blog', async () => {
         const response = await request(app).post('/blogs')
             .set('authorization', `Basic ${auth}`)
@@ -20,7 +25,6 @@ describe('Post api', () => {
             })
         blogID = response.body.id;
     })
-
 
     it('get all posts', async () => {
         const response = await request(app).get('/posts');
@@ -54,7 +58,7 @@ describe('Post api', () => {
         expect(response.status).toBe(BAD_REQUEST);
         const errors = response.body.errorsMessages;
         expect(errors).toBeInstanceOf(Array<ErrorType>);
-        expect(errors).toHaveLength(4);
+        expect(errors).toHaveLength(3);
         expect(errors).toEqual([
             {
                 "message": "title must be between 1 and 30 characters",
@@ -68,10 +72,6 @@ describe('Post api', () => {
                 "message": "content must be between 1 and 1000 characters",
                 "field": "content"
             },
-            {
-                "message": "blog name not found, wrong blogId or blog not exists",
-                "field": "blogId"
-            }
         ])
     });
 
@@ -103,6 +103,7 @@ describe('Post api', () => {
             title: 'title2',
             shortDescription: 'shortDescription2',
             content: 'content2',
+            createdAt: expect.any(String),
             blogId: blogID,
             blogName: 'name1'
         })

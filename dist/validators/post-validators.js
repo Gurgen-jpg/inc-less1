@@ -45,9 +45,7 @@ const checkBlogId = (0, express_validator_1.body)(blogId)
     .notEmpty()
     .withMessage('blogId is required')
     .custom((blogId) => __awaiter(void 0, void 0, void 0, function* () {
-    const blog = yield blog_repository_1.BlogRepository.getBlogById(blogId);
-    console.log(blog);
-    return blog;
+    return yield blog_repository_1.BlogRepository.getBlogById(blogId);
 }))
     .withMessage('blog name not found, wrong blogId or blog not exists');
 const postInputValidation = () => {

@@ -40,9 +40,7 @@ const checkBlogId = body(blogId)
     .notEmpty()
     .withMessage('blogId is required')
     .custom(async (blogId) => {
-        const blog = await BlogRepository.getBlogById(blogId);
-        console.log(blog)
-        return blog;
+        return await BlogRepository.getBlogById(blogId);
     })
     .withMessage('blog name not found, wrong blogId or blog not exists');
 

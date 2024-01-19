@@ -10,7 +10,6 @@ const allPostsMapper = (post) => {
         blogId: post.blogId,
         blogName: post.blogName,
         createdAt: post.createdAt,
-        isMembership: false
     });
 };
 exports.allPostsMapper = allPostsMapper;
