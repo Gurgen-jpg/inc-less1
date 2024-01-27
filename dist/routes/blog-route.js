@@ -21,8 +21,7 @@ const mongodb_1 = require("mongodb");
 exports.blogRoute = (0, express_1.Router)();
 const { OK, CREATED, NO_CONTENT, NOT_FOUND, BAD_REQUEST } = common_1.HTTP_STATUSES;
 exports.blogRoute.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { searchNameTerm = null, sortBy = 'createdAt', sortDirection = 'desc', pageNumber = 1, pageSize = 10 } = req.query;
-    const allBlogs = yield blog_services_1.BlogServices.getAllBlogs({ searchNameTerm, sortBy, sortDirection, pageNumber, pageSize });
+    const allBlogs = yield blog_services_1.BlogServices.getAllBlogs(req.query);
     res.status(OK).send(allBlogs);
 }));
 exports.blogRoute.get("/:id", input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -45,7 +44,7 @@ exports.blogRoute.post("/", auth_middleware_1.authMiddleware, (0, blog_validator
 }));
 exports.blogRoute.post("/:blogId/posts", auth_middleware_1.authMiddleware, (0, post_validators_1.createPostFromBlogValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!mongodb_1.ObjectId.isValid(req.params.blogId)) {
-        res.sendStatus(NOT_FOUND);
+        res.sendStatus(BAD_REQUEST);
     }
     else {
         let newPost = yield blog_services_1.BlogServices.addPostByBlogId(Object.assign(Object.assign({}, req.body), { blogId: req.params.blogId }));

@@ -16,9 +16,17 @@ const post_repository_1 = require("../repositories/post-repository");
 const post_query_repository_1 = require("../repositories/post-query-repository");
 class BlogServices {
     static getAllBlogs(sortData) {
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
+            const payload = {
+                sortBy: (_a = sortData.sortBy) !== null && _a !== void 0 ? _a : 'createdAt',
+                sortDirection: (_b = sortData.sortDirection) !== null && _b !== void 0 ? _b : 'desc',
+                pageNumber: sortData.pageNumber ? +sortData.pageNumber : 1,
+                pageSize: sortData.pageSize ? +sortData.pageSize : 10,
+                searchNameTerm: (_c = sortData.searchNameTerm) !== null && _c !== void 0 ? _c : null
+            };
             try {
-                return yield blog_query_repository_1.BlogQueryRepository.getAllBlogs(sortData);
+                return yield blog_query_repository_1.BlogQueryRepository.getAllBlogs(payload);
             }
             catch (error) {
                 console.log('Error in Service getAllBlogs: ', error);
@@ -76,7 +84,6 @@ class BlogServices {
     }
     static addPostByBlogId(payload) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('121212');
             const { title, shortDescription, content, blogId } = payload;
             const blogName = yield blog_query_repository_1.BlogQueryRepository.getBlogById(blogId).then(res => res === null || res === void 0 ? void 0 : res.name);
             try {

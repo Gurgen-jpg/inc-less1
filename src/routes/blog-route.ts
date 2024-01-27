@@ -53,7 +53,7 @@ blogRoute.post("/", authMiddleware, blogsValidation(), async (req: RequestBodyTy
 
 blogRoute.post("/:blogId/posts", authMiddleware, createPostFromBlogValidation(), async (req: RequestBodyWithParamsType<{blogId: string}, PostInputModel>, res: Response) => {
     if (!ObjectId.isValid(req.params.blogId)) {
-         res.sendStatus(NOT_FOUND);
+         res.sendStatus(BAD_REQUEST);
     } else {
         let newPost = await BlogServices.addPostByBlogId({...req.body, blogId: req.params.blogId});
         res.status(CREATED).send(newPost);
