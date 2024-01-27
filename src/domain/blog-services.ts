@@ -18,9 +18,16 @@ type AddPostByBlogIdPayloadType = {
 }
 
 export class BlogServices {
-    static async getAllBlogs(sortData: BlogSortDataType): Promise<PaginationType<BlogViewModel> | null> {
+    static async getAllBlogs(sortData: BlogQueryRepoInputModel): Promise<PaginationType<BlogViewModel> | null> {
+        const payload = {
+            sortBy: sortData.sortBy ?? 'createdAt',
+            sortDirection: sortData.sortDirection ?? 'desc',
+            pageNumber: sortData.pageNumber ? +sortData.pageNumber : 1,
+            pageSize: sortData.pageSize ? +sortData.pageSize : 10,
+            searchNameTerm: sortData.searchNameTerm ?? null
+        }
         try {
-            return await BlogQueryRepository.getAllBlogs(sortData)
+            return await BlogQueryRepository.getAllBlogs(payload)
         } catch (error) {
             console.log('Error in Service getAllBlogs: ', error);
             return null;
@@ -70,7 +77,6 @@ export class BlogServices {
     }
 
     static async addPostByBlogId(payload: AddPostByBlogIdPayloadType): Promise<PostViewModel | null> {
-        console.log('121212')
         const {title, shortDescription, content, blogId} = payload;
         const blogName = await BlogQueryRepository.getBlogById(blogId).then(res => res?.name);
         try {

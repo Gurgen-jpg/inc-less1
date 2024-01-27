@@ -24,15 +24,7 @@ export const blogRoute = Router();
 const {OK, CREATED, NO_CONTENT, NOT_FOUND, BAD_REQUEST} = HTTP_STATUSES;
 
 blogRoute.get("/", async (req: RequestWithQueryType<BlogQueryRepoInputModel>, res: Response<PaginationType<BlogViewModel> | null>) => {
-    const {
-        searchNameTerm = null,
-        sortBy = 'createdAt',
-        sortDirection = 'desc',
-        pageNumber = 1,
-        pageSize = 10
-    } = req.query;
-
-    const allBlogs = await BlogServices.getAllBlogs({searchNameTerm, sortBy, sortDirection, pageNumber, pageSize});
+    const allBlogs = await BlogServices.getAllBlogs(req.query);
     res.status(OK).send(allBlogs);
 });
 
