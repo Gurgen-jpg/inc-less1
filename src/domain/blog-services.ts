@@ -81,7 +81,13 @@ export class BlogServices {
                 blogName,
                 createdAt: new Date().toISOString(),
             }
-            return await PostRepository.addPost(newPost);
+            const postId = await PostRepository.addPost(newPost);
+            if (postId) {
+                return await PostQueryRepository.getPostById(postId.insertedId.toString())
+            } else {
+                console.log('can not get recently added post with id: ', postId)
+                return null
+            }
         } catch (e) {
             console.log('Error in Service addBlog:', e);
             return null;

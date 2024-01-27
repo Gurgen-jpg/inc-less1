@@ -10,9 +10,11 @@ import {PaginationType} from "../models/common";
 
 export class PostServices {
     static async getAllPosts(sortData: PostSortDataType): Promise<PaginationType<PostViewModel> | null> {
-
+        const {
+            sortBy = 'createdAt', sortDirection = 'desc', pageNumber = 1, pageSize = 10, blogId
+        } = sortData;
         try {
-            return await PostQueryRepository.getAllPosts(sortData);
+            return await PostQueryRepository.getAllPosts({sortBy, sortDirection, pageNumber, pageSize, blogId});
         } catch (error) {
             console.error('Error in getAllPosts:', error);
             return null
