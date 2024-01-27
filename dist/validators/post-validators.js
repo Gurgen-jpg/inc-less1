@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postInputValidation = void 0;
+exports.createPostFromBlogValidation = exports.postInputValidation = void 0;
 const express_validator_1 = require("express-validator");
 const input_validation_middleware_1 = require("../middlewares/inputValidation/input-validation-middleware");
-const blog_repository_1 = require("../repositories/blog-repository");
+const blog_query_repository_1 = require("../repositories/blog-query-repository");
 const POST_VALIDATION_FIELDS = {
     title: 'title',
     shortDescription: 'shortDescription',
@@ -41,7 +41,7 @@ const contentValidation = (0, express_validator_1.body)(content)
     .withMessage('content must be between 1 and 1000 characters');
 const checkBlogId = (0, express_validator_1.body)(blogId)
     .custom((blogId) => __awaiter(void 0, void 0, void 0, function* () {
-    const blog = yield blog_repository_1.BlogRepository.getBlogById(blogId);
+    const blog = yield blog_query_repository_1.BlogQueryRepository.getBlogById(blogId);
     if (!blog) {
         throw new Error('blog name not found, wrong blogId or blog not exists');
     }
@@ -57,12 +57,12 @@ const postInputValidation = () => {
     ];
 };
 exports.postInputValidation = postInputValidation;
-// export const checkId = param(id)
-//     .isString()
-//     .withMessage('id must be a string')
-//     .notEmpty()
-//     .withMessage('id is required')
-//     .custom(async (id) => {
-//         return await PostRepository.getPostById(id);
-//     })
-//     .withMessage('post not found');
+const createPostFromBlogValidation = () => {
+    return [
+        postTitleValidation,
+        shortDescriptionValidation,
+        contentValidation,
+        input_validation_middleware_1.inputValidationMiddleware
+    ];
+};
+exports.createPostFromBlogValidation = createPostFromBlogValidation;

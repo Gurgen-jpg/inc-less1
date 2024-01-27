@@ -11,56 +11,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostRepository = void 0;
 const db_1 = require("../db/db");
-const allPostsMapper_1 = require("../models/posts/mappers/allPostsMapper");
 const mongodb_1 = require("mongodb");
-const blog_repository_1 = require("./blog-repository");
 class PostRepository {
-    static getAllPosts() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const posts = yield db_1.postCollection.find({}).toArray();
-                return posts.map(allPostsMapper_1.allPostsMapper);
-            }
-            catch (error) {
-                console.error('Error in getAllPosts:', error);
-                return false;
-            }
-        });
-    }
-    static getPostById(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const postId = mongodb_1.ObjectId.createFromHexString(id);
-                const post = yield db_1.postCollection.findOne({ _id: postId });
-                if (post) {
-                    return (0, allPostsMapper_1.allPostsMapper)(post);
-                }
-                else {
-                    return false;
-                }
-            }
-            catch (error) {
-                console.error('Error in getPostById:', error);
-                return false;
-            }
-        });
-    }
     static addPost(post) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blog = yield blog_repository_1.BlogRepository.getBlogById(post.blogId);
-            if (typeof blog !== "boolean") {
-                const newPost = {
-                    title: post.title,
-                    shortDescription: post.shortDescription,
-                    content: post.content,
-                    blogId: post.blogId,
-                    blogName: blog.name,
-                    createdAt: new Date().toISOString(),
-                };
-                const postId = yield db_1.postCollection.insertOne(newPost);
-                return yield this.getPostById(postId.insertedId.toString());
+            try {
+                return yield db_1.postCollection.insertOne(post);
             }
-            return false;
+            catch (e) {
+                return null;
+            }
         });
     }
     static updatePost(id, post) {

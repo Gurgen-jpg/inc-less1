@@ -12,29 +12,39 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postRoute = void 0;
 const express_1 = require("express");
 const common_1 = require("../models/common");
-const post_repository_1 = require("../repositories/post-repository");
 const post_validators_1 = require("../validators/post-validators");
 const input_validation_middleware_1 = require("../middlewares/inputValidation/input-validation-middleware");
 const auth_middleware_1 = require("../middlewares/authValidation/auth-middleware");
+const post_services_1 = require("../domain/post-services");
+const mongodb_1 = require("mongodb");
 exports.postRoute = (0, express_1.Router)({});
 const { OK, CREATED, NO_CONTENT, NOT_FOUND } = common_1.HTTP_STATUSES;
 exports.postRoute.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const posts = yield post_repository_1.PostRepository.getAllPosts();
+    const posts = yield post_services_1.PostServices.getAllPosts(req.query);
     res.status(OK).send(posts);
 }));
 exports.postRoute.get("/:id", input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const post = yield post_repository_1.PostRepository.getPostById(req.params.id);
+    if (!mongodb_1.ObjectId.isValid(req.params.id)) {
+        return res.sendStatus(NOT_FOUND);
+    }
+    const post = yield post_services_1.PostServices.getPostById(req.params.id);
     return post ? res.status(200).send(post) : res.sendStatus(NOT_FOUND);
 }));
 exports.postRoute.post("/", auth_middleware_1.authMiddleware, (0, post_validators_1.postInputValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const newPost = yield post_repository_1.PostRepository.addPost(req.body);
+    const newPost = yield post_services_1.PostServices.addPost(req.body);
     res.status(CREATED).send(newPost);
 }));
 exports.postRoute.put("/:id", auth_middleware_1.authMiddleware, (0, post_validators_1.postInputValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const postIsUpdate = yield post_repository_1.PostRepository.updatePost(req.params.id, req.body);
+    if (!mongodb_1.ObjectId.isValid(req.params.id)) {
+        return res.sendStatus(NOT_FOUND);
+    }
+    const postIsUpdate = yield post_services_1.PostServices.updatePost(req.params.id, req.body);
     return postIsUpdate ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 }));
 exports.postRoute.delete("/:id", auth_middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const postIsDelete = yield post_repository_1.PostRepository.deletePost(req.params.id);
+    if (!mongodb_1.ObjectId.isValid(req.params.id)) {
+        return res.sendStatus(NOT_FOUND);
+    }
+    const postIsDelete = yield post_services_1.PostServices.deletePost(req.params.id);
     return postIsDelete ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 }));
