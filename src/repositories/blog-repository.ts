@@ -3,6 +3,7 @@ import {BlogInputModel} from "../models/blogs/input";
 import {blogMapper} from "../models/blogs/mappers/mapper";
 import {ObjectId} from "mongodb";
 import {BlogViewModel} from "../models/blogs/output";
+import {BlogDBModel} from "../models/db";
 
 export class BlogRepository {
     static async getAllBlogs(): Promise<BlogViewModel[] | null> {
@@ -10,52 +11,46 @@ export class BlogRepository {
             return await blogCollection.find({}).toArray()
                 .then(res => res.map(blogMapper));
         } catch (error) {
-            console.log(error);
+            console.log('Error in Repository getAllBlogs:',error);
             return null;
         }
     }
 
-    static async getBlogById(id: string): Promise<BlogViewModel | boolean> {
+    static async getBlogById(id: string): Promise<BlogViewModel | null> {
         try {
             const blog = await blogCollection
                 .findOne({_id: ObjectId.createFromHexString(id)})
             if (blog) {
                 return blogMapper(blog);
             }
-            return false;
+            return null;
         } catch (error) {
-            console.error('Error in getBlogById:', error);
-            return false;
+            console.error('Error in Repository getBlogById:', error);
+            return null;
         }
     }
 
-    static async addBlog(blog: BlogInputModel): Promise<BlogViewModel | boolean> {
+    static async addBlog(blog: BlogDBModel): Promise<BlogViewModel | null> {
         try {
-            const newBlog = {
-                name: blog.name,
-                description: blog.description,
-                websiteUrl: blog.websiteUrl,
-                createdAt: new Date().toISOString(),
-                isMembership: false,
-            }
-            const blogId = await blogCollection.insertOne(newBlog);
+            const blogId = await blogCollection.insertOne(blog);
             return await this.getBlogById(blogId.insertedId.toString());
         } catch (e) {
-            console.log('Error in addBlog:', e);
-            return false;
+            console.log('Error in Repository addBlog:', e);
+            return null;
         }
     }
 
-    static async updateBlog(id: string, blog: BlogInputModel): Promise<Boolean> {
+    static async updateBlog(id: string, blog: BlogInputModel): Promise<boolean> {
+        const {name, description, websiteUrl} = blog;
         try {
             const blogId = ObjectId.createFromHexString(id);
             const result = await blogCollection.updateOne(
                 { _id: blogId },
                 {
                     $set: {
-                        name: blog.name,
-                        description: blog.description,
-                        websiteUrl: blog.websiteUrl
+                        name,
+                        description,
+                        websiteUrl
                     }
                 }
             );
@@ -67,18 +62,18 @@ export class BlogRepository {
                 return false;
             }
         } catch (error) {
-            console.error('Error updating blog:', error);
+            console.error('Error in Repository  updating blog:', error);
             return false;
         }
     }
 
-    static async deleteBlog(id: string) {
+    static async deleteBlog(id: string): Promise<boolean> {
         try {
             const blogIsDeleted = await blogCollection.deleteOne({_id: ObjectId.createFromHexString(id)});
             await postCollection.deleteMany({blogId: id});
             return blogIsDeleted.deletedCount === 1;
         } catch (error) {
-            console.error('Error in deleteBlogById:', error);
+            console.error('Error in Repository  deleteBlogById:', error);
             return false;
         }
     }

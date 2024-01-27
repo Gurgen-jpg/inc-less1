@@ -1,54 +1,46 @@
-import {PostInputModel, PostUpdateModel} from "../models/posts/input";
+import {PostUpdateModel} from "../models/posts/input";
 import {postCollection} from "../db/db";
 import {PostViewModel} from "../models/posts/output";
 import {allPostsMapper} from "../models/posts/mappers/allPostsMapper";
 import {ObjectId} from "mongodb";
-import {BlogRepository} from "./blog-repository";
+import {PostDBModel} from "../models/db";
 
 export class PostRepository {
-    static async getAllPosts(): Promise<PostViewModel[] | boolean> {
+    static async getAllPosts(): Promise<PostViewModel[] | null> {
         try {
             const posts = await postCollection.find({}).toArray();
             return posts.map(allPostsMapper);
         } catch (error) {
             console.error('Error in getAllPosts:', error);
-            return false
+            return null
         }
     }
 
-    static async getPostById(id: string): Promise<PostViewModel | boolean> {
+    static async getPostById(id: string): Promise<PostViewModel | null> {
         try {
             const postId = ObjectId.createFromHexString(id);
             const post = await postCollection.findOne({_id: postId})
             if (post) {
                 return allPostsMapper(post);
             } else {
-                return false
+                return null
             }
         } catch (error) {
             console.error('Error in getPostById:', error);
-            return false
+            return null
         }
     }
 
-    static async addPost(post: PostInputModel): Promise<PostViewModel | boolean> {
-        const blog = await BlogRepository.getBlogById(post.blogId)
-        if (typeof blog !== "boolean") {
-            const newPost = {
-                title: post.title,
-                shortDescription: post.shortDescription,
-                content: post.content,
-                blogId: post.blogId,
-                blogName: blog.name,
-                createdAt: new Date().toISOString(),
-            }
-            const postId = await postCollection.insertOne(newPost);
+    static async addPost(post: PostDBModel): Promise<PostViewModel | null> {
+        try {
+            const postId = await postCollection.insertOne(post);
             return await this.getPostById(postId.insertedId.toString());
+        } catch (e) {
+            return null;
         }
-        return false;
     }
 
-    static async updatePost(id: string, post: PostUpdateModel) {
+    static async updatePost(id: string, post: PostUpdateModel): Promise<boolean> {
         try {
             const result = await postCollection.updateOne({_id: ObjectId.createFromHexString(id)}, {
                 $set: {
