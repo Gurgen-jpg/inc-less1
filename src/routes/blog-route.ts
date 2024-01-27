@@ -36,7 +36,7 @@ blogRoute.get("/", async (req: RequestWithQueryType<BlogQueryRepoInputModel>, re
     res.status(OK).send(allBlogs);
 });
 
-blogRoute.get("/:id", inputValidationMiddleware, async (req: RequestParamType<{ id: string }>, res: Response) => {
+blogRoute.get("/:id", inputValidationMiddleware, async (req: RequestParamType<Param>, res: Response) => {
     if (!ObjectId.isValid(req.params.id)) {
         return res.sendStatus(NOT_FOUND);
     }
@@ -60,8 +60,11 @@ blogRoute.post("/", authMiddleware, blogsValidation(), async (req: RequestBodyTy
 });
 
 blogRoute.post("/:id/posts", authMiddleware, createPostFromBlogValidation(), async (req: RequestBodyWithParamsType<Param, PostInputModel>, res: Response) => {
+    if (!ObjectId.isValid(req.params.id)) {
+        return res.sendStatus(NOT_FOUND);
+    }
     let newPost = await BlogServices.addPostByBlogId({...req.body, blogId: req.params.id});
-    res.status(CREATED).send(newPost);
+    return res.status(CREATED).send(newPost);
 });
 
 
