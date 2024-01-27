@@ -2,12 +2,17 @@ import {PostInputModel, PostUpdateModel} from "../models/posts/input";
 import {PostViewModel} from "../models/posts/output";
 import {PostRepository} from "../repositories/post-repository";
 import {BlogRepository} from "../repositories/blog-repository";
+import {BlogQueryRepository} from "../repositories/blog-query-repository";
+import {PostQueryRepository} from "../repositories/post-query-repository";
+import {PostSortDataType} from "../models/posts/postQueryRepoInputModel";
+import {PaginationType} from "../models/common";
 
 
 export class PostServices {
-    static async getAllPosts(): Promise<PostViewModel[] | null> {
+    static async getAllPosts(sortData: PostSortDataType): Promise<PaginationType<PostViewModel> | null> {
+
         try {
-            return await PostRepository.getAllPosts();
+            return await PostQueryRepository.getAllPosts(sortData);
         } catch (error) {
             console.error('Error in getAllPosts:', error);
             return null
@@ -16,7 +21,7 @@ export class PostServices {
 
     static async getPostById(id: string): Promise<PostViewModel | null> {
         try {
-            return await PostRepository.getPostById(id);
+            return await PostQueryRepository.getPostById(id);
         } catch (error) {
             console.error('Error in getPostById:', error);
             return null
@@ -25,7 +30,7 @@ export class PostServices {
 
     static async addPost(post: PostInputModel): Promise<PostViewModel | null> {
         try {
-            const blog = await BlogRepository.getBlogById(post.blogId)
+            const blog = await BlogQueryRepository.getBlogById(post.blogId)
             if (blog) {
                 const newPost = {
                     title: post.title,
@@ -35,7 +40,13 @@ export class PostServices {
                     blogName: blog.name,
                     createdAt: new Date().toISOString(),
                 }
-                return await PostRepository.addPost(newPost);
+                const postId = await PostRepository.addPost(newPost);
+                if (postId) {
+                    return this.getPostById(postId.insertedId.toString())
+                } else {
+                    console.log('can not get recently added post with id: ', postId)
+                    return null
+                }
             } else {
                 console.log('No blog found for the provided id.');
                 return null
@@ -48,7 +59,7 @@ export class PostServices {
 
     static async updatePost(id: string, post: PostUpdateModel): Promise<boolean> {
         try {
-          return await PostRepository.updatePost(id, post)
+            return await PostRepository.updatePost(id, post)
         } catch (e) {
             console.log('Error in updatePost:', e);
             return false
@@ -57,7 +68,7 @@ export class PostServices {
 
     static async deletePost(id: string): Promise<boolean> {
         try {
-          return await PostRepository.deletePost(id)
+            return await PostRepository.deletePost(id)
         } catch (e) {
             console.log('Error in deletePost:', e);
             return false

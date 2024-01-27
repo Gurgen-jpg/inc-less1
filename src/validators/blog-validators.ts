@@ -42,13 +42,3 @@ export const blogsValidation = () => {
         inputValidationMiddleware
     ]
 }
-
-// export const checkId = param(id)
-//     .isString()
-//     .withMessage('id must be a string')
-//     .notEmpty()
-//     .withMessage('id is required')
-//     .custom(async (id) => {
-//         return await blogCollection.findOne({_id: ObjectId.createFromHexString(id)})
-//     })
-//     .withMessage('blog not found');

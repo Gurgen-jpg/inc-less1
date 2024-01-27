@@ -1,4 +1,5 @@
 import {Request} from "express";
+import {BlogViewModel} from "./blogs/output";
 
 export const HTTP_STATUSES = {
     OK: 200,
@@ -34,23 +35,30 @@ export type VideoType = {
 }
 
 
-
-
 export type Param = {
-    id: number
+    id: string
 }
 
-export type BodyType = {
-    title: string
-    author: string
-    availableResolutions?: EAvailableResolutions[]
-    createdAt?: string;
+
+export type BlogSortDataType = {
+    searchNameTerm: string | null;
+    sortBy: string;
+    sortDirection: 'asc' | 'desc';
+    pageNumber: number;
+    pageSize: number;
+}
+export type PaginationType<I> = {
+    "pageSize": number,
+    "page": number,
+    "pagesCount": number,
+    "totalCount": number,
+    "items": Array<I>
 }
 
 export type RequestParamType<P> = Request<P, unknown, unknown, unknown>;
-
+export type RequestParamAndQueryType<P,Q> = Request<P, unknown, unknown, Q>;
 export type RequestBodyType<B> = Request<unknown, unknown, B, unknown>;
-
+export type RequestWithQueryType<Q> = Request<unknown, unknown, unknown, Q>;
 export type RequestBodyWithParamsType<P, B> = Request<P, unknown, B, unknown>;
 
 export type ErrorType = {

@@ -1,40 +1,13 @@
 import {PostUpdateModel} from "../models/posts/input";
 import {postCollection} from "../db/db";
-import {PostViewModel} from "../models/posts/output";
-import {allPostsMapper} from "../models/posts/mappers/allPostsMapper";
-import {ObjectId} from "mongodb";
+import {InsertOneResult, ObjectId} from "mongodb";
 import {PostDBModel} from "../models/db";
 
 export class PostRepository {
-    static async getAllPosts(): Promise<PostViewModel[] | null> {
-        try {
-            const posts = await postCollection.find({}).toArray();
-            return posts.map(allPostsMapper);
-        } catch (error) {
-            console.error('Error in getAllPosts:', error);
-            return null
-        }
-    }
 
-    static async getPostById(id: string): Promise<PostViewModel | null> {
+    static async addPost(post: PostDBModel): Promise<InsertOneResult<PostDBModel> | null> {
         try {
-            const postId = ObjectId.createFromHexString(id);
-            const post = await postCollection.findOne({_id: postId})
-            if (post) {
-                return allPostsMapper(post);
-            } else {
-                return null
-            }
-        } catch (error) {
-            console.error('Error in getPostById:', error);
-            return null
-        }
-    }
-
-    static async addPost(post: PostDBModel): Promise<PostViewModel | null> {
-        try {
-            const postId = await postCollection.insertOne(post);
-            return await this.getPostById(postId.insertedId.toString());
+            return await postCollection.insertOne(post);
         } catch (e) {
             return null;
         }
