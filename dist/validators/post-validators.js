@@ -62,7 +62,6 @@ const createPostFromBlogValidation = () => {
         postTitleValidation,
         shortDescriptionValidation,
         contentValidation,
-        exports.checkBlogId,
         input_validation_middleware_1.inputValidationMiddleware
     ];
 };

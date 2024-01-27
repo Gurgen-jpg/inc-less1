@@ -56,6 +56,11 @@ class BlogServices {
                 blogId: sortData.blogId
             };
             try {
+                const blog = yield blog_query_repository_1.BlogQueryRepository.getBlogById(payload.blogId);
+                if (!blog) {
+                    console.log('No blog found for the provided id.');
+                    return null;
+                }
                 return yield post_query_repository_1.PostQueryRepository.getAllPosts(payload);
             }
             catch (error) {

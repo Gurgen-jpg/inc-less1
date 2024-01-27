@@ -31,7 +31,7 @@ exports.blogRoute.get("/:id", input_validation_middleware_1.inputValidationMiddl
     const blog = yield blog_services_1.BlogServices.getBlogById(req.params.id);
     return blog ? res.status(OK).send(blog) : res.sendStatus(NOT_FOUND);
 }));
-exports.blogRoute.get("/:blogId/posts", post_validators_1.checkBlogId, input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.blogRoute.get("/:blogId/posts", input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!mongodb_1.ObjectId.isValid(req.params.blogId)) {
         return res.sendStatus(NOT_FOUND);
     }
@@ -43,13 +43,12 @@ exports.blogRoute.post("/", auth_middleware_1.authMiddleware, (0, blog_validator
     res.status(CREATED).send(newBlog);
 }));
 exports.blogRoute.post("/:blogId/posts", auth_middleware_1.authMiddleware, (0, post_validators_1.createPostFromBlogValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    mongodb_1.ObjectId.isValid(req.params.blogId);
     if (!mongodb_1.ObjectId.isValid(req.params.blogId)) {
         res.sendStatus(BAD_REQUEST);
     }
     else {
         let newPost = yield blog_services_1.BlogServices.addPostByBlogId(Object.assign(Object.assign({}, req.body), { blogId: req.params.blogId }));
-        res.status(CREATED).send(newPost);
+        newPost ? res.status(CREATED).send(newPost) : res.sendStatus(NOT_FOUND);
     }
 }));
 exports.blogRoute.put("/:id", auth_middleware_1.authMiddleware, (0, blog_validators_1.blogsValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
