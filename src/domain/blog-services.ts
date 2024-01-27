@@ -52,6 +52,11 @@ export class BlogServices {
             blogId: sortData.blogId
         }
         try {
+            const blog = await BlogQueryRepository.getBlogById(payload.blogId!)
+            if (!blog) {
+                console.log('No blog found for the provided id.');
+                return null
+            }
             return await PostQueryRepository.getAllPosts(payload)
         } catch (error) {
             console.log('Error in Service getAllBlogs: ', error);

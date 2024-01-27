@@ -58,8 +58,6 @@ export const createPostFromBlogValidation = () => {
         postTitleValidation,
         shortDescriptionValidation,
         contentValidation,
-        checkBlogId,
-
         inputValidationMiddleware
     ]
 }
