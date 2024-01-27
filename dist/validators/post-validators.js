@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createPostFromBlogValidation = exports.postInputValidation = void 0;
+exports.createPostFromBlogValidation = exports.postInputValidation = exports.checkBlogId = void 0;
 const express_validator_1 = require("express-validator");
 const input_validation_middleware_1 = require("../middlewares/inputValidation/input-validation-middleware");
 const blog_query_repository_1 = require("../repositories/blog-query-repository");
@@ -39,7 +39,7 @@ const contentValidation = (0, express_validator_1.body)(content)
     .trim()
     .isLength({ min: 1, max: 1000 })
     .withMessage('content must be between 1 and 1000 characters');
-const checkBlogId = (0, express_validator_1.body)(blogId)
+exports.checkBlogId = (0, express_validator_1.body)(blogId)
     .custom((blogId) => __awaiter(void 0, void 0, void 0, function* () {
     const blog = yield blog_query_repository_1.BlogQueryRepository.getBlogById(blogId);
     if (!blog) {
@@ -52,7 +52,7 @@ const postInputValidation = () => {
         postTitleValidation,
         shortDescriptionValidation,
         contentValidation,
-        checkBlogId,
+        exports.checkBlogId,
         input_validation_middleware_1.inputValidationMiddleware
     ];
 };
@@ -62,6 +62,7 @@ const createPostFromBlogValidation = () => {
         postTitleValidation,
         shortDescriptionValidation,
         contentValidation,
+        exports.checkBlogId,
         input_validation_middleware_1.inputValidationMiddleware
     ];
 };

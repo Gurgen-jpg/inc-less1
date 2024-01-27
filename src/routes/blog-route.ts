@@ -14,7 +14,7 @@ import {BlogServices} from "../domain/blog-services";
 import {BlogViewModel} from "../models/blogs/output";
 import {BlogQueryRepoInputModel} from "../models/blogs/blogQueryRepoInputModel";
 import {PostInputModel} from "../models/posts/input";
-import {createPostFromBlogValidation} from "../validators/post-validators";
+import {checkBlogId, createPostFromBlogValidation} from "../validators/post-validators";
 import {ObjectId} from "mongodb";
 import {PostQueryRepoInputModel} from "../models/posts/postQueryRepoInputModel";
 
@@ -36,7 +36,7 @@ blogRoute.get("/:id", inputValidationMiddleware, async (req: RequestParamType<Pa
     return blog ? res.status(OK).send(blog) : res.sendStatus(NOT_FOUND);
 });
 
-blogRoute.get("/:blogId/posts", inputValidationMiddleware, async (req: RequestParamAndQueryType<{blogId: string}, PostQueryRepoInputModel>, res: Response) => {
+blogRoute.get("/:blogId/posts", checkBlogId, inputValidationMiddleware, async (req: RequestParamAndQueryType<{blogId: string}, PostQueryRepoInputModel>, res: Response) => {
     if (!ObjectId.isValid(req.params.blogId)) {
         return res.sendStatus(NOT_FOUND);
     }
@@ -52,6 +52,7 @@ blogRoute.post("/", authMiddleware, blogsValidation(), async (req: RequestBodyTy
 });
 
 blogRoute.post("/:blogId/posts", authMiddleware, createPostFromBlogValidation(), async (req: RequestBodyWithParamsType<{blogId: string}, PostInputModel>, res: Response) => {
+    ObjectId.isValid(req.params.blogId)
     if (!ObjectId.isValid(req.params.blogId)) {
          res.sendStatus(BAD_REQUEST);
     } else {

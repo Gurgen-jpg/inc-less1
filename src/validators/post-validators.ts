@@ -35,7 +35,7 @@ const contentValidation = body(content)
     .withMessage('content must be between 1 and 1000 characters');
 
 
-const checkBlogId = body(blogId)
+export const checkBlogId = body(blogId)
     .custom(async (blogId) => {
         const blog = await BlogQueryRepository.getBlogById(blogId);
         if (!blog) {
@@ -58,6 +58,8 @@ export const createPostFromBlogValidation = () => {
         postTitleValidation,
         shortDescriptionValidation,
         contentValidation,
+        checkBlogId,
+
         inputValidationMiddleware
     ]
 }
