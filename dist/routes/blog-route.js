@@ -45,10 +45,12 @@ exports.blogRoute.post("/", auth_middleware_1.authMiddleware, (0, blog_validator
 }));
 exports.blogRoute.post("/:blogId/posts", auth_middleware_1.authMiddleware, (0, post_validators_1.createPostFromBlogValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!mongodb_1.ObjectId.isValid(req.params.blogId)) {
-        return res.sendStatus(NOT_FOUND);
+        res.sendStatus(NOT_FOUND);
     }
-    let newPost = yield blog_services_1.BlogServices.addPostByBlogId(Object.assign(Object.assign({}, req.body), { blogId: req.params.blogId }));
-    return res.status(CREATED).send(newPost);
+    else {
+        let newPost = yield blog_services_1.BlogServices.addPostByBlogId(Object.assign(Object.assign({}, req.body), { blogId: req.params.blogId }));
+        res.status(CREATED).send(newPost);
+    }
 }));
 exports.blogRoute.put("/:id", auth_middleware_1.authMiddleware, (0, blog_validators_1.blogsValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!mongodb_1.ObjectId.isValid(req.params.id)) {

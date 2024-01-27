@@ -70,6 +70,7 @@ export class BlogServices {
     }
 
     static async addPostByBlogId(payload: AddPostByBlogIdPayloadType): Promise<PostViewModel | null> {
+        console.log('121212')
         const {title, shortDescription, content, blogId} = payload;
         const blogName = await BlogQueryRepository.getBlogById(blogId).then(res => res?.name);
         try {

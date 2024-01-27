@@ -76,6 +76,7 @@ class BlogServices {
     }
     static addPostByBlogId(payload) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('121212');
             const { title, shortDescription, content, blogId } = payload;
             const blogName = yield blog_query_repository_1.BlogQueryRepository.getBlogById(blogId).then(res => res === null || res === void 0 ? void 0 : res.name);
             try {
