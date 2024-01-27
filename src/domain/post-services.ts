@@ -4,12 +4,12 @@ import {PostRepository} from "../repositories/post-repository";
 import {BlogRepository} from "../repositories/blog-repository";
 import {BlogQueryRepository} from "../repositories/blog-query-repository";
 import {PostQueryRepository} from "../repositories/post-query-repository";
-import {PostSortDataType} from "../models/posts/postQueryRepoInputModel";
+import {PostQueryRepoInputModel, PostSortDataType} from "../models/posts/postQueryRepoInputModel";
 import {PaginationType} from "../models/common";
 
 
 export class PostServices {
-    static async getAllPosts(sortData: PostSortDataType): Promise<PaginationType<PostViewModel> | null> {
+    static async getAllPosts(sortData: PostQueryRepoInputModel): Promise<PaginationType<PostViewModel> | null> {
         const {
             sortBy = 'createdAt', sortDirection = 'desc', pageNumber = 1, pageSize = 10, blogId
         } = sortData;

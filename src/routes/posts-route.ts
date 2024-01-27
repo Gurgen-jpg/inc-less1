@@ -11,8 +11,7 @@ export const postRoute = Router({});
 
 const {OK, CREATED, NO_CONTENT,  NOT_FOUND} = HTTP_STATUSES
 postRoute.get("/", async (req: RequestWithQueryType<PostQueryRepoInputModel>, res: Response) => {
-    const {pageNumber = 1, pageSize = 10, sortBy = 'createdAt', sortDirection = 'desc'} = req.query;
-    const posts = await PostServices.getAllPosts({pageNumber, pageSize, sortBy, sortDirection});
+    const posts = await PostServices.getAllPosts(req.query);
     res.status(OK).send(posts);
 });
 

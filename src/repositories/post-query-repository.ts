@@ -20,6 +20,7 @@ export class PostQueryRepository {
                 .find(filter)
                 .sort(sortBy, sortDirection)
                 .skip((pageNumber - 1) * pageSize)
+                .limit(pageSize)
                 .toArray();
             return {
                 pageSize,
