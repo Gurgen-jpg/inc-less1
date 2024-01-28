@@ -6,5 +6,12 @@ export type BlogViewModel = {
     "createdAt": string
     "isMembership": boolean
 }
+export type BlogsOutputModel = {
+    "pagesCount": number,
+    "page": number,
+    "pageSize": number,
+    "totalCount": number,
+    "items": BlogViewModel[]
+}
 
 export type Blogs = BlogViewModel[];

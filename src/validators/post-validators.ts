@@ -1,6 +1,5 @@
 import {body} from "express-validator";
 import {inputValidationMiddleware} from "../middlewares/inputValidation/input-validation-middleware";
-import {BlogRepository} from "../repositories/blog-repository";
 import {BlogQueryRepository} from "../repositories/blog-query-repository";
 
 const POST_VALIDATION_FIELDS = {

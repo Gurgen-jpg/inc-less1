@@ -1,6 +1,4 @@
 import {Request} from "express";
-import {BlogViewModel} from "./blogs/output";
-
 export const HTTP_STATUSES = {
     OK: 200,
     CREATED: 201,

@@ -1,10 +1,9 @@
 import {PostInputModel, PostUpdateModel} from "../models/posts/input";
 import {PostViewModel} from "../models/posts/output";
 import {PostRepository} from "../repositories/post-repository";
-import {BlogRepository} from "../repositories/blog-repository";
 import {BlogQueryRepository} from "../repositories/blog-query-repository";
 import {PostQueryRepository} from "../repositories/post-query-repository";
-import {PostQueryRepoInputModel, PostSortDataType} from "../models/posts/postQueryRepoInputModel";
+import {PostQueryRepoInputModel} from "../models/posts/postQueryRepoInputModel";
 import {PaginationType} from "../models/common";
 
 

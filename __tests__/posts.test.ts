@@ -1,8 +1,7 @@
 import request from "supertest";
 import {app} from "../src/settings";
 import {ErrorType, HTTP_STATUSES} from "../src/models/common";
-import {Posts} from "../src/models/posts/output";
-import {response} from "express";
+import {Posts, PostViewModel} from "../src/models/posts/output";
 
 const {OK, CREATED, NO_CONTENT, BAD_REQUEST, NOT_FOUND} = HTTP_STATUSES;
 const auth = 'YWRtaW46cXdlcnR5';
@@ -29,8 +28,14 @@ describe('Post api', () => {
     it('get all posts', async () => {
         const response = await request(app).get('/posts');
         expect(response.status).toBe(OK);
-        expect(response.body).toEqual([]);
-        expect(response.body).toBeInstanceOf(Array<Posts>);
+        expect(response.body).toEqual({
+            pagesCount: 0,
+            page: 1,
+            pageSize: 10,
+            totalCount: 0,
+            items: expect.any(Array),
+        });
+        expect(response.body.items).toBeInstanceOf(Array<PostViewModel>);
     });
 
     it('create post', async () => {
@@ -156,8 +161,14 @@ describe('Post api', () => {
             .set('authorization', `Basic ${auth}`)
         expect(response.status).toBe(NO_CONTENT);
         const posts = await request(app).get('/posts');
-        expect(posts.body).toEqual([]);
-        expect(posts.body).toBeInstanceOf(Array<Posts>);
+        expect(posts.body).toEqual({
+            pagesCount: 0,
+            page: 1,
+            pageSize: 10,
+            totalCount: 0,
+            items: expect.any(Array),
+        });
+        expect(posts.body.items).toBeInstanceOf(Array<PostViewModel>);
     });
 
     it('-delete post', async () => {

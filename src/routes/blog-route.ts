@@ -14,7 +14,7 @@ import {BlogServices} from "../domain/blog-services";
 import {BlogViewModel} from "../models/blogs/output";
 import {BlogQueryRepoInputModel} from "../models/blogs/blogQueryRepoInputModel";
 import {PostInputModel} from "../models/posts/input";
-import {checkBlogId, createPostFromBlogValidation} from "../validators/post-validators";
+import {createPostFromBlogValidation} from "../validators/post-validators";
 import {ObjectId} from "mongodb";
 import {PostQueryRepoInputModel} from "../models/posts/postQueryRepoInputModel";
 

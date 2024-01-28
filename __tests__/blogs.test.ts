@@ -1,11 +1,7 @@
 import {app} from "../src/settings";
 import request from "supertest";
 import {ErrorType, HTTP_STATUSES} from "../src/models/common";
-import {BlogInputModel, BlogUpdateModel} from "../src/models/blogs/input";
-import {BlogViewModel} from "../src/models/blogs/output";
-import {blogCollection} from "../src/db/db";
-import exp = require("node:constants");
-import {before} from "node:test";
+import {BlogsOutputModel, BlogViewModel} from "../src/models/blogs/output";
 
 const {OK, NOT_FOUND, CREATED, NO_CONTENT, BAD_REQUEST, UNAUTHORIZED} = HTTP_STATUSES;
 
@@ -37,7 +33,8 @@ describe('Testing blogs', () => {
         const blogs = await request(app).get('/blogs');
 
         expect(blogs.status).toBe(OK);
-        expect(blogs.body).toHaveLength(1);
+        expect(blogs.body.items).toBeInstanceOf(Array<BlogViewModel>);
+        expect(blogs.body.items).toHaveLength(1);
     })
 
     it('-all post validation errors', async () => {
@@ -165,6 +162,53 @@ describe('Testing blogs', () => {
         const blog2 = await request(app).get(`/blogs/${newID}`);
         expect(blog2.status).toBe(OK);
         // expect(blog2.body).toEqual(state.getState()[0]);
+    })
+
+    it('+ add post to blog using POST, GET -> /blogs/:id/posts', async () => {
+
+        const newBlogID = await request(app).post('/blogs')
+            .set('Authorization', `Basic ${auth}`)
+            .send({
+                name: 'testBlog',
+                description: 'description3',
+                websiteUrl: 'https://ZCFGd.Y38aOX9Fthor'
+            });
+        expect(newBlogID.status).toBe(CREATED);
+
+        const newPostID = await request(app).post(`/blogs/${newBlogID.body.id}/posts`)
+            .set('Authorization', `Basic ${auth}`)
+            .send({
+                title: 'title1',
+                shortDescription: 'shortDescription1',
+                content: 'content1',
+            });
+        expect(newPostID.status).toBe(CREATED);
+
+        const posts = await request(app).get(`/blogs/${newBlogID.body.id}/posts`)
+            .set('Authorization', `Basic ${auth}`);
+        expect(posts.status).toBe(OK);
+        expect(posts.body.items).toHaveLength(1);
+        expect(posts.body.items[0].id).toBe(newPostID.body.id);
+    })
+
+    it('- add post to blog using wrong id', async () => {
+        const newBlogID = await request(app).post('/blogs')
+            .set('Authorization', `Basic ${auth}`)
+            .send({
+                name: 'testWrongCase',
+                description: 'description3',
+                websiteUrl: 'https://ZCFGd.Y38aOX9Fthor'
+            });
+        expect(newBlogID.status).toBe(CREATED);
+
+        const newPostID = await request(app).post(`/blogs/${newBlogID.body.id}'somewrongid'/posts`)
+            .set('Authorization', `Basic ${auth}`)
+            .send({
+                title: 'title1',
+                shortDescription: 'shortDescription1',
+                content: 'content1',
+            });
+        expect(newPostID.status).toBe(BAD_REQUEST);
     })
 
 });

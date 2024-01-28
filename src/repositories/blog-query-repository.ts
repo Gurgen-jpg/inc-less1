@@ -1,9 +1,7 @@
-import {blogCollection, postCollection} from "../db/db";
-import {BlogInputModel} from "../models/blogs/input";
+import {blogCollection} from "../db/db";
 import {blogMapper} from "../models/blogs/mappers/mapper";
 import {ObjectId} from "mongodb";
 import {BlogViewModel} from "../models/blogs/output";
-import {BlogQueryRepoInputModel} from "../models/blogs/blogQueryRepoInputModel";
 import {BlogSortDataType, PaginationType} from "../models/common";
 
 export class BlogQueryRepository {

@@ -5,7 +5,7 @@ import {
 import {ValidationError, validationResult} from "express-validator";
 import {HTTP_STATUSES} from "../../models/common";
 
-const {NOT_FOUND, BAD_REQUEST} = HTTP_STATUSES
+const { BAD_REQUEST} = HTTP_STATUSES
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
 

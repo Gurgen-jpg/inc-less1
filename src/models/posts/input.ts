@@ -1,5 +1,3 @@
-import {TestingRepository} from "../../repositories/testing-repository";
-
 export type PostInputModel = {
     title: string
     shortDescription: string
