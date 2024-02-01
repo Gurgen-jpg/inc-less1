@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostRepository = void 0;
-const db_1 = require("../db/db");
+const db_1 = require("../../db/db");
 const mongodb_1 = require("mongodb");
 class PostRepository {
     static addPost(post) {

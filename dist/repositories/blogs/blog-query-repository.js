@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlogQueryRepository = void 0;
-const db_1 = require("../db/db");
-const mapper_1 = require("../models/blogs/mappers/mapper");
+const db_1 = require("../../db/db");
+const mapper_1 = require("../../models/blogs/mappers/mapper");
 const mongodb_1 = require("mongodb");
 class BlogQueryRepository {
     static getAllBlogs(sortData) {

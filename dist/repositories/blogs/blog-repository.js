@@ -10,10 +10,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlogRepository = void 0;
-const db_1 = require("../db/db");
+const db_1 = require("../../db/db");
 const mongodb_1 = require("mongodb");
 const blog_query_repository_1 = require("./blog-query-repository");
 class BlogRepository {
+    static getBlogById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const blog = yield db_1.blogCollection
+                    .findOne({ _id: mongodb_1.ObjectId.createFromHexString(id) });
+                if (blog) {
+                    return blog;
+                }
+                return null;
+            }
+            catch (error) {
+                console.error('Error in Repository getBlogById:', error);
+                return null;
+            }
+        });
+    }
     static addBlog(blog) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

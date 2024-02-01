@@ -10,10 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlogServices = void 0;
-const blog_repository_1 = require("../repositories/blog-repository");
-const blog_query_repository_1 = require("../repositories/blog-query-repository");
-const post_repository_1 = require("../repositories/post-repository");
-const post_query_repository_1 = require("../repositories/post-query-repository");
+const blog_repository_1 = require("../repositories/blogs/blog-repository");
+const blog_query_repository_1 = require("../repositories/blogs/blog-query-repository");
+const post_repository_1 = require("../repositories/users/post-repository");
+const post_query_repository_1 = require("../repositories/posts/post-query-repository");
 class BlogServices {
     static getAllBlogs(sortData) {
         var _a, _b, _c;
@@ -90,7 +90,7 @@ class BlogServices {
     static addPostByBlogId(payload) {
         return __awaiter(this, void 0, void 0, function* () {
             const { title, shortDescription, content, blogId } = payload;
-            const blogName = yield blog_query_repository_1.BlogQueryRepository.getBlogById(blogId).then(res => res === null || res === void 0 ? void 0 : res.name);
+            const blogName = yield blog_repository_1.BlogRepository.getBlogById(blogId).then(res => res === null || res === void 0 ? void 0 : res.name);
             try {
                 if (!blogName) {
                     console.log('No blog found for the provided id.');

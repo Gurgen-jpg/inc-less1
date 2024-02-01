@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import {MongoClient} from "mongodb";
-import {BlogDBModel, PostDBModel} from "../models/db";
+import {BlogDBModel, PostDBModel, UserDBModel} from "../models/db";
 
 dotenv.config();
 const PORT = 80;
@@ -13,6 +13,7 @@ export const database = client.db('blogs-hws');
 
 const blogCollection = database.collection<BlogDBModel>('blogs');
 const postCollection = database.collection<PostDBModel>('posts');
+const usersCollection = database.collection<UserDBModel>('users');
 
 async function connectDB() {
     try {
@@ -26,4 +27,4 @@ async function connectDB() {
     }
 }
 
-export { connectDB, client, blogCollection, postCollection };
+export { connectDB, client, blogCollection, postCollection, usersCollection };
