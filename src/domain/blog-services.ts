@@ -82,7 +82,7 @@ export class BlogServices {
 
     static async addPostByBlogId(payload: AddPostByBlogIdPayloadType): Promise<PostViewModel | null> {
         const {title, shortDescription, content, blogId} = payload;
-        const blogName = await BlogQueryRepository.getBlogById(blogId).then(res => res?.name);
+        const blogName = await BlogRepository.getBlogById(blogId).then(res => res?.name);
         try {
             if (!blogName) {
                 console.log('No blog found for the provided id.');

@@ -1,12 +1,24 @@
 import {blogCollection, postCollection} from "../db/db";
 import {BlogInputModel} from "../models/blogs/input";
-import {blogMapper} from "../models/blogs/mappers/mapper";
 import {ObjectId} from "mongodb";
 import {BlogViewModel} from "../models/blogs/output";
 import {BlogDBModel} from "../models/db";
 import {BlogQueryRepository} from "./blog-query-repository";
-
 export class BlogRepository {
+
+    static async getBlogById(id: string): Promise<BlogDBModel | null> {
+        try {
+            const blog = await blogCollection
+                .findOne({_id: ObjectId.createFromHexString(id)})
+            if (blog) {
+                return blog;
+            }
+            return null;
+        } catch (error) {
+            console.error('Error in Repository getBlogById:', error);
+            return null;
+        }
+    }
     static async addBlog(blog: BlogDBModel): Promise<BlogViewModel | null> {
         try {
             const blogId = await blogCollection.insertOne(blog);

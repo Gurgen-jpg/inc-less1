@@ -1,7 +1,7 @@
 import request from "supertest";
 import {app} from "../src/settings";
 import {ErrorType, HTTP_STATUSES} from "../src/models/common";
-import {Posts, PostViewModel} from "../src/models/posts/output";
+import {PostViewModel} from "../src/models/posts/output";
 
 const {OK, CREATED, NO_CONTENT, BAD_REQUEST, NOT_FOUND} = HTTP_STATUSES;
 const auth = 'YWRtaW46cXdlcnR5';
@@ -178,3 +178,14 @@ describe('Post api', () => {
     })
 
 })
+
+
+function counter() {
+    var count = 0;
+    return function () { return ++count; };
+}
+
+var increment = counter();
+console.log(increment())
+console.log(increment())
+console.log(increment())
