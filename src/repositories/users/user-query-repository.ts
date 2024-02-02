@@ -18,7 +18,14 @@ import {UserDBModel} from "../../models/db";
 
 export class UserQueryRepository {
     static async getAllUsers(sortData: UserQueryModel): Promise<PaginationType<UserViewModel> | null> {
-        let {sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm} = sortData;
+        let {
+            sortBy,
+            sortDirection,
+            pageNumber,
+            pageSize,
+            searchLoginTerm,
+            searchEmailTerm
+        } = sortData;
         let filter = {};
 
         if (searchLoginTerm) {
@@ -45,6 +52,7 @@ export class UserQueryRepository {
             const users = await usersCollection
                 .find(filter)
                 .sort(sortBy, sortDirection)
+                .limit(pageSize)
                 .skip((pageNumber - 1) * pageSize)
                 .toArray();
             return {

@@ -65,4 +65,16 @@ describe('users', () => {
         expect(response.body.items).toBeInstanceOf(Array<UserViewModel>);
     })
 
+    it('+get all users first list', async () => {
+        await request(app).delete('/testing/all-data');
+        await createUsers(14);
+        const response = await request(app)
+            .get('/users')
+            .set('Authorization', `Basic YWRtaW46cXdlcnR5`);
+        expect(response.status).toBe(200);
+        expect(response.body.items).toHaveLength(10);
+        expect(response.body.totalCount).toBe(14);
+        expect(response.body.pagesCount).toBe(2);
+        expect(response.body.pageSize).toBe(10);
+    })
 })

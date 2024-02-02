@@ -46,6 +46,7 @@ class UserQueryRepository {
                 const users = yield db_1.usersCollection
                     .find(filter)
                     .sort(sortBy, sortDirection)
+                    .limit(pageSize)
                     .skip((pageNumber - 1) * pageSize)
                     .toArray();
                 return {
