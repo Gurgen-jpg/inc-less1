@@ -8,7 +8,6 @@ import {PaginationType} from "../models/common";
 export class UsersService {
     static async createUser(payload: UserInputModel): Promise<UserViewModel | null> {
         const {login, email, password} = payload;
-        console.log('UsersService', payload);
         const saltRound = 10;
         const createdAt = new Date().toISOString();
         // let userHash = ''

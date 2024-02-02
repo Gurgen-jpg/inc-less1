@@ -17,6 +17,7 @@ class TestingRepository {
             try {
                 yield db_1.blogCollection.deleteMany({});
                 yield db_1.postCollection.deleteMany({});
+                yield db_1.usersCollection.deleteMany({});
             }
             catch (e) {
                 console.log('Error in deleteAllData:', e);

@@ -17,8 +17,6 @@ export class BlogQueryRepository {
                 }
             }
         }
-
-
         try {
             const totalCount = await blogCollection.countDocuments(filter);
 

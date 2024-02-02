@@ -4,7 +4,6 @@ import {InsertOneResult, ObjectId} from "mongodb";
 
 export class UserRepository {
     static async createUser(payload: UserInputModel): Promise<string | null> {
-        console.log('UserRepository')
         const {login, email, password, createdAt} = payload;
         try {
             return await usersCollection.insertOne({login, email, password, createdAt}).then((id) => {

@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createPostFromBlogValidation = exports.postInputValidation = exports.checkBlogId = void 0;
 const express_validator_1 = require("express-validator");
 const input_validation_middleware_1 = require("../middlewares/inputValidation/input-validation-middleware");
-const blog_query_repository_1 = require("../repositories/blogs/blog-query-repository");
+const blog_query_repository_1 = require("../repositories/blog-query-repository");
 const POST_VALIDATION_FIELDS = {
     title: 'title',
     shortDescription: 'shortDescription',

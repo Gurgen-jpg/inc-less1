@@ -20,7 +20,6 @@ class UsersService {
     static createUser(payload) {
         return __awaiter(this, void 0, void 0, function* () {
             const { login, email, password } = payload;
-            console.log('UsersService', payload);
             const saltRound = 10;
             const createdAt = new Date().toISOString();
             // let userHash = ''
