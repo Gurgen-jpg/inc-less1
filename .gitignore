@@ -1,7 +1,7 @@
 # Игнорировать папку с зависимостями Node.js
 .idea
 node_modules/
-
+dist
 # Игнорировать файлы конфигурации npm
 package-lock.json
 .env
