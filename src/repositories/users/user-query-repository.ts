@@ -26,24 +26,30 @@ export class UserQueryRepository {
             searchLoginTerm,
             searchEmailTerm
         } = sortData;
-        let filter = {};
+        let filter: any = {};
 
-        if (searchLoginTerm) {
+        if (searchLoginTerm || searchEmailTerm) {
             filter = {
-                login: {
-                    $regex: searchLoginTerm,
-                    $options: 'i'
-                }
+                $or: []
             };
-        }
-        if (searchEmailTerm) {
-            filter = {
-                ...filter,
-                email: {
-                    $regex: searchEmailTerm,
-                    $options: 'i'
-                }
-            };
+
+            if (searchLoginTerm) {
+                filter.$or.push({
+                    login: {
+                        $regex: searchLoginTerm,
+                        $options: 'i'
+                    }
+                });
+            }
+
+            if (searchEmailTerm) {
+                filter.$or.push({
+                    email: {
+                        $regex: searchEmailTerm,
+                        $options: 'i'
+                    }
+                });
+            }
         }
 
 

@@ -26,19 +26,26 @@ class UserQueryRepository {
         return __awaiter(this, void 0, void 0, function* () {
             let { sortBy, sortDirection, pageNumber, pageSize, searchLoginTerm, searchEmailTerm } = sortData;
             let filter = {};
-            if (searchLoginTerm) {
+            if (searchLoginTerm || searchEmailTerm) {
                 filter = {
-                    login: {
-                        $regex: searchLoginTerm,
-                        $options: 'i'
-                    }
+                    $or: []
                 };
-            }
-            if (searchEmailTerm) {
-                filter = Object.assign(Object.assign({}, filter), { email: {
-                        $regex: searchEmailTerm,
-                        $options: 'i'
-                    } });
+                if (searchLoginTerm) {
+                    filter.$or.push({
+                        login: {
+                            $regex: searchLoginTerm,
+                            $options: 'i'
+                        }
+                    });
+                }
+                if (searchEmailTerm) {
+                    filter.$or.push({
+                        email: {
+                            $regex: searchEmailTerm,
+                            $options: 'i'
+                        }
+                    });
+                }
             }
             console.log(filter);
             try {
