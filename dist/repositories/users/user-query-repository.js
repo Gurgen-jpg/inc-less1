@@ -29,23 +29,24 @@ class UserQueryRepository {
             if (searchLoginTerm) {
                 filter = {
                     login: {
-                        $regex: sortData.searchLoginTerm,
+                        $regex: searchLoginTerm,
                         $options: 'i'
                     }
                 };
             }
             if (searchEmailTerm) {
                 filter = Object.assign(Object.assign({}, filter), { email: {
-                        $regex: sortData.searchEmailTerm,
+                        $regex: searchEmailTerm,
                         $options: 'i'
                     } });
             }
+            console.log(filter);
             try {
                 const totalCount = yield db_1.usersCollection.countDocuments(filter);
                 const pagesCount = Math.ceil(totalCount / pageSize);
                 const users = yield db_1.usersCollection
                     .find(filter)
-                    .sort(sortBy, sortDirection)
+                    .sort({ [sortBy]: sortDirection })
                     .limit(pageSize)
                     .skip((pageNumber - 1) * pageSize)
                     .toArray();

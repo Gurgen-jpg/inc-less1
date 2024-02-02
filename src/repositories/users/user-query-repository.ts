@@ -31,27 +31,31 @@ export class UserQueryRepository {
         if (searchLoginTerm) {
             filter = {
                 login: {
-                    $regex: sortData.searchLoginTerm,
+                    $regex: searchLoginTerm,
                     $options: 'i'
                 }
-            }
+            };
         }
         if (searchEmailTerm) {
             filter = {
                 ...filter,
                 email: {
-                    $regex: sortData.searchEmailTerm,
+                    $regex: searchEmailTerm,
                     $options: 'i'
                 }
-            }
+            };
         }
+
+
+
+        console.log(filter);
 
         try {
             const totalCount = await usersCollection.countDocuments(filter);
             const pagesCount = Math.ceil(totalCount / pageSize);
             const users = await usersCollection
                 .find(filter)
-                .sort(sortBy, sortDirection)
+                .sort({[sortBy]: sortDirection})
                 .limit(pageSize)
                 .skip((pageNumber - 1) * pageSize)
                 .toArray();

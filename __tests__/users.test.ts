@@ -8,6 +8,10 @@ describe('users', () => {
     beforeAll(async () => {
         await request(app).delete('/testing/all-data');
     })
+    afterAll(async () => {
+        await request(app).delete('/testing/all-data');
+
+    })
     it('+add user', async () => {
         const response = await request(app)
             .post('/users')
@@ -76,5 +80,24 @@ describe('users', () => {
         expect(response.body.totalCount).toBe(14);
         expect(response.body.pagesCount).toBe(2);
         expect(response.body.pageSize).toBe(10);
+    })
+
+    it('+check pagination', async () => {
+        await request(app).delete('/testing/all-data');
+        await createUsers(14);
+        const response = await request(app)
+            .get('/users')
+            .query({
+                pageSize: 15,
+                pageNumber: 1,
+                searchLoginTerm: 'seR',
+                searchEmailTerm: '.com',
+                sortDirection: 'asc',
+                sortBy: 'login'
+            })
+            .set('Authorization', `Basic YWRtaW46cXdlcnR5`);
+
+        console.log(response.body)
+
     })
 })

@@ -9,7 +9,7 @@ export async function createUsers(count: number) {
             currentDate.setMinutes(currentDate.getMinutes());
             return ({
                 login: 'login',
-                email: 'user.email@mail.ru',
+                email: 'user.email@mail.com',
                 password: 'password',
                 createdAt: currentDate.toISOString()
             })
