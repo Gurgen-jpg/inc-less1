@@ -2,10 +2,10 @@ import {Router, Request, Response} from "express";
 import {HTTP_STATUSES, RequestWithQueryType} from "../models/common";
 import {postInputValidation} from "../validators/post-validators";
 import {inputValidationMiddleware} from "../middlewares/inputValidation/input-validation-middleware";
-import {authMiddleware} from "../middlewares/authValidation/auth-middleware";
 import {PostServices} from "../domain/post-services";
 import {PostQueryRepoInputModel} from "../models/posts/postQueryRepoInputModel";
 import {ObjectId} from "mongodb";
+import {basicAuthorizationMiddleware} from "../middlewares/authValidation/basic-authorization";
 
 export const postRoute = Router({});
 
@@ -23,12 +23,12 @@ postRoute.get("/:id", inputValidationMiddleware, async (req: Request, res: Respo
     return post ? res.status(200).send(post) : res.sendStatus(NOT_FOUND);
 });
 
-postRoute.post("/", authMiddleware, postInputValidation(), async (req: Request, res: Response) => {
+postRoute.post("/", basicAuthorizationMiddleware, postInputValidation(), async (req: Request, res: Response) => {
     const newPost = await PostServices.addPost(req.body);
     res.status(CREATED).send(newPost);
 });
 
-postRoute.put("/:id", authMiddleware, postInputValidation(), async (req: Request, res: Response) => {
+postRoute.put("/:id", basicAuthorizationMiddleware, postInputValidation(), async (req: Request, res: Response) => {
     if (!ObjectId.isValid(req.params.id)) {
         return res.sendStatus(NOT_FOUND);
     }
@@ -36,7 +36,7 @@ postRoute.put("/:id", authMiddleware, postInputValidation(), async (req: Request
     return postIsUpdate ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 });
 
-postRoute.delete("/:id", authMiddleware, async (req: Request, res: Response) => {
+postRoute.delete("/:id", basicAuthorizationMiddleware, async (req: Request, res: Response) => {
     if (!ObjectId.isValid(req.params.id)) {
         return res.sendStatus(NOT_FOUND);
     }

@@ -1,8 +1,8 @@
 import {UserInputModel, UserQueryModel} from "../models/users/input";
-import bcrypt, {hash} from "bcrypt";
+import bcrypt from "bcrypt";
 import {UserRepository} from "../repositories/users/user-repository";
 import {UserQueryRepository} from "../repositories/users/user-query-repository";
-import {Users, UserViewModel} from "../models/users/output";
+import {UserViewModel} from "../models/users/output";
 import {PaginationType} from "../models/common";
 
 export class UsersService {
@@ -30,7 +30,6 @@ export class UsersService {
             });
             if (!userId) {
                 throw new Error('Error creating user');
-                return null
             }
             return await UserQueryRepository.getUserById(userId);
         } catch (e) {

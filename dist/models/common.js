@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EAvailableResolutions = exports.HTTP_STATUSES = void 0;
+exports.AUTH_TYPES = exports.EAvailableResolutions = exports.HTTP_STATUSES = void 0;
 exports.HTTP_STATUSES = {
     OK: 200,
     CREATED: 201,
@@ -22,3 +22,8 @@ var EAvailableResolutions;
     EAvailableResolutions["P1440"] = "P1440";
     EAvailableResolutions["P2160"] = "P2160";
 })(EAvailableResolutions || (exports.EAvailableResolutions = EAvailableResolutions = {}));
+var AUTH_TYPES;
+(function (AUTH_TYPES) {
+    AUTH_TYPES["BASIC"] = "Basic";
+    AUTH_TYPES["BEARER"] = "Bearer";
+})(AUTH_TYPES || (exports.AUTH_TYPES = AUTH_TYPES = {}));

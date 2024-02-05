@@ -1,5 +1,4 @@
 import {Router, Response} from "express";
-import {authMiddleware} from "../middlewares/authValidation/auth-middleware";
 import {
     HTTP_STATUSES, PaginationType, Param,
     RequestBodyType,
@@ -17,6 +16,7 @@ import {PostInputModel} from "../models/posts/input";
 import {createPostFromBlogValidation} from "../validators/post-validators";
 import {ObjectId} from "mongodb";
 import {PostQueryRepoInputModel} from "../models/posts/postQueryRepoInputModel";
+import {basicAuthorizationMiddleware} from "../middlewares/authValidation/basic-authorization";
 
 
 export const blogRoute = Router();
@@ -46,12 +46,12 @@ blogRoute.get("/:blogId/posts", inputValidationMiddleware, async (req: RequestPa
 
 
 
-blogRoute.post("/", authMiddleware, blogsValidation(), async (req: RequestBodyType<BlogInputModel>, res: Response) => {
+blogRoute.post("/", basicAuthorizationMiddleware, blogsValidation(), async (req: RequestBodyType<BlogInputModel>, res: Response) => {
     let newBlog = await BlogServices.addBlog(req.body);
     res.status(CREATED).send(newBlog);
 });
 
-blogRoute.post("/:blogId/posts", authMiddleware, createPostFromBlogValidation(), async (req: RequestBodyWithParamsType<{blogId: string}, PostInputModel>, res: Response) => {
+blogRoute.post("/:blogId/posts", basicAuthorizationMiddleware, createPostFromBlogValidation(), async (req: RequestBodyWithParamsType<{blogId: string}, PostInputModel>, res: Response) => {
     if (!ObjectId.isValid(req.params.blogId)) {
          res.sendStatus(BAD_REQUEST);
     } else {
@@ -61,7 +61,7 @@ blogRoute.post("/:blogId/posts", authMiddleware, createPostFromBlogValidation(),
 });
 
 
-blogRoute.put("/:id", authMiddleware, blogsValidation(), async (req: RequestBodyWithParamsType<{
+blogRoute.put("/:id", basicAuthorizationMiddleware, blogsValidation(), async (req: RequestBodyWithParamsType<{
     id: string
 }, BlogInputModel>, res: Response) => {
     if (!ObjectId.isValid(req.params.id)) {
@@ -71,7 +71,7 @@ blogRoute.put("/:id", authMiddleware, blogsValidation(), async (req: RequestBody
     return blogIsUpdate ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 });
 
-blogRoute.delete("/:id", authMiddleware, inputValidationMiddleware, async (req: RequestParamType<{
+blogRoute.delete("/:id", basicAuthorizationMiddleware, inputValidationMiddleware, async (req: RequestParamType<{
     id: string
 }>, res: Response) => {
     if (!ObjectId.isValid(req.params.id)) {

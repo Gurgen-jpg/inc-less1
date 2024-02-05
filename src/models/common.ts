@@ -21,6 +21,11 @@ export enum EAvailableResolutions {
     P2160 = "P2160",
 }
 
+export enum AUTH_TYPES {
+    BASIC = 'Basic',
+    BEARER = 'Bearer'
+}
+
 export type VideoType = {
     id: number
     title: string
