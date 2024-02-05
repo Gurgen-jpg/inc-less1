@@ -14,17 +14,50 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const jwt_service_1 = require("../app/auth/jwt-service");
 const user_repository_1 = require("../repositories/users/user-repository");
+const user_query_repository_1 = require("../repositories/users/user-query-repository");
 class AuthService {
+    // todo: Спросить: как сделать валидацию логина и почты, поиска юзера, в миддлваре или в сервисе.
     static login(payload) {
         return __awaiter(this, void 0, void 0, function* () {
             const { loginOrEmail, password } = payload;
-            const isUserExist = yield user_repository_1.UserRepository.getUserByLoginOrEmail(loginOrEmail);
-            if (!isUserExist) {
-                return false;
+            try {
+                const user = yield user_repository_1.UserRepository.getUserByLoginOrEmail(loginOrEmail);
+                if (!user) {
+                    throw new Error('user not found');
+                }
+                else {
+                    const isCredentialsCorrect = yield bcrypt_1.default.compare(password, user.password);
+                    if (!isCredentialsCorrect) {
+                        throw new Error('wrong password');
+                    }
+                    else {
+                        return jwt_service_1.JwtService.createJWT(user);
+                    }
+                }
             }
-            else {
-                return yield bcrypt_1.default.compare(password, isUserExist);
+            catch (e) {
+                console.error(e);
+                return null;
+            }
+        });
+    }
+    static me(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!userId) {
+                    throw new Error('Invalid token');
+                }
+                const user = yield user_query_repository_1.UserQueryRepository.getUserById(userId);
+                if (!user) {
+                    throw new Error('bad user id maybe deleted user');
+                }
+                return user;
+            }
+            catch (e) {
+                console.error(e);
+                return null;
             }
         });
     }

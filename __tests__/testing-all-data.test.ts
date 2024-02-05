@@ -1,9 +1,8 @@
 import {app} from "../src/settings";
-import request from "supertest";
 import {testExpectedBlog} from "./blogs.test";
-import dotenv from "dotenv";
+import request from "supertest";
+import {createUsers} from "./utils/createData";
 
-dotenv.config();
 describe('testing delete all data', () => {
     it('delete all data', async () => {
         await request(app).post('/blogs')
@@ -17,16 +16,20 @@ describe('testing delete all data', () => {
                 content: 'content1',
                 blogId: '123df',
             })
+        await createUsers(5);
 
 
         const response = await request(app).delete('/testing/all-data');
         const blogs = await request(app).get('/blogs');
         const posts = await request(app).get('/posts');
+        const users = await request(app).get('/users').set('Authorization', `Basic YWRtaW46cXdlcnR5`);
         expect(response.status).toBe(204);
         expect(blogs.status).toBe(200);
-        expect(blogs.body).toHaveLength(0);
+        expect(blogs.body.items).toHaveLength(0);
         expect(posts.status).toBe(200);
-        expect(posts.body).toHaveLength(0);
+        expect(posts.body.items).toHaveLength(0);
+        expect(users.status).toBe(200);
+        expect(users.body.items).toHaveLength(0);
 
     })
 

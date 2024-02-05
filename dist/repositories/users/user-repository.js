@@ -45,7 +45,14 @@ class UserRepository {
             try {
                 return yield db_1.usersCollection
                     .findOne({ $or: [{ login: loginOrEmail }, { email: loginOrEmail }] })
-                    .then((user) => user ? user.password : null)
+                    .then((user) => {
+                    return user ? {
+                        id: user._id.toString(),
+                        login: user.login,
+                        email: user.email,
+                        password: user.password,
+                    } : null;
+                })
                     .catch((err) => {
                     throw err;
                 });

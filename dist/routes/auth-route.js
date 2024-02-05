@@ -15,12 +15,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authRoute = void 0;
 const express_1 = __importDefault(require("express"));
 const common_1 = require("../models/common");
-const auth_validation_1 = require("../validators/auth-validation");
 const auth_service_1 = require("../domain/auth-service");
+const auth_middleware_1 = require("../middlewares/authValidation/auth-middleware");
 exports.authRoute = express_1.default.Router({});
-const { NO_CONTENT, UNAUTHORIZED } = common_1.HTTP_STATUSES;
-exports.authRoute.post('/login', (0, auth_validation_1.authValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const { OK, NO_CONTENT, UNAUTHORIZED } = common_1.HTTP_STATUSES;
+exports.authRoute.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { loginOrEmail, password } = req.body;
-    const isLogin = yield auth_service_1.AuthService.login({ loginOrEmail, password });
-    isLogin ? res.sendStatus(NO_CONTENT) : res.sendStatus(UNAUTHORIZED);
+    const token = yield auth_service_1.AuthService.login({ loginOrEmail, password });
+    return token
+        ? res.status(OK).send({ token })
+        : res.sendStatus(UNAUTHORIZED);
+}));
+exports.authRoute.get('/me', auth_middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const me = yield auth_service_1.AuthService.me((_a = req.context.user) === null || _a === void 0 ? void 0 : _a.id);
+    res.send(me);
 }));

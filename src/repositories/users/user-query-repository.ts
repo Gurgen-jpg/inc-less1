@@ -4,7 +4,6 @@ import {UserViewModel} from "../../models/users/output";
 import {Filter, ObjectId} from "mongodb";
 import {PaginationType} from "../../models/common";
 import {UserQueryModel} from "../../models/users/input";
-import {UserDBModel} from "../../models/db";
 
 // type Option = {
 //     $regex: string | null;

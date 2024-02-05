@@ -5,6 +5,6 @@ const usersMapper = (usersBd) => ({
     id: usersBd._id.toString(),
     login: usersBd.login,
     email: usersBd.email,
-    createdAt: usersBd.createdAt
+    // createdAt: usersBd.createdAt
 });
 exports.usersMapper = usersMapper;

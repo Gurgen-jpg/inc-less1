@@ -1,14 +1,22 @@
-import express, {Response} from "express";
+import express, {Response, Request} from "express";
 import {LoginInputModel} from "../models/auth/input";
 import {HTTP_STATUSES, RequestBodyType} from "../models/common";
 import {authValidation} from "../validators/auth-validation";
 import {AuthService} from "../domain/auth-service";
+import {authMiddleware} from "../middlewares/authValidation/auth-middleware";
 
 export const authRoute = express.Router({});
 
-const {NO_CONTENT, UNAUTHORIZED} = HTTP_STATUSES;
-authRoute.post('/login', authValidation(), async (req: RequestBodyType<LoginInputModel>, res: Response) => {
+const {OK, NO_CONTENT, UNAUTHORIZED} = HTTP_STATUSES;
+authRoute.post('/login', async (req: RequestBodyType<LoginInputModel>, res: Response) => {
     const {loginOrEmail, password} = req.body;
-    const isLogin = await AuthService.login({loginOrEmail, password});
-    isLogin ? res.sendStatus(NO_CONTENT) : res.sendStatus(UNAUTHORIZED);
+    const token = await AuthService.login({loginOrEmail, password});
+    return token
+        ? res.status(OK).send({token})
+        : res.sendStatus(UNAUTHORIZED);
 });
+
+authRoute.get('/me', authMiddleware, async (req: Request, res: Response) => {
+    const me = await AuthService.me(req.context.user?.id!);
+    res.send(me);
+})

@@ -1,6 +1,7 @@
 import {UserInputModel} from "../../models/users/input";
 import {usersCollection} from "../../db/db";
-import {InsertOneResult, ObjectId} from "mongodb";
+import {ObjectId} from "mongodb";
+import {UserAuthViewModel} from "../../models/users/output";
 
 export class UserRepository {
     static async createUser(payload: UserInputModel): Promise<string | null> {
@@ -26,11 +27,18 @@ export class UserRepository {
         }
     }
 
-    static async getUserByLoginOrEmail(loginOrEmail: string): Promise<string | null> {
+    static async getUserByLoginOrEmail(loginOrEmail: string): Promise<UserAuthViewModel | null> {
         try {
             return await usersCollection
                 .findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]})
-                .then((user) => user ? user.password : null)
+                .then((user) => {
+                    return user ? {
+                        id: user._id.toString(),
+                        login: user.login,
+                        email: user.email,
+                        password: user.password,
+                    } : null
+                })
                 .catch((err) => {
                     throw err
                 });
