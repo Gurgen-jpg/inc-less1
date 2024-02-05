@@ -6,7 +6,7 @@ import {tokenAuthorizationMiddleware} from "../middlewares/authValidation/token-
 
 export const authRoute = express.Router({});
 
-const {OK, UNAUTHORIZED} = HTTP_STATUSES;
+const {OK, UNAUTHORIZED, NOT_FOUND} = HTTP_STATUSES;
 authRoute.post('/login', async (req: RequestBodyType<LoginInputModel>, res: Response) => {
     const {loginOrEmail, password} = req.body;
     const token = await AuthService.login({loginOrEmail, password});
@@ -17,5 +17,5 @@ authRoute.post('/login', async (req: RequestBodyType<LoginInputModel>, res: Resp
 
 authRoute.get('/me', tokenAuthorizationMiddleware, async (req: Request, res: Response) => {
     const me = await AuthService.me(req.context.user?.id!);
-    res.send(me);
+    return me ? res.status(OK).send(me) : res.sendStatus(NOT_FOUND);
 })

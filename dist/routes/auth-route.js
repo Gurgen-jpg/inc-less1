@@ -16,9 +16,9 @@ exports.authRoute = void 0;
 const express_1 = __importDefault(require("express"));
 const common_1 = require("../models/common");
 const auth_service_1 = require("../domain/auth-service");
-const auth_middleware_1 = require("../middlewares/authValidation/auth-middleware");
+const token_authorization_1 = require("../middlewares/authValidation/token-authorization");
 exports.authRoute = express_1.default.Router({});
-const { OK, NO_CONTENT, UNAUTHORIZED } = common_1.HTTP_STATUSES;
+const { OK, UNAUTHORIZED, NOT_FOUND } = common_1.HTTP_STATUSES;
 exports.authRoute.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { loginOrEmail, password } = req.body;
     const token = yield auth_service_1.AuthService.login({ loginOrEmail, password });
@@ -26,8 +26,8 @@ exports.authRoute.post('/login', (req, res) => __awaiter(void 0, void 0, void 0,
         ? res.status(OK).send({ token })
         : res.sendStatus(UNAUTHORIZED);
 }));
-exports.authRoute.get('/me', auth_middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authRoute.get('/me', token_authorization_1.tokenAuthorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const me = yield auth_service_1.AuthService.me((_a = req.context.user) === null || _a === void 0 ? void 0 : _a.id);
-    res.send(me);
+    return me ? res.status(OK).send(me) : res.sendStatus(NOT_FOUND);
 }));

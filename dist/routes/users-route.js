@@ -16,21 +16,21 @@ exports.usersRoute = void 0;
 const express_1 = __importDefault(require("express"));
 const users_validator_1 = require("../validators/users-validator");
 const users_service_1 = require("../domain/users-service");
-const auth_middleware_1 = require("../middlewares/authValidation/auth-middleware");
 const common_1 = require("../models/common");
 const mongodb_1 = require("mongodb");
+const basic_authorization_1 = require("../middlewares/authValidation/basic-authorization");
 const { OK, CREATED, NO_CONTENT, NOT_FOUND, BAD_REQUEST } = common_1.HTTP_STATUSES;
 exports.usersRoute = express_1.default.Router({});
-exports.usersRoute.get('/', auth_middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.usersRoute.get('/', basic_authorization_1.basicAuthorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const query = req.query;
     const users = yield users_service_1.UsersService.getAllUsers(query);
     return res.status(OK).send(users);
 }));
-exports.usersRoute.post('/', auth_middleware_1.authMiddleware, (0, users_validator_1.usersValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.usersRoute.post('/', basic_authorization_1.basicAuthorizationMiddleware, (0, users_validator_1.usersValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield users_service_1.UsersService.createUser(req.body);
     user ? res.status(CREATED).send(user) : res.sendStatus(BAD_REQUEST);
 }));
-exports.usersRoute.delete('/:id', auth_middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.usersRoute.delete('/:id', basic_authorization_1.basicAuthorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!mongodb_1.ObjectId.isValid(req.params.id))
         return res.sendStatus(NOT_FOUND);
     const id = req.params.id;

@@ -65,13 +65,13 @@ describe('auth', () => {
         // удалил юзера
         const deleteStatus = await request(app)
             .delete('/users/' + user.body.id)
-            .set('Authorization', `Bearer ${token.body.token}`);
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5');
         expect(deleteStatus.status).toBe(204);
         // пробую авторизоваться с токеном удаленного юзера
         const authedUser = await request(app).get('auth/me').set({
             Authorization: `Bearer ${token.body.token}`
         })
-        console.log(authedUser.body)
+        expect(authedUser.status).toBe(404);
 
     })
 

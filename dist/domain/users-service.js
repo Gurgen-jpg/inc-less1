@@ -42,7 +42,6 @@ class UsersService {
                 });
                 if (!userId) {
                     throw new Error('Error creating user');
-                    return null;
                 }
                 return yield user_query_repository_1.UserQueryRepository.getUserById(userId);
             }
