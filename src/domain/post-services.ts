@@ -5,7 +5,6 @@ import {BlogQueryRepository} from "../repositories/blog-query-repository";
 import {PostQueryRepository} from "../repositories/post-query-repository";
 import {PostQueryRepoInputModel} from "../models/posts/postQueryRepoInputModel";
 import {CommentsSortDataType, PaginationType} from "../models/common";
-import {UserViewModel} from "../models/users/output";
 import {UserRepository} from "../repositories/users/user-repository";
 import {CommentQueryRepository} from "../repositories/comment-query-repository";
 import {CommentVewModel} from "../models/comments/output";

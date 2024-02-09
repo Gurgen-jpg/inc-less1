@@ -1,18 +1,8 @@
 import {usersCollection} from "../../db/db";
 import {usersMapper} from "../../models/users/usersMapper";
 import {UserViewModel} from "../../models/users/output";
-import {Filter, ObjectId} from "mongodb";
+import {ObjectId} from "mongodb";
 import {PaginationType, UserQueryModel} from "../../models/common";
-
-// type Option = {
-//     $regex: string | null;
-//     $options: string;
-// }
-// type FilterType = {
-//     login: Option | null;
-//     email: Option | null;
-// }
-
 
 export class UserQueryRepository {
     static async getAllUsers(sortData: UserQueryModel): Promise<PaginationType<UserViewModel> | null> {

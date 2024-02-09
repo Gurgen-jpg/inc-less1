@@ -15,7 +15,7 @@ const POST_VALIDATION_FIELDS = {
     id: 'id',
 } as const;
 
-const {title, shortDescription, content, blogId, id} = POST_VALIDATION_FIELDS;
+const {title, shortDescription, content, blogId} = POST_VALIDATION_FIELDS;
 
 const postTitleValidation = body(title)
     .isString()

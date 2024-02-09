@@ -1,8 +1,7 @@
 import {Router, Request, Response} from "express";
 import {
     CommentsSortDataType,
-    HTTP_STATUSES, Param,
-    RequestBodyType,
+    HTTP_STATUSES,
     RequestBodyWithParamsType,
     RequestParamAndQueryType,
     RequestWithQueryType

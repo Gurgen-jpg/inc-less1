@@ -1,8 +1,7 @@
 import {PostUpdateModel} from "../models/posts/input";
 import {commentsCollection, postCollection} from "../db/db";
-import {InsertOneResult, ObjectId, WithId} from "mongodb";
-import {CommentDBModel, PostDBModel, UserDBModel} from "../models/db";
-import {CommentVewModel} from "../models/comments/output";
+import {InsertOneResult, ObjectId} from "mongodb";
+import {CommentDBModel, PostDBModel} from "../models/db";;
 
 export class PostRepository {
 

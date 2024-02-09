@@ -1,7 +1,7 @@
 import {UserInputModel} from "../../models/users/input";
 import {usersCollection} from "../../db/db";
 import {ObjectId, WithId} from "mongodb";
-import {UserAuthViewModel, UserViewModel} from "../../models/users/output";
+import {UserAuthViewModel} from "../../models/users/output";
 import {UserDBModel} from "../../models/db";
 
 export class UserRepository {
