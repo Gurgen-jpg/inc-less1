@@ -5,6 +5,9 @@ import {UserViewModel} from "../src/models/users/output";
 import {ErrorType} from "../src/models/common";
 
 describe('users', () => {
+    // todo: mongoServerServer - использовать для подключения к базе
+
+    // todo: дОбавить script - "test:e2e": "jest --config jest-e2e.json --runInBand --detectOpenHandles --forceExit",
     beforeAll(async () => {
         await request(app).delete('/testing/all-data');
     })

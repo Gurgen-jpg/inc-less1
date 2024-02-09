@@ -13,6 +13,8 @@ exports.PostServices = void 0;
 const post_repository_1 = require("../repositories/post-repository");
 const blog_query_repository_1 = require("../repositories/blog-query-repository");
 const post_query_repository_1 = require("../repositories/post-query-repository");
+const user_repository_1 = require("../repositories/users/user-repository");
+const comment_query_repository_1 = require("../repositories/comment-query-repository");
 class PostServices {
     static getAllPosts(sortData) {
         var _a, _b;
@@ -96,6 +98,37 @@ class PostServices {
             catch (e) {
                 console.log('Error in deletePost:', e);
                 return false;
+            }
+        });
+    }
+    static createComment(postId, content, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield user_repository_1.UserRepository.getUserById(userId);
+                if (!user) {
+                    throw new Error('User not found');
+                }
+                const commentId = yield post_repository_1.PostRepository.createComment(postId, content, {
+                    _id: user._id,
+                    login: user.login
+                });
+                return commentId
+                    ? yield comment_query_repository_1.CommentQueryRepository.getCommentById(commentId)
+                    : null;
+            }
+            catch (e) {
+                console.error(e);
+                return null;
+            }
+        });
+    }
+    static getCommentsByPostId(postId, sortData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield comment_query_repository_1.CommentQueryRepository.getCommentsByPostId(postId, sortData);
+            }
+            catch (e) {
+                return null;
             }
         });
     }

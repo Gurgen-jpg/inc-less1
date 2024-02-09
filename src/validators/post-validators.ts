@@ -1,13 +1,18 @@
-import {body} from "express-validator";
-import {inputValidationMiddleware} from "../middlewares/inputValidation/input-validation-middleware";
+import {body, param} from "express-validator";
+import {
+    idParamValidationMiddleware,
+    inputValidationMiddleware
+} from "../middlewares/inputValidation/input-validation-middleware";
 import {BlogQueryRepository} from "../repositories/blog-query-repository";
+import {PostRepository} from "../repositories/post-repository";
+import {Request, Response,NextFunction} from "express";
 
 const POST_VALIDATION_FIELDS = {
     title: 'title',
     shortDescription: 'shortDescription',
     content: 'content',
     blogId: 'blogId',
-    id: 'id'
+    id: 'id',
 } as const;
 
 const {title, shortDescription, content, blogId, id} = POST_VALIDATION_FIELDS;
@@ -43,6 +48,17 @@ export const checkBlogId = body(blogId)
     })
     .withMessage('blog name not found, wrong blogId or blog not exists');
 
+export const checkPostId = (req: Request, res: Response, next: NextFunction) => {
+    param('post')
+        .custom(async (id) => {
+            const post = await PostRepository.isPostExist(req.params.postId);
+            if (!post) {
+                throw new Error('post not found');
+            }
+        })
+        .withMessage('post not found');
+    return next();
+}
 export const postInputValidation = () => {
     return [
         postTitleValidation,
@@ -60,3 +76,8 @@ export const createPostFromBlogValidation = () => {
         inputValidationMiddleware
     ]
 }
+
+export const checkPostIdValidation = () => [
+    checkPostId,
+    idParamValidationMiddleware
+]

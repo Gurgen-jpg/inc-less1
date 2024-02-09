@@ -1,7 +1,8 @@
 import {UserInputModel} from "../../models/users/input";
 import {usersCollection} from "../../db/db";
-import {ObjectId} from "mongodb";
-import {UserAuthViewModel} from "../../models/users/output";
+import {ObjectId, WithId} from "mongodb";
+import {UserAuthViewModel, UserViewModel} from "../../models/users/output";
+import {UserDBModel} from "../../models/db";
 
 export class UserRepository {
     static async createUser(payload: UserInputModel): Promise<string | null> {
@@ -48,7 +49,11 @@ export class UserRepository {
         }
     }
 
-    static async getAllUsers() {
-
+    static async getUserById(id: string): Promise<WithId<UserDBModel> | null>  {
+        try {
+            return await usersCollection.findOne({_id: new ObjectId(id)});
+        } catch (e) {
+            return null
+        }
     }
 }

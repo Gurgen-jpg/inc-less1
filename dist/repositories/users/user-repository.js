@@ -63,8 +63,14 @@ class UserRepository {
             }
         });
     }
-    static getAllUsers() {
+    static getUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield db_1.usersCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
+            }
+            catch (e) {
+                return null;
+            }
         });
     }
 }

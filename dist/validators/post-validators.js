@@ -9,16 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createPostFromBlogValidation = exports.postInputValidation = exports.checkBlogId = void 0;
+exports.checkPostIdValidation = exports.createPostFromBlogValidation = exports.postInputValidation = exports.checkPostId = exports.checkBlogId = void 0;
 const express_validator_1 = require("express-validator");
 const input_validation_middleware_1 = require("../middlewares/inputValidation/input-validation-middleware");
 const blog_query_repository_1 = require("../repositories/blog-query-repository");
+const post_repository_1 = require("../repositories/post-repository");
 const POST_VALIDATION_FIELDS = {
     title: 'title',
     shortDescription: 'shortDescription',
     content: 'content',
     blogId: 'blogId',
-    id: 'id'
+    id: 'id',
 };
 const { title, shortDescription, content, blogId, id } = POST_VALIDATION_FIELDS;
 const postTitleValidation = (0, express_validator_1.body)(title)
@@ -47,6 +48,18 @@ exports.checkBlogId = (0, express_validator_1.body)(blogId)
     }
 }))
     .withMessage('blog name not found, wrong blogId or blog not exists');
+const checkPostId = (req, res, next) => {
+    (0, express_validator_1.param)('post')
+        .custom((id) => __awaiter(void 0, void 0, void 0, function* () {
+        const post = yield post_repository_1.PostRepository.isPostExist(req.params.postId);
+        if (!post) {
+            throw new Error('post not found');
+        }
+    }))
+        .withMessage('post not found');
+    return next();
+};
+exports.checkPostId = checkPostId;
 const postInputValidation = () => {
     return [
         postTitleValidation,
@@ -66,3 +79,8 @@ const createPostFromBlogValidation = () => {
     ];
 };
 exports.createPostFromBlogValidation = createPostFromBlogValidation;
+const checkPostIdValidation = () => [
+    exports.checkPostId,
+    input_validation_middleware_1.idParamValidationMiddleware
+];
+exports.checkPostIdValidation = checkPostIdValidation;

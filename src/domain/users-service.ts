@@ -1,9 +1,9 @@
-import {UserInputModel, UserQueryModel} from "../models/users/input";
+import {UserInputModel} from "../models/users/input";
 import bcrypt from "bcrypt";
 import {UserRepository} from "../repositories/users/user-repository";
 import {UserQueryRepository} from "../repositories/users/user-query-repository";
 import {UserViewModel} from "../models/users/output";
-import {PaginationType} from "../models/common";
+import {PaginationType, UserQueryModel} from "../models/common";
 
 export class UsersService {
     static async createUser(payload: UserInputModel): Promise<UserViewModel | null> {

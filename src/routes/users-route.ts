@@ -1,8 +1,8 @@
 import express, {Request, Response} from "express";
 import {usersValidation} from "../validators/users-validator";
 import {UsersService} from "../domain/users-service";
-import {HTTP_STATUSES, RequestBodyType, RequestWithQueryType} from "../models/common";
-import {UserInputModel, UserQueryModel} from "../models/users/input";
+import {HTTP_STATUSES, RequestBodyType, RequestWithQueryType, UserQueryModel} from "../models/common";
+import {UserInputModel} from "../models/users/input";
 import {ObjectId} from "mongodb";
 import {basicAuthorizationMiddleware} from "../middlewares/authValidation/basic-authorization";
 

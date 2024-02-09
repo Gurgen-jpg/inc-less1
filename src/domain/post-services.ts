@@ -4,7 +4,11 @@ import {PostRepository} from "../repositories/post-repository";
 import {BlogQueryRepository} from "../repositories/blog-query-repository";
 import {PostQueryRepository} from "../repositories/post-query-repository";
 import {PostQueryRepoInputModel} from "../models/posts/postQueryRepoInputModel";
-import {PaginationType} from "../models/common";
+import {CommentsSortDataType, PaginationType} from "../models/common";
+import {UserViewModel} from "../models/users/output";
+import {UserRepository} from "../repositories/users/user-repository";
+import {CommentQueryRepository} from "../repositories/comment-query-repository";
+import {CommentVewModel} from "../models/comments/output";
 
 
 export class PostServices {
@@ -79,4 +83,32 @@ export class PostServices {
             return false
         }
     }
+
+    static async createComment(postId: string, content: string, userId: string): Promise<CommentVewModel | null> {
+        try {
+            const user = await UserRepository.getUserById(userId)
+            if (!user) {
+                throw new Error('User not found');
+            }
+            const commentId = await PostRepository.createComment(postId, content, {
+                _id: user._id,
+                login: user.login
+            })
+            return commentId
+                ? await CommentQueryRepository.getCommentById(commentId)
+                : null;
+        } catch (e) {
+            console.error(e);
+            return null;
+        }
+    }
+
+    static async getCommentsByPostId(postId: string, sortData: CommentsSortDataType): Promise<PaginationType<CommentVewModel> | null> {
+        try {
+            return await CommentQueryRepository.getCommentsByPostId(postId, sortData);
+        } catch (e) {
+            return null;
+        }
+    }
+
 }

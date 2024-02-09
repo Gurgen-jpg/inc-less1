@@ -5,7 +5,7 @@ import {
 import {ValidationError, validationResult} from "express-validator";
 import {HTTP_STATUSES} from "../../models/common";
 
-const { BAD_REQUEST} = HTTP_STATUSES
+const { BAD_REQUEST, NOT_FOUND} = HTTP_STATUSES
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
@@ -23,4 +23,19 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
     }
 
     return next();
+}
+
+export const idParamValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    const formattedErrors = validationResult(req).formatWith((error: ValidationError) => {
+        return error.type === 'field' ? ({message: error.msg, field: error.path}) : null;
+    })
+
+    if (!formattedErrors.isEmpty()) {
+        if (formattedErrors.array().find(el => el?.field === 'postId')) {
+            const errors = {errorsMessages: [{message: 'postId must be a number', field: 'postId'}]}
+            res.sendStatus(NOT_FOUND).send(errors);
+            return
+        }
+    }
+    return next()
 }

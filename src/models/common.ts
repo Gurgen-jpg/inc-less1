@@ -1,4 +1,5 @@
 import {Request} from "express";
+
 export const HTTP_STATUSES = {
     OK: 200,
     CREATED: 201,
@@ -50,6 +51,22 @@ export type BlogSortDataType = {
     pageNumber: number;
     pageSize: number;
 }
+
+export type CommentsSortDataType = {
+    pageNumber: number;
+    pageSize: number;
+    sortBy: string;
+    sortDirection: 'asc' | 'desc';
+}
+export type UserQueryModel = {
+    sortBy: string
+    sortDirection: 'asc' | 'desc'
+    pageNumber: number
+    pageSize: number
+    searchLoginTerm: string | null
+    searchEmailTerm: string | null
+}
+
 export type PaginationType<I> = {
     "pageSize": number,
     "page": number,
@@ -57,16 +74,15 @@ export type PaginationType<I> = {
     "totalCount": number,
     "items": Array<I>
 }
-
 export type RequestParamType<P> = Request<P, unknown, unknown, unknown>;
 export type RequestParamAndQueryType<P,Q> = Request<P, unknown, unknown, Q>;
 export type RequestBodyType<B> = Request<unknown, unknown, B, unknown>;
 export type RequestWithQueryType<Q> = Request<unknown, unknown, unknown, Q>;
+
 export type RequestBodyWithParamsType<P, B> = Request<P, unknown, B, unknown>;
 
 export type ErrorType = {
     message: string
     field: string
 }
-
 export type ErrorsMessageType = ErrorType[];

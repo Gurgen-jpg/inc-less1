@@ -2,8 +2,7 @@ import {usersCollection} from "../../db/db";
 import {usersMapper} from "../../models/users/usersMapper";
 import {UserViewModel} from "../../models/users/output";
 import {Filter, ObjectId} from "mongodb";
-import {PaginationType} from "../../models/common";
-import {UserQueryModel} from "../../models/users/input";
+import {PaginationType, UserQueryModel} from "../../models/common";
 
 // type Option = {
 //     $regex: string | null;

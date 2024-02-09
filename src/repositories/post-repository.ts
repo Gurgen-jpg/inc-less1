@@ -1,7 +1,8 @@
 import {PostUpdateModel} from "../models/posts/input";
-import {postCollection} from "../db/db";
-import {InsertOneResult, ObjectId} from "mongodb";
-import {PostDBModel} from "../models/db";
+import {commentsCollection, postCollection} from "../db/db";
+import {InsertOneResult, ObjectId, WithId} from "mongodb";
+import {CommentDBModel, PostDBModel, UserDBModel} from "../models/db";
+import {CommentVewModel} from "../models/comments/output";
 
 export class PostRepository {
 
@@ -48,5 +49,40 @@ export class PostRepository {
             console.log('Error in deletePost:', e);
             return false
         }
+    }
+
+    static async createComment(postId: string, content: string, user: {_id: ObjectId, login: string}): Promise<ObjectId | undefined> {
+        try {
+            const newComment: CommentDBModel = {
+                postId,
+                content,
+                commentatorInfo: {
+                    userId: new ObjectId(user._id).toString(),
+                    userLogin: user.login
+                },
+                createdAt: new Date().toISOString()
+            }
+            const commentId = await commentsCollection.insertOne(newComment);
+
+            if (!commentId.insertedId) {
+               throw new Error('Can not create comment - error in repo');
+            }
+            return commentId.insertedId
+        } catch (e) {
+            console.error(e)
+            return undefined
+        }
+    }
+
+    static async isPostExist(id: string): Promise<boolean> {
+        console.log(id)
+        try {
+            const post = await postCollection.findOne({_id: new ObjectId(id)})
+            return !!post
+        } catch (e) {
+            console.error(e)
+            return false
+        }
+
     }
 }
