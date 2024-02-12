@@ -9,8 +9,8 @@ export class CommentService {
             if (!user) throw new Error();
             const isCommentCanBeDeleted = await CommentRepository.getUserCommentById(id, user.id!)
             if (!isCommentCanBeDeleted) return {
-                statusCode: 403,
-                message: "forbidden"
+                statusCode: 404,
+                message: "not found"
             };
             const isDeleted = await CommentRepository.deleteComment(id);
             if (isDeleted) return {
@@ -18,8 +18,8 @@ export class CommentService {
                 message: "deleted"
             };
             return {
-                statusCode: 404,
-                message: "not found"
+                statusCode: 403,
+                message: "forbidden"
             };
         } catch (e) {
             return {

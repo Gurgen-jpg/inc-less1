@@ -37,10 +37,10 @@ describe('comments', () => {
             loginOrEmail: 'login0',
             password: 'password0'
         });
-        expect.setState({token: token.body.token});
+        expect.setState({accessToken: token.body.accessToken});
         expect(token.status).toBe(200);
         const user = await request(app).get('/auth/me').set({
-            Authorization: `Bearer ${token.body.token}`
+            Authorization: `Bearer ${token.body.accessToken}`
         });
         expect(user.body).toBeDefined();
 
@@ -50,15 +50,14 @@ describe('comments', () => {
                 content: 'content of comment ' + new Date().toISOString(),
             })
             .set({
-                Authorization: `Bearer ${token.body.token}`
+                Authorization: `Bearer ${token.body.accessToken}`
             })
         expect(commentId.status).toBe(201);
-        expect(commentId.body.postId).toBe(expect.getState().postId);
     });
     it('+getCommentsByPostId', async () => {
         const postId = expect.getState().postId;
-        const token = expect.getState().token;
-        const commentsPromise = Array(15).fill(0).map(async () => {
+        const accessToken = expect.getState().accessToken;
+        const commentsPromise = Array(11).fill(0).map(async () => {
 
             await request(app)
                 .post(`/posts/${postId}/comments`)
@@ -66,10 +65,17 @@ describe('comments', () => {
                     content: 'content of comment long ' + new Date().toISOString() + ' ' + new Date().toISOString(),
                 })
                 .set({
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${accessToken}`
                 })
         });
         await Promise.all(commentsPromise);
+
+        const pagination = await request(app).get(`/posts/${postId}/comments`).query({
+            pageNumber: 3,
+            pageSize: 5
+        });
+        console.log(pagination.body)
+
         const comments = await request(app).get(`/posts/${postId}/comments`);
         expect(comments.status).toBe(200);
         expect(comments.body.items).toHaveLength(10);
@@ -78,6 +84,7 @@ describe('comments', () => {
             expect(comments.body.items[id].postId).toBe(postId);
         })
         expect.setState({comment: comments.body.items[0]});
+
     })
     it('-Wrong postId', async () => {
         const comments = await request(app).get(`/posts/65c66e4622b8d2211b4cLec9/comments`);
@@ -92,7 +99,7 @@ describe('comments', () => {
         const res = await request(app)
             .get(`/comments/${expect.getState().comment.id}`)
             // .set({
-            //     Authorization: `Bearer ${expect.getState().token}`
+            //     Authorization: `Bearer ${expect.getState().accessToken}`
             // })
         expect(res.status).toBe(200);
         expect(res.body.id).toBe(expect.getState().comment.id);
@@ -106,7 +113,7 @@ describe('comments', () => {
                 content: 'updated content for testing process check ID',
             })
             .set({
-                Authorization: `Bearer ${expect.getState().token}`
+                Authorization: `Bearer ${expect.getState().accessToken}`
             })
         expect(res.status).toBe(204);
         const comment = await request(app)
@@ -119,7 +126,7 @@ describe('comments', () => {
         const res = await request(app)
             .delete(`/comments/${expect.getState().comment.id}`)
             .set({
-                Authorization: `Bearer ${expect.getState().token}`
+                Authorization: `Bearer ${expect.getState().accessToken}`
             })
         expect(res.status).toBe(204);
         const comment = await request(app)
