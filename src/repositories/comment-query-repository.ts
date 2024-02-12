@@ -20,7 +20,7 @@ export class CommentQueryRepository {
             return {
                 pagesCount,
                 page: sortData.pageNumber,
-                pageSize: totalCount,
+                pageSize: sortData.pageSize,
                 totalCount,
                 items: comments.map(commentMapper)
             }
