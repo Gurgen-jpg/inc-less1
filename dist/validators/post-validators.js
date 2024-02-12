@@ -9,11 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkPostIdValidation = exports.createPostFromBlogValidation = exports.postInputValidation = exports.checkPostId = exports.checkBlogId = void 0;
+exports.createPostFromBlogValidation = exports.postInputValidation = exports.checkPostId = exports.checkIdFoFormat = exports.checkBlogId = void 0;
 const express_validator_1 = require("express-validator");
 const input_validation_middleware_1 = require("../middlewares/inputValidation/input-validation-middleware");
 const blog_query_repository_1 = require("../repositories/blog-query-repository");
 const post_repository_1 = require("../repositories/post-repository");
+const mongodb_1 = require("mongodb");
+const common_1 = require("../models/common");
 const POST_VALIDATION_FIELDS = {
     title: 'title',
     shortDescription: 'shortDescription',
@@ -21,7 +23,7 @@ const POST_VALIDATION_FIELDS = {
     blogId: 'blogId',
     id: 'id',
 };
-const { title, shortDescription, content, blogId, id } = POST_VALIDATION_FIELDS;
+const { title, shortDescription, content, blogId } = POST_VALIDATION_FIELDS;
 const postTitleValidation = (0, express_validator_1.body)(title)
     .isString()
     .withMessage('title must be a string')
@@ -48,16 +50,22 @@ exports.checkBlogId = (0, express_validator_1.body)(blogId)
     }
 }))
     .withMessage('blog name not found, wrong blogId or blog not exists');
+const checkIdFoFormat = (req, res, next) => {
+    if (!mongodb_1.ObjectId.isValid(req.params.postId)) {
+        return res.sendStatus(common_1.HTTP_STATUSES.NOT_FOUND);
+    }
+    return next();
+};
+exports.checkIdFoFormat = checkIdFoFormat;
 const checkPostId = (req, res, next) => {
     (0, express_validator_1.param)('post')
-        .custom((id) => __awaiter(void 0, void 0, void 0, function* () {
-        const post = yield post_repository_1.PostRepository.isPostExist(req.params.postId);
+        .custom((postId) => __awaiter(void 0, void 0, void 0, function* () {
+        const post = yield post_repository_1.PostRepository.isPostExist(postId);
         if (!post) {
             throw new Error('post not found');
         }
     }))
         .withMessage('post not found');
-    return next();
 };
 exports.checkPostId = checkPostId;
 const postInputValidation = () => {
@@ -79,8 +87,3 @@ const createPostFromBlogValidation = () => {
     ];
 };
 exports.createPostFromBlogValidation = createPostFromBlogValidation;
-const checkPostIdValidation = () => [
-    exports.checkPostId,
-    input_validation_middleware_1.idParamValidationMiddleware
-];
-exports.checkPostIdValidation = checkPostIdValidation;

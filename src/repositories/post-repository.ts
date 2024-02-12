@@ -74,7 +74,6 @@ export class PostRepository {
     }
 
     static async isPostExist(id: string): Promise<boolean> {
-        console.log(id)
         try {
             const post = await postCollection.findOne({_id: new ObjectId(id)})
             return !!post

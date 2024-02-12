@@ -2,6 +2,7 @@ import {app} from "../src/settings";
 import request from "supertest";
 import {ErrorType, HTTP_STATUSES} from "../src/models/common";
 import {BlogsOutputModel, BlogViewModel} from "../src/models/blogs/output";
+import exp = require("node:constants");
 
 const {OK, NOT_FOUND, CREATED, NO_CONTENT, BAD_REQUEST, UNAUTHORIZED} = HTTP_STATUSES;
 
@@ -71,8 +72,8 @@ describe('Testing blogs', () => {
         expect(blog.body).toEqual(testExpectedBlog);
     })
 
-    it('--not found blog by id', async () => {
-        const blog = await request(app).get(`/blogs/123`);
+    it('--not found blog by correct MongoId', async () => {
+        const blog = await request(app).get(`/blogs/65c66e4622b8d2211b4cfec0`);
         expect(blog.status).toBe(NOT_FOUND);
     })
 
@@ -88,6 +89,7 @@ describe('Testing blogs', () => {
         expect(response.status).toBe(NO_CONTENT);
         const blog = await request(app).get(`/blogs/${blogId}`);
         expect(blog.body).toEqual(Object.assign(testExpectedBlog, newBlog));
+        expect.setState({blogId: blog.body.id});
     })
 
     it('- update blog validation errors', async () => {
@@ -120,6 +122,17 @@ describe('Testing blogs', () => {
 
     it('- update with bad id and bad BODY need to return 400', async () => {
         const response = await request(app).put(`/blogs/BAD-ID`)
+            .set('Authorization', `Basic ${auth}`)
+            .send({
+                name: '',
+                description: '',
+                websiteUrl: '////////',
+            })
+        expect(response.status).toBe(BAD_REQUEST);
+    })
+
+    it('- update with bad id and bad BODY need to return 400', async () => {
+        const response = await request(app).put(`/blogs/${expect.getState().blogId}`)
             .set('Authorization', `Basic ${auth}`)
             .send({
                 name: '',

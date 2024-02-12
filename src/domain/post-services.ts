@@ -89,6 +89,10 @@ export class PostServices {
             if (!user) {
                 throw new Error('User not found');
             }
+            const isPostExist = await PostRepository.isPostExist(postId);
+            if (!isPostExist) {
+                return null;
+            }
             const commentId = await PostRepository.createComment(postId, content, {
                 _id: user._id,
                 login: user.login
@@ -104,6 +108,10 @@ export class PostServices {
 
     static async getCommentsByPostId(postId: string, sortData: CommentsSortDataType): Promise<PaginationType<CommentVewModel> | null> {
         try {
+            const isIdValid = await PostRepository.isPostExist(postId);
+            if (!isIdValid) {
+                return null;
+            }
             return await CommentQueryRepository.getCommentsByPostId(postId, sortData);
         } catch (e) {
             return null;

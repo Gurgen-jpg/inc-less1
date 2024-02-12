@@ -6,11 +6,8 @@ import {CommentsSortDataType, PaginationType} from "../models/common";
 
 export class CommentQueryRepository {
     static async getCommentsByPostId(postId: string, sortData: CommentsSortDataType): Promise<PaginationType<CommentVewModel> | null> {
-        debugger;
         try {
-            console.log(postId)
             const totalCount = await commentsCollection.countDocuments({postId});
-
             const pagesCount = Math.ceil(totalCount / sortData.pageSize);
             const comments = await commentsCollection
                 .find({})
@@ -33,8 +30,11 @@ export class CommentQueryRepository {
         }
     }
 
-    static async getCommentById(id: ObjectId): Promise<CommentVewModel | null> {
+    static async getCommentById(id: ObjectId | string): Promise<CommentVewModel | null> {
         try {
+            // if (typeof id === 'string') {
+            //     id = new ObjectId(id)
+            // }
             const comment = await commentsCollection.findOne({_id: new ObjectId(id)});
             if (!comment) {
                 return null

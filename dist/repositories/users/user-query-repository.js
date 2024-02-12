@@ -13,14 +13,6 @@ exports.UserQueryRepository = void 0;
 const db_1 = require("../../db/db");
 const usersMapper_1 = require("../../models/users/usersMapper");
 const mongodb_1 = require("mongodb");
-// type Option = {
-//     $regex: string | null;
-//     $options: string;
-// }
-// type FilterType = {
-//     login: Option | null;
-//     email: Option | null;
-// }
 class UserQueryRepository {
     static getAllUsers(sortData) {
         return __awaiter(this, void 0, void 0, function* () {

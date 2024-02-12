@@ -1,6 +1,7 @@
 import request from "supertest";
 import {app} from "../src/settings";
 import {createUsers} from "./utils/createData";
+import exp = require("node:constants");
 
 describe('comments', () => {
     beforeAll(async () => {
@@ -76,5 +77,53 @@ describe('comments', () => {
             expect(comments.body.items[id].content).toContain('content of');
             expect(comments.body.items[id].postId).toBe(postId);
         })
+        expect.setState({comment: comments.body.items[0]});
+    })
+    it('-Wrong postId', async () => {
+        const comments = await request(app).get(`/posts/65c66e4622b8d2211b4cLec9/comments`);
+        expect(comments.status).toBe(400);
+    })
+    it('-Wrong FORMAT - postId', async () => {
+        const comments = await request(app).get(`/posts/----404--/comments`);
+        expect(comments.status).toBe(400);
+    })
+
+    it('+getCommentById', async () => {
+        const res = await request(app)
+            .get(`/comments/${expect.getState().comment.id}`)
+            // .set({
+            //     Authorization: `Bearer ${expect.getState().token}`
+            // })
+        expect(res.status).toBe(200);
+        expect(res.body.id).toBe(expect.getState().comment.id);
+        expect(res.body.content).toBe(expect.getState().comment.content);
+    })
+
+    it('+updateComment', async () => {
+        const res = await request(app)
+            .put(`/comments/${expect.getState().comment.id}`)
+            .send({
+                content: 'updated content for testing process check ID',
+            })
+            .set({
+                Authorization: `Bearer ${expect.getState().token}`
+            })
+        expect(res.status).toBe(204);
+        const comment = await request(app)
+            .get(`/comments/${expect.getState().comment.id}`)
+        expect(comment.status).toBe(200);
+        expect(comment.body.content).toBe('updated content for testing process check ID');
+    })
+
+    it('+deleteComment', async () => {
+        const res = await request(app)
+            .delete(`/comments/${expect.getState().comment.id}`)
+            .set({
+                Authorization: `Bearer ${expect.getState().token}`
+            })
+        expect(res.status).toBe(204);
+        const comment = await request(app)
+            .get(`/comments/${expect.getState().comment.id}`)
+        expect(comment).toHaveProperty('status', 404);
     })
 })

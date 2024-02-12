@@ -19,17 +19,13 @@ const mongodb_1 = require("mongodb");
 const basic_authorization_1 = require("../middlewares/authValidation/basic-authorization");
 const token_authorization_1 = require("../middlewares/authValidation/token-authorization");
 const comment_validation_1 = require("../validators/comment-validation");
-const sortParamsMiddleware_1 = require("../middlewares/inputValidation/sortParamsMiddleware");
 exports.postRoute = (0, express_1.Router)({});
 const { OK, CREATED, NO_CONTENT, NOT_FOUND } = common_1.HTTP_STATUSES;
 exports.postRoute.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const posts = yield post_services_1.PostServices.getAllPosts(req.query);
     res.status(OK).send(posts);
 }));
-exports.postRoute.get("/:id", input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!mongodb_1.ObjectId.isValid(req.params.id)) {
-        return res.sendStatus(NOT_FOUND);
-    }
+exports.postRoute.get("/:id", input_validation_middleware_1.mongoIdValidation, input_validation_middleware_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield post_services_1.PostServices.getPostById(req.params.id);
     return post ? res.status(200).send(post) : res.sendStatus(NOT_FOUND);
 }));
@@ -37,17 +33,11 @@ exports.postRoute.post("/", basic_authorization_1.basicAuthorizationMiddleware, 
     const newPost = yield post_services_1.PostServices.addPost(req.body);
     res.status(CREATED).send(newPost);
 }));
-exports.postRoute.put("/:id", basic_authorization_1.basicAuthorizationMiddleware, (0, post_validators_1.postInputValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!mongodb_1.ObjectId.isValid(req.params.id)) {
-        return res.sendStatus(NOT_FOUND);
-    }
+exports.postRoute.put("/:id", input_validation_middleware_1.mongoIdValidation, basic_authorization_1.basicAuthorizationMiddleware, (0, post_validators_1.postInputValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postIsUpdate = yield post_services_1.PostServices.updatePost(req.params.id, req.body);
     return postIsUpdate ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 }));
-exports.postRoute.delete("/:id", basic_authorization_1.basicAuthorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!mongodb_1.ObjectId.isValid(req.params.id)) {
-        return res.sendStatus(NOT_FOUND);
-    }
+exports.postRoute.delete("/:id", input_validation_middleware_1.mongoIdValidation, basic_authorization_1.basicAuthorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postIsDelete = yield post_services_1.PostServices.deletePost(req.params.id);
     return postIsDelete ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 }));
@@ -58,12 +48,8 @@ exports.postRoute.post("/:postId/comments", token_authorization_1.tokenAuthoriza
     const comment = yield post_services_1.PostServices.createComment(req.params.postId, req.body.content, req.context.user.id);
     return comment ? res.status(CREATED).send(comment) : res.sendStatus(NOT_FOUND);
 }));
-exports.postRoute.get("/:postId/comments", (0, post_validators_1.checkPostIdValidation)(), sortParamsMiddleware_1.sortParamsMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postRoute.get("/:postId/comments", input_validation_middleware_1.mongoIdValidation, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
-    if (!mongodb_1.ObjectId.isValid(req.params.postId)) {
-        console.log('not valid postId: ', req.params.postId);
-        return res.sendStatus(NOT_FOUND);
-    }
     const sortData = {
         sortBy: (_a = req.query.sortBy) !== null && _a !== void 0 ? _a : 'createdAt',
         sortDirection: (_b = req.query.sortDirection) !== null && _b !== void 0 ? _b : 'desc',

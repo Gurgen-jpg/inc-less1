@@ -12,7 +12,5 @@ export const sortParamsMiddleware = (req: RequestWithQueryType<CommonSortType>, 
             searchEmailTerm: req.query.searchEmailTerm ?? null,
             searchNameTerm: req.query.searchNameTerm ?? null
         }
-
-
     return next();
 }

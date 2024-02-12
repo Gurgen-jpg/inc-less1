@@ -1,9 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.idParamValidationMiddleware = exports.inputValidationMiddleware = void 0;
+exports.inputValidationMiddleware = exports.mongoIdValidation = void 0;
 const express_validator_1 = require("express-validator");
 const common_1 = require("../../models/common");
+const mongodb_1 = require("mongodb");
 const { BAD_REQUEST, NOT_FOUND } = common_1.HTTP_STATUSES;
+const mongoIdValidation = (req, res, next) => {
+    const keysToCheck = ['id', 'postId', 'blogId'];
+    for (const key of keysToCheck) {
+        if (req.params[key] && !mongodb_1.ObjectId.isValid(req.params[key])) {
+            return res.sendStatus(BAD_REQUEST);
+        }
+    }
+    return next();
+};
+exports.mongoIdValidation = mongoIdValidation;
 const inputValidationMiddleware = (req, res, next) => {
     // формирование массива ошибок
     const formattedErrors = (0, express_validator_1.validationResult)(req).formatWith((error) => {
@@ -12,24 +23,9 @@ const inputValidationMiddleware = (req, res, next) => {
     if (!formattedErrors.isEmpty()) {
         const errorMessage = formattedErrors.array({ onlyFirstError: true });
         const errors = { errorsMessages: errorMessage };
-        console.error(errors);
         res.status(BAD_REQUEST).send(errors);
         return;
     }
     return next();
 };
 exports.inputValidationMiddleware = inputValidationMiddleware;
-const idParamValidationMiddleware = (req, res, next) => {
-    const formattedErrors = (0, express_validator_1.validationResult)(req).formatWith((error) => {
-        return error.type === 'field' ? ({ message: error.msg, field: error.path }) : null;
-    });
-    if (!formattedErrors.isEmpty()) {
-        if (formattedErrors.array().find(el => (el === null || el === void 0 ? void 0 : el.field) === 'postId')) {
-            const errors = { errorsMessages: [{ message: 'postId must be a number', field: 'postId' }] };
-            res.sendStatus(NOT_FOUND).send(errors);
-            return;
-        }
-    }
-    return next();
-};
-exports.idParamValidationMiddleware = idParamValidationMiddleware;

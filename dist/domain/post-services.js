@@ -108,6 +108,10 @@ class PostServices {
                 if (!user) {
                     throw new Error('User not found');
                 }
+                const isPostExist = yield post_repository_1.PostRepository.isPostExist(postId);
+                if (!isPostExist) {
+                    return null;
+                }
                 const commentId = yield post_repository_1.PostRepository.createComment(postId, content, {
                     _id: user._id,
                     login: user.login
@@ -125,6 +129,10 @@ class PostServices {
     static getCommentsByPostId(postId, sortData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const isIdValid = yield post_repository_1.PostRepository.isPostExist(postId);
+                if (!isIdValid) {
+                    return null;
+                }
                 return yield comment_query_repository_1.CommentQueryRepository.getCommentsByPostId(postId, sortData);
             }
             catch (e) {

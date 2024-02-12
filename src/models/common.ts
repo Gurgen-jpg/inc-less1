@@ -38,9 +38,14 @@ export type VideoType = {
     availableResolutions: EAvailableResolutions[]
 }
 
+export interface idKeys {
+    id: 'id',
+    postId: 'postId',
+    blogId: 'blogId',
+}
 
-export type Param = {
-    id: string
+export type Param<T extends keyof idKeys> = {
+    [key in T]: string;
 }
 
 

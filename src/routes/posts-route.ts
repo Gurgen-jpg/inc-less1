@@ -6,8 +6,8 @@ import {
     RequestParamAndQueryType,
     RequestWithQueryType
 } from "../models/common";
-import {checkPostIdValidation, postInputValidation} from "../validators/post-validators";
-import {inputValidationMiddleware} from "../middlewares/inputValidation/input-validation-middleware";
+import {postInputValidation} from "../validators/post-validators";
+import {inputValidationMiddleware, mongoIdValidation} from "../middlewares/inputValidation/input-validation-middleware";
 import {PostServices} from "../domain/post-services";
 import {PostQueryRepoInputModel} from "../models/posts/postQueryRepoInputModel";
 import {ObjectId} from "mongodb";
@@ -15,7 +15,6 @@ import {basicAuthorizationMiddleware} from "../middlewares/authValidation/basic-
 import {tokenAuthorizationMiddleware} from "../middlewares/authValidation/token-authorization";
 import {commentInputValidation} from "../validators/comment-validation";
 import {CommentInputModel} from "../models/comments/input";
-import {sortParamsMiddleware} from "../middlewares/inputValidation/sortParamsMiddleware";
 
 export const postRoute = Router({});
 
@@ -25,10 +24,7 @@ postRoute.get("/", async (req: RequestWithQueryType<PostQueryRepoInputModel>, re
     res.status(OK).send(posts);
 });
 
-postRoute.get("/:id", inputValidationMiddleware, async (req: Request, res: Response) => {
-    if (!ObjectId.isValid(req.params.id)) {
-        return res.sendStatus(NOT_FOUND);
-    }
+postRoute.get("/:id", mongoIdValidation, inputValidationMiddleware, async (req: Request, res: Response) => {
     const post = await PostServices.getPostById(req.params.id);
     return post ? res.status(200).send(post) : res.sendStatus(NOT_FOUND);
 });
@@ -38,18 +34,12 @@ postRoute.post("/", basicAuthorizationMiddleware, postInputValidation(), async (
     res.status(CREATED).send(newPost);
 });
 
-postRoute.put("/:id", basicAuthorizationMiddleware, postInputValidation(), async (req: Request, res: Response) => {
-    if (!ObjectId.isValid(req.params.id)) {
-        return res.sendStatus(NOT_FOUND);
-    }
+postRoute.put("/:id", mongoIdValidation, basicAuthorizationMiddleware, postInputValidation(), async (req: Request, res: Response) => {
     const postIsUpdate = await PostServices.updatePost(req.params.id, req.body);
     return postIsUpdate ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 });
 
-postRoute.delete("/:id", basicAuthorizationMiddleware, async (req: Request, res: Response) => {
-    if (!ObjectId.isValid(req.params.id)) {
-        return res.sendStatus(NOT_FOUND);
-    }
+postRoute.delete("/:id", mongoIdValidation,basicAuthorizationMiddleware, async (req: Request, res: Response) => {
     const postIsDelete = await PostServices.deletePost(req.params.id);
     return postIsDelete ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 })
@@ -67,16 +57,10 @@ postRoute.post("/:postId/comments",
     })
 
 postRoute.get("/:postId/comments",
-    checkPostIdValidation(),
-    sortParamsMiddleware,
+    mongoIdValidation,
     async (req: RequestParamAndQueryType<{
         postId: string
     }, CommentsSortDataType>, res: Response) => {
-        if (!ObjectId.isValid(req.params.postId)) {
-            console.log('not valid postId: ', req.params.postId);
-            return res.sendStatus(NOT_FOUND);
-        }
-
         const sortData = {
             sortBy: req.query.sortBy ?? 'createdAt',
             sortDirection: req.query.sortDirection ?? 'desc',
