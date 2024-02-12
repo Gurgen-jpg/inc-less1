@@ -23,7 +23,7 @@ exports.authRoute.post('/login', (req, res) => __awaiter(void 0, void 0, void 0,
     const { loginOrEmail, password } = req.body;
     const token = yield auth_service_1.AuthService.login({ loginOrEmail, password });
     return token
-        ? res.status(OK).send({ token })
+        ? res.status(OK).send({ accessToken: token })
         : res.sendStatus(UNAUTHORIZED);
 }));
 exports.authRoute.get('/me', token_authorization_1.tokenAuthorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

@@ -11,7 +11,7 @@ authRoute.post('/login', async (req: RequestBodyType<LoginInputModel>, res: Resp
     const {loginOrEmail, password} = req.body;
     const token = await AuthService.login({loginOrEmail, password});
     return token
-        ? res.status(OK).send({token})
+        ? res.status(OK).send({accessToken:token})
         : res.sendStatus(UNAUTHORIZED);
 });
 
