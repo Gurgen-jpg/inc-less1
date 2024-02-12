@@ -1,7 +1,7 @@
 export type CommentVewModel = {
     id: string
     content: string
-    postId: string
+    // postId: string
     commentatorInfo: CommentatorInfo
     createdAt: string
 }
