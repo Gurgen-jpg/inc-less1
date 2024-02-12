@@ -13,6 +13,13 @@ export class CommentService {
                     message: 'Unauthorized'
                 }
             }
+            const isCommentExist = await CommentRepository.isCommentExist(id);
+            if (!isCommentExist) {
+                return {
+                    statusCode: 404,
+                    message: 'Not found'
+                }
+            }
             const isCommentCanBeDeleted = await CommentRepository.getUserCommentById(id, user.id!)
             if (!isCommentCanBeDeleted) {
                 return {
