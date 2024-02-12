@@ -39,7 +39,6 @@ class UserQueryRepository {
                     });
                 }
             }
-            console.log(filter);
             try {
                 const totalCount = yield db_1.usersCollection.countDocuments(filter);
                 const pagesCount = Math.ceil(totalCount / pageSize);

@@ -38,6 +38,8 @@ export type VideoType = {
     availableResolutions: EAvailableResolutions[]
 }
 
+export type StatusResultType = {}
+
 export interface idKeys {
     id: 'id',
     postId: 'postId',

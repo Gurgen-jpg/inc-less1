@@ -40,10 +40,6 @@ export class UserQueryRepository {
             }
         }
 
-
-
-        console.log(filter);
-
         try {
             const totalCount = await usersCollection.countDocuments(filter);
             const pagesCount = Math.ceil(totalCount / pageSize);

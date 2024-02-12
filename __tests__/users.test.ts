@@ -100,7 +100,5 @@ describe('users', () => {
             })
             .set('Authorization', `Basic YWRtaW46cXdlcnR5`);
 
-        console.log(response.body)
-
     })
 })

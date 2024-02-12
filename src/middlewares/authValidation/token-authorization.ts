@@ -7,18 +7,18 @@ export const tokenAuthorizationMiddleware = (req: Request, res: Response, next: 
     dotenv.config();
     const auth = req.headers['authorization'];
     if (!auth) {
-        res.sendStatus(HTTP_STATUSES.FORBIDDEN);
+        res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
         return
     }
 
     const [authType, token] = auth.split(' ');
     if (authType !== AUTH_TYPES.BEARER) {
-        res.sendStatus(HTTP_STATUSES.FORBIDDEN);
+        res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
         return
     }
     const userId = JwtService.verifyJWT(token);
     if (!userId) {
-        res.sendStatus(HTTP_STATUSES.FORBIDDEN);
+        res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
         return
     }
     req.context = {
