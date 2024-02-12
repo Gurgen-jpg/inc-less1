@@ -6,7 +6,6 @@ import {UserQueryRepository} from "../repositories/users/user-query-repository";
 import {UserViewModel} from "../models/users/output";
 
 export class AuthService {
-    // todo: Спросить: как сделать валидацию логина и почты, поиска юзера, в миддлваре или в сервисе.
     static async login(payload: LoginInputModel): Promise<string | null> {
         const {loginOrEmail, password} = payload;
         try {

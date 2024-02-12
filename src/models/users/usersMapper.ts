@@ -6,5 +6,5 @@ export const usersMapper = (usersBd: WithId<UserDBModel>): UserViewModel => ({
     id: usersBd._id.toString(),
     login: usersBd.login,
     email: usersBd.email,
-    // createdAt: usersBd.createdAt
+    createdAt: usersBd.createdAt
 })

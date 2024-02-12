@@ -18,7 +18,6 @@ const jwt_service_1 = require("../app/auth/jwt-service");
 const user_repository_1 = require("../repositories/users/user-repository");
 const user_query_repository_1 = require("../repositories/users/user-query-repository");
 class AuthService {
-    // todo: Спросить: как сделать валидацию логина и почты, поиска юзера, в миддлваре или в сервисе.
     static login(payload) {
         return __awaiter(this, void 0, void 0, function* () {
             const { loginOrEmail, password } = payload;
