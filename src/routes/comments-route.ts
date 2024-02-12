@@ -24,7 +24,14 @@ commentsRoute.delete('/:id', mongoIdValidation, tokenAuthorizationMiddleware, as
 })
 commentsRoute.put('/:id', mongoIdValidation, tokenAuthorizationMiddleware, commentInputValidation(), async (req: RequestBodyWithParamsType<Param<'id'>, CommentInputModel>, res: Response) => {
     const isUpdate = await CommentService.updateComment(req.params.id, req.body.content, req.context.user!);
-    return isUpdate ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
+    if (isUpdate.statusCode === 404) {
+        return res.sendStatus(NOT_FOUND);
+    }
+    if (isUpdate.statusCode === 403) {
+        return res.sendStatus(FORBIDDEN);
+    }
+    return res.sendStatus(NO_CONTENT);
+    // return isUpdate ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 })
 commentsRoute.get('/:id', mongoIdValidation, async (req: RequestBodyWithParamsType<Param<'id'>, CommentInputModel>, res: Response) => {
     const comment = await CommentService.getComment(req.params.id);

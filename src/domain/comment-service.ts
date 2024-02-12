@@ -29,14 +29,36 @@ export class CommentService {
         }
     }
 
-    static async updateComment(id: string, newComment: string, user: Partial<UserViewModel>): Promise<boolean> {
+    static async updateComment(id: string, newComment: string, user: Partial<UserViewModel>){
         try {
-            if (!user || !user.id) return false;
-            const isCommentCanBeDeleted = await CommentRepository.getUserCommentById(id, user.id!)
-            if (!isCommentCanBeDeleted) return false;
-            return await CommentRepository.updateComment(id, newComment);
+            if (!user || !user.id) return {
+                statusCode: 404,
+                message: "not found"
+            };
+            const comment = await CommentRepository.getComment(id);
+            if (user?.id !== comment?.commentatorInfo.userId) return {
+                statusCode: 403,
+                message: "forbidden"
+            }
+            const isCommentCanBeDeleted = await CommentRepository.updateComment(id, newComment);
+                // await CommentRepository.getUserCommentById(id, user.id!)
+            if (!isCommentCanBeDeleted) {
+                return {
+                    statusCode: 404,
+                    message: "not found"
+                }
+            }else {
+                return {
+                    statusCode: 204,
+                    message: "updated"
+                }
+            }
+
         } catch (e) {
-            return false
+            return {
+                statusCode: 404,
+                message: "not found"
+            }
         }
     }
 
