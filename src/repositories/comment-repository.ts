@@ -17,10 +17,11 @@ export class CommentRepository {
         }
     }
 
-    static async updateComment(id: string, newComment: string): Promise<boolean> {
+    static async updateComment(id: string, newComment: string, userid: string): Promise<boolean> {
         try {
             const result = await commentsCollection.updateOne({
-                    _id: new ObjectId(id)
+                    _id: new ObjectId(id),
+                    'commentatorInfo.userId': userid
                 },
                 {
                     $set: {
@@ -55,20 +56,21 @@ export class CommentRepository {
             return false
         }
     }
-   static async getUserCommentById(id: string, userId: string): Promise<WithId<CommentDBModel> | null> {
-       try {
-           const comment = await commentsCollection.findOne({
-               _id: new ObjectId(id),
-               'commentatorInfo.userId': userId
-           });
-           if (!comment) {
-               return null
-           }
-           return comment
-       } catch (e) {
-           console.error('Error in getCommentById:', e);
-           return null
-       }
 
-   }
+    static async getUserCommentById(id: string, userId: string): Promise<WithId<CommentDBModel> | null> {
+        try {
+            const comment = await commentsCollection.findOne({
+                _id: new ObjectId(id),
+                'commentatorInfo.userId': userId
+            });
+            if (!comment) {
+                return null
+            }
+            return comment
+        } catch (e) {
+            console.error('Error in getCommentById:', e);
+            return null
+        }
+
+    }
 }

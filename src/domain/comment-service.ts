@@ -40,11 +40,11 @@ export class CommentService {
                 statusCode: 403,
                 message: "forbidden"
             }
-            const isCommentCanBeDeleted = await CommentRepository.updateComment(id, newComment);
+            const isCommentCanBeDeleted = await CommentRepository.updateComment(id, newComment, user.id!);
                 // await CommentRepository.getUserCommentById(id, user.id!)
             if (!isCommentCanBeDeleted) {
                 return {
-                    statusCode: 404,
+                    statusCode: 403,
                     message: "not found"
                 }
             }else {
