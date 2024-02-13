@@ -10,12 +10,11 @@ export class CommentQueryRepository {
             const totalCount = await commentsCollection.countDocuments({postId});
             const pagesCount = Math.ceil(totalCount / sortData.pageSize);
             const comments = await commentsCollection
-                .find({})
+                .find({postId})
                 .sort({[sortData.sortBy]: sortData.sortDirection})
                 .skip((sortData.pageNumber - 1) * sortData.pageSize)
                 .limit(sortData.pageSize)
                 .toArray();
-
 
             return {
                 pagesCount,
