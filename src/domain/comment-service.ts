@@ -7,6 +7,11 @@ export class CommentService {
     static async deleteComment(id: string, user: Partial<UserViewModel>) {
         try {
             if (!user) throw new Error();
+            const comment = await CommentRepository.getComment(id);
+            if (!comment) return {
+                statusCode: 404,
+                message: "not found"
+            };
             const isCommentCanBeDeleted = await CommentRepository.getUserCommentById(id, user.id!)
             if (!isCommentCanBeDeleted) return {
                 statusCode: 403,
