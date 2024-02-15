@@ -40,7 +40,7 @@ export class CommentService {
                 statusCode: 404,
                 message: "not found"
             };
-            if (user?.id !== comment?.commentatorInfo.userId) return {
+            if (user?.id !== comment.commentatorInfo.userId) return {
                 statusCode: 403,
                 message: "forbidden"
             };
@@ -48,7 +48,7 @@ export class CommentService {
             // await CommentRepository.getUserCommentById(id, user.id!)
             if (!isCommentCanBeDeleted) {
                 return {
-                    statusCode: 403,
+                    statusCode: 404,
                     message: "not found"
                 }
             } else {
