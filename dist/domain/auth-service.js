@@ -17,6 +17,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const jwt_service_1 = require("../app/auth/jwt-service");
 const user_repository_1 = require("../repositories/users/user-repository");
 const user_query_repository_1 = require("../repositories/users/user-query-repository");
+const email_adapter_1 = require("../adapters/email-adapter");
 class AuthService {
     static login(payload) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -57,6 +58,19 @@ class AuthService {
             catch (e) {
                 console.error(e);
                 return null;
+            }
+        });
+    }
+    static registerConfirm(payload) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { login, email } = payload;
+            const subject = 'Подтверждение регистрации';
+            try {
+                return yield email_adapter_1.EmailAdapter.sendMail(email, login, subject);
+            }
+            catch (e) {
+                console.error(e);
+                return false;
             }
         });
     }

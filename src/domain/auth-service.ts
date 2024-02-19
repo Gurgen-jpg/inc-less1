@@ -1,9 +1,12 @@
-import {LoginInputModel} from "../models/auth/input";
+import {LoginInputModel, RegisterInputModel} from "../models/auth/input";
 import bcrypt from "bcrypt";
 import {JwtService} from "../app/auth/jwt-service";
 import {UserRepository} from "../repositories/users/user-repository";
 import {UserQueryRepository} from "../repositories/users/user-query-repository";
 import {UserViewModel} from "../models/users/output";
+import {EmailAdapter} from "../adapters/email-adapter";
+import {MAIL_USER} from "../adapters/env-config";
+
 
 export class AuthService {
     static async login(payload: LoginInputModel): Promise<string | null> {
@@ -12,7 +15,7 @@ export class AuthService {
             const user = await UserRepository.getUserByLoginOrEmail(loginOrEmail);
             if (!user) {
                 throw new Error('user not found')
-            } else{
+            } else {
                 const isCredentialsCorrect = await bcrypt.compare(password, user.password);
                 if (!isCredentialsCorrect) {
                     throw new Error('wrong password')
@@ -41,5 +44,17 @@ export class AuthService {
             console.error(e);
             return null
         }
+    }
+
+    static async registerConfirm(payload: RegisterInputModel) {
+        const {login, email} = payload;
+        const subject = 'Подтверждение регистрации'
+        try {
+            return await EmailAdapter.sendMail(email, login, subject)
+        } catch (e) {
+            console.error(e);
+            return false
+        }
+
     }
 }

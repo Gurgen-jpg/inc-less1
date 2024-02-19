@@ -17,8 +17,9 @@ const express_1 = __importDefault(require("express"));
 const common_1 = require("../models/common");
 const auth_service_1 = require("../domain/auth-service");
 const token_authorization_1 = require("../middlewares/authValidation/token-authorization");
+const registration_validation_1 = require("../validators/registration-validation");
 exports.authRoute = express_1.default.Router({});
-const { OK, UNAUTHORIZED, NOT_FOUND } = common_1.HTTP_STATUSES;
+const { OK, NO_CONTENT, UNAUTHORIZED, NOT_FOUND, BAD_REQUEST } = common_1.HTTP_STATUSES;
 exports.authRoute.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { loginOrEmail, password } = req.body;
     const token = yield auth_service_1.AuthService.login({ loginOrEmail, password });
@@ -30,4 +31,11 @@ exports.authRoute.get('/me', token_authorization_1.tokenAuthorizationMiddleware,
     var _a;
     const me = yield auth_service_1.AuthService.me((_a = req.context.user) === null || _a === void 0 ? void 0 : _a.id);
     return me ? res.status(OK).send(me) : res.sendStatus(NOT_FOUND);
+}));
+exports.authRoute.post('/register', (0, registration_validation_1.registerValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { login, email, password } = req.body;
+    const result = yield auth_service_1.AuthService.registerConfirm({ login, email, password });
+    return result
+        ? res.sendStatus(NO_CONTENT)
+        : res.sendStatus(BAD_REQUEST);
 }));
