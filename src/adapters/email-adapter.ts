@@ -1,14 +1,14 @@
 import nodemailer, {Transporter} from "nodemailer";
-import {MAIL_PASS, MAIL_USER} from "./env-config";
+import {MAIL_HOST, MAIL_PASS, MAIL_USER} from "./env-config";
 
 export class EmailAdapter {
     protected static _transport = nodemailer.createTransport({
-        host: "smtp.gmail.com",
+        host: MAIL_HOST,
         port: 587,
         secure: false,
         service: "gmail",
         auth: {
-            user: `Gurgen <${MAIL_USER}>`,
+            user: MAIL_USER,
             pass: MAIL_PASS,
         },
     });
@@ -21,7 +21,7 @@ export class EmailAdapter {
                 subject,
                 html: ` 
  <h1>Thank for your registration</h1>
-  <p>Dear ${login}! To finish registration please follow the link below:
+  <p>To finish registration please follow the link below:
      <a href='https://somesite.com/confirm-email?code=your_confirmation_code'>complete registration</a>
  </p>
 `,
