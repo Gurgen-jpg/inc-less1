@@ -5,7 +5,8 @@ import {UserRepository} from "../repositories/users/user-repository";
 import {UserQueryRepository} from "../repositories/users/user-query-repository";
 import {UserViewModel} from "../models/users/output";
 import {EmailAdapter} from "../adapters/email-adapter";
-import {MAIL_USER} from "../adapters/env-config";
+import {BcryptService} from "../app/auth/bcrypt-service";
+import {StatusResultType} from "../models/common";
 
 
 export class AuthService {
@@ -40,6 +41,27 @@ export class AuthService {
                 throw new Error('bad user id maybe deleted user')
             }
             return user
+        } catch (e) {
+            console.error(e);
+            return null
+        }
+    }
+
+    static async register(payload: RegisterInputModel): Promise<StatusResultType | null> {
+        const {login, email, password} = payload;
+        try {
+            const hash = await BcryptService.createHash(password);
+            if (!hash) {
+                throw new Error('Problem hashing password')
+            }
+            const user = await UserRepository.createUser({
+                login,
+                email,
+                password: hash,
+                createdAt: new Date().toISOString(),
+                isConfirm: false
+            })
+            return null
         } catch (e) {
             console.error(e);
             return null

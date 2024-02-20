@@ -15,9 +15,10 @@ const mongodb_1 = require("mongodb");
 class UserRepository {
     static createUser(payload) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { login, email, password, createdAt } = payload;
+            const { login, email, password, createdAt, isConfirm } = payload;
             try {
-                return yield db_1.usersCollection.insertOne({ login, email, password, createdAt }).then((id) => {
+                return yield db_1.usersCollection.insertOne({ login, email, password, createdAt, isConfirm })
+                    .then((id) => {
                     if (!id) {
                         return null;
                     }

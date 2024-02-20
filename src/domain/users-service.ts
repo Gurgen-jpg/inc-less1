@@ -10,7 +10,6 @@ export class UsersService {
         const {login, email, password} = payload;
         const saltRound = 10;
         const createdAt = new Date().toISOString();
-        // let userHash = ''
         try {
             const userHash: string = await new Promise((resolve, reject) => {
                 bcrypt.hash(password, saltRound, (err, hash) => {
@@ -26,7 +25,8 @@ export class UsersService {
                 login,
                 email,
                 password: userHash,
-                createdAt
+                createdAt,
+                isConfirm: true
             });
             if (!userId) {
                 throw new Error('Error creating user');

@@ -5,15 +5,16 @@ import {UserAuthViewModel} from "../../models/users/output";
 import {UserDBModel} from "../../models/db";
 
 export class UserRepository {
-    static async createUser(payload: UserInputModel): Promise<string | null> {
-        const {login, email, password, createdAt} = payload;
+    static async createUser(payload: UserInputModel & { isConfirm: boolean }): Promise<string | null> {
+        const {login, email, password, createdAt, isConfirm } = payload;
         try {
-            return await usersCollection.insertOne({login, email, password, createdAt}).then((id) => {
-                if (!id) {
-                    return null
-                }
-                return id.insertedId.toString()
-            });
+            return await usersCollection.insertOne({login, email, password, createdAt, isConfirm})
+                .then((id) => {
+                    if (!id) {
+                        return null
+                    }
+                    return id.insertedId.toString()
+                });
         } catch (e) {
             return null
         }
@@ -49,7 +50,7 @@ export class UserRepository {
         }
     }
 
-    static async getUserById(id: string): Promise<WithId<UserDBModel> | null>  {
+    static async getUserById(id: string): Promise<WithId<UserDBModel> | null> {
         try {
             return await usersCollection.findOne({_id: new ObjectId(id)});
         } catch (e) {

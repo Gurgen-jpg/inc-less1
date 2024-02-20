@@ -38,7 +38,11 @@ export type VideoType = {
     availableResolutions: EAvailableResolutions[]
 }
 
-export type StatusResultType = {}
+export type StatusResultType = {
+    status: number
+    message?: string
+    errorsMessages?: ErrorsMessageType
+}
 
 export interface idKeys {
     id: 'id',

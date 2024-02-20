@@ -23,7 +23,7 @@ authRoute.get('/me', tokenAuthorizationMiddleware, async (req: Request, res: Res
 
 authRoute.post('/register', registerValidation(), async (req: RequestBodyType<RegisterInputModel>, res: Response) => {
     const {login, email, password} = req.body;
-    const result = await AuthService.registerConfirm({login, email, password});
+    const result = await AuthService.register({login, email, password});
     return result
         ? res.sendStatus(NO_CONTENT)
         : res.sendStatus(BAD_REQUEST);

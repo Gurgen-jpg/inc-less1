@@ -8,7 +8,7 @@ export type OutputViewModel = {
     posts: Posts,
     users: Users
 }
-export type UserDBModel = Omit<UserViewModel, 'id'> & {password: string};
+export type UserDBModel = Omit<UserViewModel, 'id'> & {password: string, isConfirm: boolean};
 export type PostDBModel = Omit<PostViewModel, 'id'>;
 export type BlogDBModel = Omit<BlogViewModel, 'id'>;
 export type CommentDBModel = Omit<CommentVewModel, 'id'> & {postId: string};

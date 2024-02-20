@@ -34,7 +34,7 @@ exports.authRoute.get('/me', token_authorization_1.tokenAuthorizationMiddleware,
 }));
 exports.authRoute.post('/register', (0, registration_validation_1.registerValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { login, email, password } = req.body;
-    const result = yield auth_service_1.AuthService.registerConfirm({ login, email, password });
+    const result = yield auth_service_1.AuthService.register({ login, email, password });
     return result
         ? res.sendStatus(NO_CONTENT)
         : res.sendStatus(BAD_REQUEST);

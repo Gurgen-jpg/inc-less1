@@ -18,6 +18,7 @@ const jwt_service_1 = require("../app/auth/jwt-service");
 const user_repository_1 = require("../repositories/users/user-repository");
 const user_query_repository_1 = require("../repositories/users/user-query-repository");
 const email_adapter_1 = require("../adapters/email-adapter");
+const bcrypt_service_1 = require("../app/auth/bcrypt-service");
 class AuthService {
     static login(payload) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -54,6 +55,29 @@ class AuthService {
                     throw new Error('bad user id maybe deleted user');
                 }
                 return user;
+            }
+            catch (e) {
+                console.error(e);
+                return null;
+            }
+        });
+    }
+    static register(payload) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { login, email, password } = payload;
+            try {
+                const hash = yield bcrypt_service_1.BcryptService.createHash(password);
+                if (!hash) {
+                    throw new Error('Problem hashing password');
+                }
+                const user = yield user_repository_1.UserRepository.createUser({
+                    login,
+                    email,
+                    password: hash,
+                    createdAt: new Date().toISOString(),
+                    isConfirm: false
+                });
+                return null;
             }
             catch (e) {
                 console.error(e);

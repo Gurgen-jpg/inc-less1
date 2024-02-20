@@ -22,7 +22,6 @@ class UsersService {
             const { login, email, password } = payload;
             const saltRound = 10;
             const createdAt = new Date().toISOString();
-            // let userHash = ''
             try {
                 const userHash = yield new Promise((resolve, reject) => {
                     bcrypt_1.default.hash(password, saltRound, (err, hash) => {
@@ -38,7 +37,8 @@ class UsersService {
                     login,
                     email,
                     password: userHash,
-                    createdAt
+                    createdAt,
+                    isConfirm: true
                 });
                 if (!userId) {
                     throw new Error('Error creating user');
