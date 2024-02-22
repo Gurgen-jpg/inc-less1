@@ -52,16 +52,17 @@ export class AuthService {
     static async register(payload: RegisterInputModel): Promise<StatusResultType | null> {
         const {login, email, password} = payload;
         try {
-            const hash = await BcryptService.createHash(password);
-            if (!hash) {
-                throw new Error('Problem hashing password')
-            }
 
             const correctLogin = await UserRepository.getUserByLoginOrEmail(login);
             const correctEmail = await UserRepository.getUserByLoginOrEmail(email);
 
             if (correctLogin || correctEmail) {
                 throw new Error('User already exists')
+            }
+
+            const hash = await BcryptService.createHash(password);
+            if (!hash) {
+                throw new Error('Problem hashing password')
             }
 
             const userId = await UserRepository.createUser({
