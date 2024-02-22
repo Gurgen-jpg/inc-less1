@@ -23,7 +23,9 @@ export class EmailAdapter {
                 html: ` 
  <h1>Thank for your registration</h1>
   <p>To finish registration please follow the link below:
+<div style="background: blue; color: aliceblue">  
      <a href="${link}">complete registration</a>
+</div>     <div>under the link</div>
  </p>
 `,
             });
