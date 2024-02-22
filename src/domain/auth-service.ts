@@ -57,6 +57,14 @@ export class AuthService {
             if (!hash) {
                 throw new Error('Problem hashing password')
             }
+
+            const correctLogin = await UserRepository.getUserByLoginOrEmail(login);
+            const correctEmail = await UserRepository.getUserByLoginOrEmail(email);
+
+            if (correctLogin || correctEmail) {
+                throw new Error('User already exists')
+            }
+
             const userId = await UserRepository.createUser({
                 accountData: {
                     login,
