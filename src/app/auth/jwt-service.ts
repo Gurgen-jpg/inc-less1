@@ -1,13 +1,12 @@
 import dotenv from "dotenv";
-import {UserAuthViewModel} from "../../models/users/output";
 import jwt from "jsonwebtoken";
 
 
 export class JwtService {
-    static async createJWT(user: UserAuthViewModel): Promise<string | null> {
+    static async createJWT(userid: string): Promise<string | null> {
         try {
             dotenv.config();
-            return jwt.sign({userId: user.id}, process.env.SECRET_WORD!, {expiresIn: '24h'});
+            return jwt.sign({userId: userid}, process.env.SECRET_WORD!, {expiresIn: '24h'});
         } catch (e) {
             console.error('Error creating JWT:', e);
             return null

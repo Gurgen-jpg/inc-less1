@@ -5,10 +5,9 @@ import {UserAuthViewModel} from "../../models/users/output";
 import {UserDBModel} from "../../models/db";
 
 export class UserRepository {
-    static async createUser(payload: UserInputModel & { isConfirm: boolean }): Promise<string | null> {
-        const {login, email, password, createdAt, isConfirm } = payload;
+    static async createUser(user: UserDBModel): Promise<string | null> {
         try {
-            return await usersCollection.insertOne({login, email, password, createdAt, isConfirm})
+            return await usersCollection.insertOne(user)
                 .then((id) => {
                     if (!id) {
                         return null
@@ -29,17 +28,12 @@ export class UserRepository {
         }
     }
 
-    static async getUserByLoginOrEmail(loginOrEmail: string): Promise<UserAuthViewModel | null> {
+    static async getUserByLoginOrEmail(loginOrEmail: string): Promise<WithId<UserDBModel> | null> {
         try {
             return await usersCollection
                 .findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]})
                 .then((user) => {
-                    return user ? {
-                        id: user._id.toString(),
-                        login: user.login,
-                        email: user.email,
-                        password: user.password,
-                    } : null
+                    return user ? user : null
                 })
                 .catch((err) => {
                     throw err
@@ -55,6 +49,33 @@ export class UserRepository {
             return await usersCollection.findOne({_id: new ObjectId(id)});
         } catch (e) {
             return null
+        }
+    }
+
+    static async confirmEmail(confirmationCode: string): Promise<WithId<UserDBModel> | null> {
+        try {
+            const user = await usersCollection.findOne({
+                'emailConfirmation.confirmationCode': confirmationCode
+            });
+            if (!user) {
+                return null
+            }
+            return user
+        } catch (e) {
+            console.log(e);
+            return null
+        }
+    }
+
+    static async updateConfirmationCode(userId: ObjectId): Promise<Boolean> {
+        try {
+            const res = await usersCollection.updateOne({_id: userId}, {$set: {'emailConfirmation.isConfirmed': true}});
+            if (res && res.modifiedCount === 1) {
+                return true
+            }
+            return false
+        } catch (e) {
+            return false
         }
     }
 }

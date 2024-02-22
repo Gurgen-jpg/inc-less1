@@ -32,3 +32,15 @@ export const registerValidation = () => {
     return [loginValidation, emailValidation, passwordValidation, inputValidationMiddleware];
 }
 
+const confirmCodeValidation = body('code')
+    .trim()
+    .notEmpty()
+    .withMessage('field must not be empty')
+export const emailConfirmationValidation = () => {
+    return [confirmCodeValidation, inputValidationMiddleware];
+}
+
+export const resendEmailValidation = () => {
+    return [emailValidation, inputValidationMiddleware];
+}
+

@@ -3,7 +3,11 @@ import {LoginInputModel, RegisterInputModel} from "../models/auth/input";
 import {HTTP_STATUSES, RequestBodyType} from "../models/common";
 import {AuthService} from "../domain/auth-service";
 import {tokenAuthorizationMiddleware} from "../middlewares/authValidation/token-authorization";
-import {registerValidation} from "../validators/registration-validation";
+import {
+    emailConfirmationValidation,
+    registerValidation,
+    resendEmailValidation
+} from "../validators/registration-validation";
 
 export const authRoute = express.Router({});
 
@@ -12,7 +16,7 @@ authRoute.post('/login', async (req: RequestBodyType<LoginInputModel>, res: Resp
     const {loginOrEmail, password} = req.body;
     const token = await AuthService.login({loginOrEmail, password});
     return token
-        ? res.status(OK).send({accessToken:token})
+        ? res.status(OK).send({accessToken: token})
         : res.sendStatus(UNAUTHORIZED);
 });
 
@@ -25,7 +29,24 @@ authRoute.post('/register', registerValidation(), async (req: RequestBodyType<Re
     const {login, email, password} = req.body;
     const result = await AuthService.register({login, email, password});
     return result
-        ? res.sendStatus(NO_CONTENT)
+        ? res.status(NO_CONTENT).send(result?.message)
         : res.sendStatus(BAD_REQUEST);
 })
 
+authRoute.post('/registration-confirmation', emailConfirmationValidation(), async (req: RequestBodyType<{
+    code: string
+}>, res: Response) => {
+    const result = await AuthService.confirmEmail(req.body.code);
+    return result.status === 204
+        ? res.status(NO_CONTENT).send(result?.message)
+        : res.send(BAD_REQUEST).send(result?.errorsMessages);
+})
+
+authRoute.post('/registration-email-resend', resendEmailValidation(), async (req: RequestBodyType<{
+    email: string
+}>, res: Response) => {
+    const result = await AuthService.resendEmail(req.body.email);
+    return result.status === 204
+        ? res.status(NO_CONTENT).send(result?.message)
+        : res.send(BAD_REQUEST).send(result?.errorsMessages);
+})

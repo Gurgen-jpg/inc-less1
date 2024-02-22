@@ -4,6 +4,8 @@ import {UserRepository} from "../repositories/users/user-repository";
 import {UserQueryRepository} from "../repositories/users/user-query-repository";
 import {UserViewModel} from "../models/users/output";
 import {PaginationType, UserQueryModel} from "../models/common";
+import {generateId} from "../adapters/uuid";
+import {add} from "date-fns/add";
 
 export class UsersService {
     static async createUser(payload: UserInputModel): Promise<UserViewModel | null> {
@@ -22,11 +24,18 @@ export class UsersService {
                 });
             });
             const userId = await UserRepository.createUser({
-                login,
+                accountData: {login,
                 email,
-                password: userHash,
-                createdAt,
-                isConfirm: true
+                passwordHash: userHash,
+                createdAt},
+                emailConfirmation: {
+                    confirmationCode: generateId(),
+                    expirationDate: add(new Date(), {
+                        hours: 1,
+                        minutes: 2
+                    }),
+                    isConfirmed: false
+                },
             });
             if (!userId) {
                 throw new Error('Error creating user');
