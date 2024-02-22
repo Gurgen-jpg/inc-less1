@@ -34,7 +34,7 @@ export class UsersService {
                         hours: 1,
                         minutes: 2
                     }),
-                    isConfirmed: false
+                    isConfirmed: true
                 },
             });
             if (!userId) {
