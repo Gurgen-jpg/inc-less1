@@ -7,7 +7,6 @@ import {UserViewModel} from "../models/users/output";
 import {EmailAdapter} from "../adapters/email-adapter";
 import {BcryptService} from "../app/auth/bcrypt-service";
 import {StatusResultType} from "../models/common";
-import {ObjectId} from "mongodb";
 import {add} from "date-fns/add";
 import {generateId} from "../adapters/uuid";
 
@@ -151,7 +150,7 @@ export class AuthService {
     static async resendEmail(email: string): Promise<StatusResultType> {
         try {
             const user = await UserRepository.getUserByLoginOrEmail(email);
-            if (!user) {
+            if (!user || user.emailConfirmation.isConfirmed) {
                 return {
                     status: 400,
                     errorsMessages: [{message: 'User not found', field: 'Email'}]
