@@ -128,7 +128,7 @@ export class AuthService {
                 }
             }
 
-            const confirm = await UserRepository.updateConfirmationCode(user._id);
+            const confirm = await UserRepository.updateIsConfirmed(user._id);
 
             if (!confirm) {
                 return {
@@ -157,7 +157,15 @@ export class AuthService {
                     errorsMessages: [{message: 'User not found', field: 'Email'}]
                 }
             }
-            await EmailAdapter.sendMail(email, user.accountData.login, 'Подтверждение регистрации', user.emailConfirmation.confirmationCode);
+
+            const newCode = await UserRepository.updateConfirmationCode(generateId(), user._id);
+            if (!newCode) {
+                return {
+                    status: 400,
+                    errorsMessages: [{message: 'User not found', field: 'Email'}]
+                }
+            }
+            await EmailAdapter.sendMail(email, user.accountData.login, 'Подтверждение регистрации', newCode);
             return {
                 status: 204,
                 message: 'Input data is accepted. Email with confirmation code will be send to passed email address'

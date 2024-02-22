@@ -67,7 +67,7 @@ export class UserRepository {
         }
     }
 
-    static async updateConfirmationCode(userId: ObjectId): Promise<Boolean> {
+    static async updateIsConfirmed(userId: ObjectId): Promise<Boolean> {
         try {
             const res = await usersCollection.updateOne({_id: userId}, {$set: {'emailConfirmation.isConfirmed': true}});
             if (res && res.modifiedCount === 1) {
@@ -76,6 +76,19 @@ export class UserRepository {
             return false
         } catch (e) {
             return false
+        }
+    }
+
+    static async updateConfirmationCode(code: string, userId: ObjectId) {
+        try {
+            const result = await usersCollection.updateOne({_id: userId}, {$set: {'emailConfirmation.confirmationCode': code}});
+            if (result.modifiedCount === 1) {
+                return code;
+            }
+            return null
+        } catch (e) {
+            console.log(e)
+            return null
         }
     }
 }
