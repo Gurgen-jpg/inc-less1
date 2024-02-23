@@ -34,7 +34,7 @@ describe('registration Service', () => {
             .set('Authorization', `Basic YWRtaW46cXdlcnR5`)
             .send({login, email, password});
 
-        const newUser = await registerMethod({login, email, password});
+        const newUser = await registerMethod({login: 'admin', email, password});
         expect(newUser?.status).toBe(400);
     })
 
