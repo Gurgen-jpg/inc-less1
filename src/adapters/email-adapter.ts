@@ -14,7 +14,7 @@ export class EmailAdapter {
     });
 
     static async sendMail(email: string, login: string, subject: string, code: string): Promise<boolean> {
-        const link = `https://somesite.com/confirm-email?code=${code}`
+        const link = `https://inc-less1.vercel.app/confirm-email?code=${code}`
         try {
             await this._transport.sendMail({
                 from: MAIL_USER,

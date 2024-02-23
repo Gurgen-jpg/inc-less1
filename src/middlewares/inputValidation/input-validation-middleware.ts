@@ -27,7 +27,7 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
     if (!formattedErrors.isEmpty()) {
         const errorMessage = formattedErrors.array({onlyFirstError: true});
         const errors = {errorsMessages: errorMessage};
-        res.status(403).send(errors);
+        res.status(BAD_REQUEST).send(errors);
         return;
     }
 
