@@ -41,7 +41,7 @@ export type VideoType = {
 export type StatusResultType = {
     status: number
     message?: string
-    errorsMessages?: ErrorsMessageType
+    errors?: {errorsMessages: ErrorsMessageType}
 }
 
 export interface idKeys {

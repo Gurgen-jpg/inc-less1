@@ -59,23 +59,27 @@ export class AuthService {
             if (userLoginExist) {
                 return {
                     status: 400,
-                    errorsMessages: [
-                        {
-                            message: 'User already exists',
-                            field: 'login'
-                        }
-                    ]
+                    errors: {
+                        errorsMessages: [
+                            {
+                                message: 'User already exists',
+                                field: 'login'
+                            }
+                        ]
+                    }
                 }
             }
             if (userLoginExist) {
                 return {
                     status: 400,
-                    errorsMessages: [
-                        {
-                            message: 'User already exists',
-                            field: 'email'
-                        }
-                    ]
+                    errors: {
+                        errorsMessages: [
+                            {
+                                message: 'User already exists',
+                                field: 'email'
+                            }
+                        ]
+                    }
                 }
             }
 
@@ -128,22 +132,25 @@ export class AuthService {
             const user = await UserRepository.confirmEmail(emailCode);
             if (!user) return {
                 status: 400,
-                errorsMessages: [{message: 'Bad confirmation code', field: 'Confirmation code'}]
+                errors: {errorsMessages: [{message: 'Bad confirmation code', field: 'Confirmation code'}]}
             };
             if (user.emailConfirmation.confirmationCode !== emailCode) return {
                 status: 400,
-                errorsMessages: [{message: 'Bad confirmation code', field: 'Confirmation code'}]
+                errors: {
+                    errorsMessages:
+                        [{message: 'Bad confirmation code', field: 'Confirmation code'}]
+                }
             };
             if (user.emailConfirmation.isConfirmed) {
                 return {
                     status: 400,
-                    errorsMessages: [{message: 'Code was confirmed later', field: 'Confirmation code'}],
+                    errors: {errorsMessages: [{message: 'Code was confirmed later', field: 'Confirmation code'}]},
                 }
             }
             if (user.emailConfirmation.confirmationCode === emailCode && user.emailConfirmation.expirationDate < new Date()) {
                 return {
                     status: 400,
-                    errorsMessages: [{message: 'Code expired', field: 'Confirmation code'}],
+                    errors: {errorsMessages: [{message: 'Code expired', field: 'Confirmation code'}]},
                 }
             }
 
@@ -152,7 +159,7 @@ export class AuthService {
             if (!confirm) {
                 return {
                     status: 400,
-                    errorsMessages: [{message: 'Bad confirmation code', field: 'Confirmation code'}]
+                    errors: {errorsMessages: [{message: 'Bad confirmation code', field: 'Confirmation code'}]}
                 }
             }
 
@@ -162,7 +169,12 @@ export class AuthService {
             }
         } catch (e) {
             console.error(e);
-            return {status: 400, errorsMessages: [{message: 'Bad confirmation code', field: 'Confirmation code'}]}
+            return {status: 400, errors: {
+                    errorsMessages: [{
+                        message: 'Bad confirmation code',
+                        field: 'Confirmation code'
+                    }]
+                }}
         }
     }
 
@@ -173,13 +185,13 @@ export class AuthService {
             if (!user) {
                 return {
                     status: 400,
-                    errorsMessages: [{message: 'User not found', field: 'Email'}]
+                    errors: {errorsMessages: [{message: 'User not found', field: 'Email'}]}
                 }
             }
             if (user.emailConfirmation.isConfirmed) {
                 return {
                     status: 400,
-                    errorsMessages: [{message: 'User already confirmed', field: 'Email'}]
+                    errors: {errorsMessages: [{message: 'User already confirmed', field: 'Email'}]}
                 }
             }
 
@@ -188,14 +200,14 @@ export class AuthService {
             if (!newCode) {
                 return {
                     status: 400,
-                    errorsMessages: [{message: 'User not found', field: 'Email'}]
+                    errors: {errorsMessages: [{message: 'User not found', field: 'Email'}]}
                 }
             }
             const isSend = await EmailAdapter.sendMail(email, user.accountData.login, 'Подтверждение регистрации', newCode);
             if (!isSend) {
                 return {
                     status: 400,
-                    errorsMessages: [{message: 'User not found', field: 'Email'}]
+                    errors: {errorsMessages: [{message: 'User not found', field: 'Email'}]}
                 }
             }
             return {
@@ -204,7 +216,7 @@ export class AuthService {
             }
         } catch (e) {
             console.error(e);
-            return {status: 400, errorsMessages: [{message: 'User not found', field: 'Email'}]}
+            return {status: 400, errors: {errorsMessages: [{message: 'User not found', field: 'Email'}]}}
         }
     }
 }
