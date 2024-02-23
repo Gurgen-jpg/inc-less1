@@ -91,7 +91,7 @@ describe('Post api', () => {
 
     it('-get post by id', async () => {
         const response = await request(app).get('/posts/1');
-        expect(response.status).toBe(NOT_FOUND);
+        expect(response.status).toBe(BAD_REQUEST);
     });
 
     it('+update post', async () => {
@@ -174,18 +174,7 @@ describe('Post api', () => {
     it('-delete post', async () => {
         const response = await request(app).delete(`/posts/1`)
             .set('authorization', `Basic ${auth}`)
-        expect(response.status).toBe(NOT_FOUND);
+        expect(response.status).toBe(BAD_REQUEST);
     })
 
 })
-
-
-function counter() {
-    var count = 0;
-    return function () { return ++count; };
-}
-
-var increment = counter();
-console.log(increment())
-console.log(increment())
-console.log(increment())

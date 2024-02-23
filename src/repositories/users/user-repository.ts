@@ -31,7 +31,7 @@ export class UserRepository {
     static async getUserByLoginOrEmail(loginOrEmail: string): Promise<WithId<UserDBModel> | null> {
         try {
             return await usersCollection
-                .findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]})
+                .findOne({$or: [{"accountData.login": loginOrEmail}, {"accountData.email": loginOrEmail}]})
                 .then((user) => {
                     return user ? user : null
                 })

@@ -13,11 +13,10 @@ exports.UserRepository = void 0;
 const db_1 = require("../../db/db");
 const mongodb_1 = require("mongodb");
 class UserRepository {
-    static createUser(payload) {
+    static createUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { login, email, password, createdAt, isConfirm } = payload;
             try {
-                return yield db_1.usersCollection.insertOne({ login, email, password, createdAt, isConfirm })
+                return yield db_1.usersCollection.insertOne(user)
                     .then((id) => {
                     if (!id) {
                         return null;
@@ -45,14 +44,9 @@ class UserRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 return yield db_1.usersCollection
-                    .findOne({ $or: [{ login: loginOrEmail }, { email: loginOrEmail }] })
+                    .findOne({ $or: [{ "accountData.login": loginOrEmail }, { "accountData.email": loginOrEmail }] })
                     .then((user) => {
-                    return user ? {
-                        id: user._id.toString(),
-                        login: user.login,
-                        email: user.email,
-                        password: user.password,
-                    } : null;
+                    return user ? user : null;
                 })
                     .catch((err) => {
                     throw err;
@@ -70,6 +64,52 @@ class UserRepository {
                 return yield db_1.usersCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
             }
             catch (e) {
+                return null;
+            }
+        });
+    }
+    static confirmEmail(confirmationCode) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield db_1.usersCollection.findOne({
+                    'emailConfirmation.confirmationCode': confirmationCode
+                });
+                if (!user) {
+                    return null;
+                }
+                return user;
+            }
+            catch (e) {
+                console.log(e);
+                return null;
+            }
+        });
+    }
+    static updateIsConfirmed(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const res = yield db_1.usersCollection.updateOne({ _id: userId }, { $set: { 'emailConfirmation.isConfirmed': true } });
+                if (res && res.modifiedCount === 1) {
+                    return true;
+                }
+                return false;
+            }
+            catch (e) {
+                return false;
+            }
+        });
+    }
+    static updateConfirmationCode(code, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const result = yield db_1.usersCollection.updateOne({ _id: userId }, { $set: { 'emailConfirmation.confirmationCode': code } });
+                if (result.modifiedCount === 1) {
+                    return code;
+                }
+                return null;
+            }
+            catch (e) {
+                console.log(e);
                 return null;
             }
         });

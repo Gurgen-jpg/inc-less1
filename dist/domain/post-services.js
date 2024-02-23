@@ -114,7 +114,7 @@ class PostServices {
                 }
                 const commentId = yield post_repository_1.PostRepository.createComment(postId, content, {
                     _id: user._id,
-                    login: user.login
+                    login: user.accountData.login
                 });
                 return commentId
                     ? yield comment_query_repository_1.CommentQueryRepository.getCommentById(commentId)

@@ -95,7 +95,7 @@ export class PostServices {
             }
             const commentId = await PostRepository.createComment(postId, content, {
                 _id: user._id,
-                login: user.login
+                login: user.accountData.login
             })
             return commentId
                 ? await CommentQueryRepository.getCommentById(commentId)

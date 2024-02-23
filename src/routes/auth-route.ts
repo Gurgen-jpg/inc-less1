@@ -28,9 +28,9 @@ authRoute.get('/me', tokenAuthorizationMiddleware, async (req: Request, res: Res
 authRoute.post('/registration', registerValidation(), async (req: RequestBodyType<RegisterInputModel>, res: Response) => {
     const {login, email, password} = req.body;
     const result = await AuthService.register({login, email, password});
-    return result
+    return result?.status === 204
         ? res.status(NO_CONTENT).send(result?.message)
-        : res.sendStatus(BAD_REQUEST);
+        : res.status(BAD_REQUEST).send(result?.errorsMessages);
 })
 
 authRoute.post('/registration-confirmation', emailConfirmationValidation(), async (req: RequestBodyType<{

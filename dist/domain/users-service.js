@@ -16,6 +16,8 @@ exports.UsersService = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_repository_1 = require("../repositories/users/user-repository");
 const user_query_repository_1 = require("../repositories/users/user-query-repository");
+const uuid_1 = require("../adapters/uuid");
+const add_1 = require("date-fns/add");
 class UsersService {
     static createUser(payload) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -34,11 +36,18 @@ class UsersService {
                     });
                 });
                 const userId = yield user_repository_1.UserRepository.createUser({
-                    login,
-                    email,
-                    password: userHash,
-                    createdAt,
-                    isConfirm: true
+                    accountData: { login,
+                        email,
+                        passwordHash: userHash,
+                        createdAt },
+                    emailConfirmation: {
+                        confirmationCode: (0, uuid_1.generateId)(),
+                        expirationDate: (0, add_1.add)(new Date(), {
+                            hours: 1,
+                            minutes: 2
+                        }),
+                        isConfirmed: true
+                    },
                 });
                 if (!userId) {
                     throw new Error('Error creating user');

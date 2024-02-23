@@ -53,11 +53,19 @@ export class AuthService {
         const {login, email, password} = payload;
         try {
 
-            const correctLogin = await UserRepository.getUserByLoginOrEmail(login);
-            const correctEmail = await UserRepository.getUserByLoginOrEmail(email);
+            const userLoginExist = await UserRepository.getUserByLoginOrEmail(login);
+            const userEmailExist = await UserRepository.getUserByLoginOrEmail(email);
 
-            if (correctLogin || correctEmail) {
-                throw new Error('User already exists')
+            if (userLoginExist || userEmailExist) {
+                return {
+                    status: 400,
+                    errorsMessages: [
+                        {
+                            message: 'User already exists',
+                            field: 'loginOrEmail'
+                        }
+                    ]
+                }
             }
 
             const hash = await BcryptService.createHash(password);
@@ -165,7 +173,13 @@ export class AuthService {
                     errorsMessages: [{message: 'User not found', field: 'Email'}]
                 }
             }
-            await EmailAdapter.sendMail(email, user.accountData.login, 'Подтверждение регистрации', newCode);
+            const isSend = await EmailAdapter.sendMail(email, user.accountData.login, 'Подтверждение регистрации', newCode);
+            if (!isSend) {
+                return {
+                    status: 400,
+                    errorsMessages: [{message: 'User not found', field: 'Email'}]
+                }
+            }
             return {
                 status: 204,
                 message: 'Input data is accepted. Email with confirmation code will be send to passed email address'

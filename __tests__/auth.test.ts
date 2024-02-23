@@ -25,8 +25,8 @@ describe('auth', () => {
                     password: user.password + id
                 });
             expect(response.status).toBe(200);
-            expect(response.body.token).toBeDefined();
-            const token = response.body.token;
+            expect(response.body.accessToken).toBeDefined();
+            const token = response.body.accessToken;
             const authedUser = await request(app)
                 .get('/auth/me')
                 .set({
@@ -36,13 +36,14 @@ describe('auth', () => {
             expect(authedUser.body).toEqual({
                 email: 'user.email@mail.com',
                 login: user.loginOrEmail + id,
-                id: expect.any(String)
+                id: expect.any(String),
+                createdAt: expect.any(String),
             })
         })
         await Promise.all(authPromise);
     });
-// todo: Спросить: как поступать с таим кейсом? описать в валидации а записать ошибку в errorsMessages или просто вернуть null или 403???
-    it('-deleted user', async () => {
+
+    it('+deleted user', async () => {
         // создал юзера
         const user = await request(app)
             .post('/users')
@@ -61,7 +62,7 @@ describe('auth', () => {
                 password: 'password'
             })
         expect(token.status).toBe(200);
-        expect(token.body.token).toBeDefined();
+        expect(token.body.accessToken).toBeDefined();
         // удалил юзера
         const deleteStatus = await request(app)
             .delete('/users/' + user.body.id)
@@ -69,7 +70,7 @@ describe('auth', () => {
         expect(deleteStatus.status).toBe(204);
         // пробую авторизоваться с токеном удаленного юзера
         const authedUser = await request(app).get('auth/me').set({
-            Authorization: `Bearer ${token.body.token}`
+            Authorization: `Bearer ${token.body.accessToken}`
         })
         expect(authedUser.status).toBe(404);
 

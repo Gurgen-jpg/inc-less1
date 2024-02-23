@@ -14,7 +14,6 @@ export const database = client.db('blogs-hws');
 const blogCollection = database.collection<BlogDBModel>('blogs');
 const postCollection = database.collection<PostDBModel>('posts');
 const usersCollection = database.collection<UserDBModel>('users');
-
 const commentsCollection = database.collection<CommentDBModel>('comments');
 
 async function connectDB() {
