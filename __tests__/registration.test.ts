@@ -27,7 +27,7 @@ describe('registration Service', () => {
         });
     })
 
-    it('-should not send email, user is existed', async () => {
+    it('-should not send email, user email is existed', async () => {
         const {login, email, password} = testSeeder.createUserDto();
         await request(app)
             .post('/users')
@@ -36,6 +36,41 @@ describe('registration Service', () => {
 
         const newUser = await registerMethod({login: 'admin', email, password});
         expect(newUser?.status).toBe(400);
+    })
+    it('-should not send email, user login is existed', async () => {
+        const {login, email, password} = testSeeder.createUserDto();
+        await request(app)
+            .post('/users')
+            .set('Authorization', `Basic YWRtaW46cXdlcnR5`)
+            .send({login, email, password});
+
+        const newUser = await registerMethod({login, email: 'something@gmail.com', password});
+        expect(newUser?.status).toBe(400);
+    })
+
+    it('confirm email with code', async () => {
+        await request(app).delete('/testing/all-data');
+        const {login, email, password} = testSeeder.createUserDto();
+
+        await registerMethod({login, email, password});
+        // дщстать код из базы
+
+        const user = await UserRepository.getUserByLoginOrEmail(login);
+        const code = user?.emailConfirmation.confirmationCode;
+
+        const confirm = await request(app).post('/auth/registration-confirmation').send({code});
+
+        expect(confirm.status).toBe(204);
+    })
+
+    it('-crash confirm email with BAD code', async () => {
+        await request(app).delete('/testing/all-data');
+        const {login, email, password} = testSeeder.createUserDto();
+
+        await registerMethod({login, email, password});
+        const code = '12345';
+        const confirm = await request(app).post('/auth/registration-confirmation').send({code});
+        expect(confirm.status).toBe(400);
     })
 
     it('+should not send email with new code, user is existed, but not confirmed', async () => {

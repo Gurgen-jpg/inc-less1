@@ -83,7 +83,7 @@ class AuthService {
                         }
                     };
                 }
-                if (userLoginExist) {
+                if (userEmailExist) {
                     return {
                         status: 400,
                         errors: {
