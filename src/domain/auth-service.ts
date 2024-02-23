@@ -100,7 +100,7 @@ export class AuthService {
                 await EmailAdapter.sendMail(email, login, 'Подтверждение регистрации', user.emailConfirmation.confirmationCode)
             } catch (e) {
                 console.error(e);
-                await UserRepository.deleteUser(userId);
+                // await UserRepository.deleteUser(userId);
             }
             return {
                 status: 204,
