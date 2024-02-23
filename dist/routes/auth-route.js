@@ -45,7 +45,7 @@ exports.authRoute.post('/registration-confirmation', (0, registration_validation
         ? res.status(NO_CONTENT).send(result === null || result === void 0 ? void 0 : result.message)
         : res.send(BAD_REQUEST).send(result === null || result === void 0 ? void 0 : result.errors);
 }));
-exports.authRoute.post('/registration-email-resending', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authRoute.post('/registration-email-resending', (0, registration_validation_1.resendEmailValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield auth_service_1.AuthService.resendEmail(req.body.email);
     return result.status === 204
         ? res.status(NO_CONTENT).send(result === null || result === void 0 ? void 0 : result.message)

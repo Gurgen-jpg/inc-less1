@@ -9,16 +9,16 @@ const fields: RegisterInputModel = {
 } as const;
 
 const loginValidation = body(fields.login)
-    .isString()
     .trim()
+    .isString()
+    .withMessage('field must be a string')
     .isLength({min: 3, max: 30})
     .withMessage('field must be between 3 and 30 characters')
     .matches('^[a-zA-Z0-9_-]*$')
     .withMessage('field must contain only english letters, numbers, underscores and dashes');
 const emailValidation = body(fields.email)
-    .isString()
     .trim()
-    .exists()
+    .isString()
     .withMessage('field must be a string')
     .matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
     .withMessage('field must be an email');

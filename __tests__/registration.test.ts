@@ -76,11 +76,13 @@ describe('Registration Controller', () => {
             .send({login, email, password});
 
         expect(newUser.status).toBe(400);
-        console.log(newUser.body)
-        expect(newUser.body.errorsMessages).toEqual([{
-            message: 'User already exists',
-            field: 'loginOrEmail'
-        }])
+        console.log(newUser.body.errorsMessages)
+        expect(newUser.body).toEqual({
+            errorsMessages: [{
+                message: 'User already exists',
+                field: 'login'
+            }]
+        })
     })
 
 
