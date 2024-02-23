@@ -25,7 +25,7 @@ authRoute.get('/me', tokenAuthorizationMiddleware, async (req: Request, res: Res
     return me ? res.status(OK).send(me) : res.sendStatus(NOT_FOUND);
 })
 
-authRoute.post('/register', registerValidation(), async (req: RequestBodyType<RegisterInputModel>, res: Response) => {
+authRoute.post('/registration', registerValidation(), async (req: RequestBodyType<RegisterInputModel>, res: Response) => {
     const {login, email, password} = req.body;
     const result = await AuthService.register({login, email, password});
     return result
