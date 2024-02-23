@@ -37,17 +37,17 @@ exports.authRoute.post('/registration', (0, registration_validation_1.registerVa
     const result = yield auth_service_1.AuthService.register({ login, email, password });
     return (result === null || result === void 0 ? void 0 : result.status) === 204
         ? res.status(NO_CONTENT).send(result === null || result === void 0 ? void 0 : result.message)
-        : res.status(BAD_REQUEST).send(result === null || result === void 0 ? void 0 : result.errorsMessages);
+        : res.status(BAD_REQUEST).send(result === null || result === void 0 ? void 0 : result.errors);
 }));
 exports.authRoute.post('/registration-confirmation', (0, registration_validation_1.emailConfirmationValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield auth_service_1.AuthService.confirmEmail(req.body.code);
     return result.status === 204
         ? res.status(NO_CONTENT).send(result === null || result === void 0 ? void 0 : result.message)
-        : res.send(BAD_REQUEST).send(result['errorsMessages'] = result === null || result === void 0 ? void 0 : result.errorsMessages);
+        : res.send(BAD_REQUEST).send(result === null || result === void 0 ? void 0 : result.errors);
 }));
-exports.authRoute.post('/registration-email-resending', (0, registration_validation_1.resendEmailValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authRoute.post('/registration-email-resending', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield auth_service_1.AuthService.resendEmail(req.body.email);
     return result.status === 204
         ? res.status(NO_CONTENT).send(result === null || result === void 0 ? void 0 : result.message)
-        : res.send(BAD_REQUEST).send(result['errorsMessages'] = result === null || result === void 0 ? void 0 : result.errorsMessages);
+        : res.send(BAD_REQUEST).send(result === null || result === void 0 ? void 0 : result.errors);
 }));

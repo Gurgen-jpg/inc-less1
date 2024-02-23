@@ -42,7 +42,7 @@ authRoute.post('/registration-confirmation', emailConfirmationValidation(), asyn
         : res.send(BAD_REQUEST).send(result?.errors);
 })
 
-authRoute.post('/registration-email-resending', resendEmailValidation(), async (req: RequestBodyType<{
+authRoute.post('/registration-email-resending', async (req: RequestBodyType<{
     email: string
 }>, res: Response) => {
     const result = await AuthService.resendEmail(req.body.email);

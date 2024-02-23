@@ -73,23 +73,27 @@ class AuthService {
                 if (userLoginExist) {
                     return {
                         status: 400,
-                        errorsMessages: [
-                            {
-                                message: 'User already exists',
-                                field: 'login'
-                            }
-                        ]
+                        errors: {
+                            errorsMessages: [
+                                {
+                                    message: 'User already exists',
+                                    field: 'login'
+                                }
+                            ]
+                        }
                     };
                 }
                 if (userLoginExist) {
                     return {
                         status: 400,
-                        errorsMessages: [
-                            {
-                                message: 'User already exists',
-                                field: 'email'
-                            }
-                        ]
+                        errors: {
+                            errorsMessages: [
+                                {
+                                    message: 'User already exists',
+                                    field: 'email'
+                                }
+                            ]
+                        }
                     };
                 }
                 const hash = yield bcrypt_service_1.BcryptService.createHash(password);
@@ -144,30 +148,32 @@ class AuthService {
                 if (!user)
                     return {
                         status: 400,
-                        errorsMessages: [{ message: 'Bad confirmation code', field: 'Confirmation code' }]
+                        errors: { errorsMessages: [{ message: 'Bad confirmation code', field: 'Confirmation code' }] }
                     };
                 if (user.emailConfirmation.confirmationCode !== emailCode)
                     return {
                         status: 400,
-                        errorsMessages: [{ message: 'Bad confirmation code', field: 'Confirmation code' }]
+                        errors: {
+                            errorsMessages: [{ message: 'Bad confirmation code', field: 'Confirmation code' }]
+                        }
                     };
                 if (user.emailConfirmation.isConfirmed) {
                     return {
                         status: 400,
-                        errorsMessages: [{ message: 'Code was confirmed later', field: 'Confirmation code' }],
+                        errors: { errorsMessages: [{ message: 'Code was confirmed later', field: 'Confirmation code' }] },
                     };
                 }
                 if (user.emailConfirmation.confirmationCode === emailCode && user.emailConfirmation.expirationDate < new Date()) {
                     return {
                         status: 400,
-                        errorsMessages: [{ message: 'Code expired', field: 'Confirmation code' }],
+                        errors: { errorsMessages: [{ message: 'Code expired', field: 'Confirmation code' }] },
                     };
                 }
                 const confirm = yield user_repository_1.UserRepository.updateIsConfirmed(user._id, true);
                 if (!confirm) {
                     return {
                         status: 400,
-                        errorsMessages: [{ message: 'Bad confirmation code', field: 'Confirmation code' }]
+                        errors: { errorsMessages: [{ message: 'Bad confirmation code', field: 'Confirmation code' }] }
                     };
                 }
                 return {
@@ -177,7 +183,12 @@ class AuthService {
             }
             catch (e) {
                 console.error(e);
-                return { status: 400, errorsMessages: [{ message: 'Bad confirmation code', field: 'Confirmation code' }] };
+                return { status: 400, errors: {
+                        errorsMessages: [{
+                                message: 'Bad confirmation code',
+                                field: 'Confirmation code'
+                            }]
+                    } };
             }
         });
     }
@@ -188,27 +199,27 @@ class AuthService {
                 if (!user) {
                     return {
                         status: 400,
-                        errorsMessages: [{ message: 'User not found', field: 'Email' }]
+                        errors: { errorsMessages: [{ message: 'User not found', field: 'Email' }] }
                     };
                 }
                 if (user.emailConfirmation.isConfirmed) {
                     return {
                         status: 400,
-                        errorsMessages: [{ message: 'User already confirmed', field: 'Email' }]
+                        errors: { errorsMessages: [{ message: 'User already confirmed', field: 'Email' }] }
                     };
                 }
                 const newCode = yield user_repository_1.UserRepository.updateConfirmationCode((0, uuid_1.generateId)(), user._id);
                 if (!newCode) {
                     return {
                         status: 400,
-                        errorsMessages: [{ message: 'User not found', field: 'Email' }]
+                        errors: { errorsMessages: [{ message: 'User not found', field: 'Email' }] }
                     };
                 }
                 const isSend = yield email_adapter_1.EmailAdapter.sendMail(email, user.accountData.login, 'Подтверждение регистрации', newCode);
                 if (!isSend) {
                     return {
                         status: 400,
-                        errorsMessages: [{ message: 'User not found', field: 'Email' }]
+                        errors: { errorsMessages: [{ message: 'User not found', field: 'Email' }] }
                     };
                 }
                 return {
@@ -218,7 +229,7 @@ class AuthService {
             }
             catch (e) {
                 console.error(e);
-                return { status: 400, errorsMessages: [{ message: 'User not found', field: 'Email' }] };
+                return { status: 400, errors: { errorsMessages: [{ message: 'User not found', field: 'Email' }] } };
             }
         });
     }
