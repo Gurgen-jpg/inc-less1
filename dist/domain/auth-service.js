@@ -70,13 +70,24 @@ class AuthService {
             try {
                 const userLoginExist = yield user_repository_1.UserRepository.getUserByLoginOrEmail(login);
                 const userEmailExist = yield user_repository_1.UserRepository.getUserByLoginOrEmail(email);
-                if (userLoginExist || userEmailExist) {
+                if (userLoginExist) {
                     return {
                         status: 400,
                         errorsMessages: [
                             {
                                 message: 'User already exists',
-                                field: 'loginOrEmail'
+                                field: 'login'
+                            }
+                        ]
+                    };
+                }
+                if (userLoginExist) {
+                    return {
+                        status: 400,
+                        errorsMessages: [
+                            {
+                                message: 'User already exists',
+                                field: 'email'
                             }
                         ]
                     };

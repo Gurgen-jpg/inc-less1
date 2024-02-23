@@ -77,7 +77,7 @@ describe('Registration Controller', () => {
 
         expect(newUser.status).toBe(400);
         console.log(newUser.body)
-        expect(newUser.body).toEqual([{
+        expect(newUser.body.errorsMessages).toEqual([{
             message: 'User already exists',
             field: 'loginOrEmail'
         }])

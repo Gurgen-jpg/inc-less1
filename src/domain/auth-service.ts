@@ -56,13 +56,24 @@ export class AuthService {
             const userLoginExist = await UserRepository.getUserByLoginOrEmail(login);
             const userEmailExist = await UserRepository.getUserByLoginOrEmail(email);
 
-            if (userLoginExist || userEmailExist) {
+            if (userLoginExist) {
                 return {
                     status: 400,
                     errorsMessages: [
                         {
                             message: 'User already exists',
-                            field: 'loginOrEmail'
+                            field: 'login'
+                        }
+                    ]
+                }
+            }
+            if (userLoginExist) {
+                return {
+                    status: 400,
+                    errorsMessages: [
+                        {
+                            message: 'User already exists',
+                            field: 'email'
                         }
                     ]
                 }
