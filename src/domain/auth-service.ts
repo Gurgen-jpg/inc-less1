@@ -159,12 +159,19 @@ export class AuthService {
     static async resendEmail(email: string): Promise<StatusResultType> {
         try {
             const user = await UserRepository.getUserByLoginOrEmail(email);
-            if (!user || user.emailConfirmation.isConfirmed) {
+            if (!user) {
                 return {
                     status: 400,
                     errorsMessages: [{message: 'User not found', field: 'Email'}]
                 }
             }
+            if (user.emailConfirmation.isConfirmed) {
+                return {
+                    status: 400,
+                    errorsMessages: [{message: 'User already confirmed', field: 'Email'}]
+                }
+            }
+
 
             const newCode = await UserRepository.updateConfirmationCode(generateId(), user._id);
             if (!newCode) {
