@@ -132,25 +132,25 @@ export class AuthService {
             const user = await UserRepository.confirmEmail(emailCode);
             if (!user) return {
                 status: 400,
-                errors: {errorsMessages: [{message: 'Bad confirmation code', field: 'Confirmation code'}]}
+                errors: {errorsMessages: [{message: 'Bad confirmation code', field: 'code'}]}
             };
             if (user.emailConfirmation.confirmationCode !== emailCode) return {
                 status: 400,
                 errors: {
                     errorsMessages:
-                        [{message: 'Bad confirmation code', field: 'Confirmation code'}]
+                        [{message: 'Bad confirmation code', field: 'code'}]
                 }
             };
             if (user.emailConfirmation.isConfirmed) {
                 return {
                     status: 400,
-                    errors: {errorsMessages: [{message: 'Code was confirmed later', field: 'Confirmation code'}]},
+                    errors: {errorsMessages: [{message: 'Code was confirmed later', field: 'code'}]},
                 }
             }
             if (user.emailConfirmation.confirmationCode === emailCode && user.emailConfirmation.expirationDate < new Date()) {
                 return {
                     status: 400,
-                    errors: {errorsMessages: [{message: 'Code expired', field: 'Confirmation code'}]},
+                    errors: {errorsMessages: [{message: 'Code expired', field: 'code'}]},
                 }
             }
 
@@ -159,7 +159,7 @@ export class AuthService {
             if (!confirm) {
                 return {
                     status: 400,
-                    errors: {errorsMessages: [{message: 'Bad confirmation code', field: 'Confirmation code'}]}
+                    errors: {errorsMessages: [{message: 'Bad confirmation code', field: 'code'}]}
                 }
             }
 
@@ -172,7 +172,7 @@ export class AuthService {
             return {status: 400, errors: {
                     errorsMessages: [{
                         message: 'Bad confirmation code',
-                        field: 'Confirmation code'
+                        field: 'code'
                     }]
                 }}
         }
@@ -185,13 +185,13 @@ export class AuthService {
             if (!user) {
                 return {
                     status: 400,
-                    errors: {errorsMessages: [{message: 'User not found', field: 'Email'}]}
+                    errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
                 }
             }
             if (user.emailConfirmation.isConfirmed) {
                 return {
                     status: 400,
-                    errors: {errorsMessages: [{message: 'User already confirmed', field: 'Email'}]}
+                    errors: {errorsMessages: [{message: 'User already confirmed', field: 'email'}]}
                 }
             }
 
@@ -200,14 +200,14 @@ export class AuthService {
             if (!newCode) {
                 return {
                     status: 400,
-                    errors: {errorsMessages: [{message: 'User not found', field: 'Email'}]}
+                    errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
                 }
             }
             const isSend = await EmailAdapter.sendMail(email, user.accountData.login, 'Подтверждение регистрации', newCode);
             if (!isSend) {
                 return {
                     status: 400,
-                    errors: {errorsMessages: [{message: 'User not found', field: 'Email'}]}
+                    errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
                 }
             }
             return {
@@ -216,7 +216,7 @@ export class AuthService {
             }
         } catch (e) {
             console.error(e);
-            return {status: 400, errors: {errorsMessages: [{message: 'User not found', field: 'Email'}]}}
+            return {status: 400, errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}}
         }
     }
 }

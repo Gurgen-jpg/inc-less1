@@ -12,7 +12,7 @@ const loginValidation = body(fields.login)
     .trim()
     .isString()
     .withMessage('field must be a string')
-    .isLength({min: 3, max: 30})
+    .isLength({min: 3, max: 10})
     .withMessage('field must be between 3 and 30 characters')
     .matches('^[a-zA-Z0-9_-]*$')
     .withMessage('field must contain only english letters, numbers, underscores and dashes');
