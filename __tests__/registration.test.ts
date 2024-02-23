@@ -89,8 +89,22 @@ describe('registration Service', () => {
         expect(resend.status).toBe(204);
 
         console.log(resend.body)
+    })
 
+    it('-should return error if email is already confirmed', async () => {
+        await request(app).delete('/testing/all-data');
+        const {login, email, password} = testSeeder.createUserDto();
+        const user = await request(app).post('/users')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({login, email, password});
 
+        const res = await request(app).post('/auth/registration-email-resending').send({email});
+        expect(res.status).toBe(400);
+        console.log(res.body.errorsMessages)
+        expect(res.body.errorsMessages).toEqual({
+            message: 'Email already confirmed',
+            field: 'email'
+        })
     })
 })
 

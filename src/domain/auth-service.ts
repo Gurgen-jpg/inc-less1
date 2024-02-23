@@ -191,7 +191,7 @@ export class AuthService {
             if (user.emailConfirmation.isConfirmed) {
                 return {
                     status: 400,
-                    errors: {errorsMessages: [{message: 'User already confirmed', field: 'email'}]}
+                    errors: {errorsMessages: [{message: 'Email already confirmed', field: 'email'}]}
                 }
             }
 
