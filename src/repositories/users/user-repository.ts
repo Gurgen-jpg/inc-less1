@@ -67,9 +67,9 @@ export class UserRepository {
         }
     }
 
-    static async updateIsConfirmed(userId: ObjectId): Promise<Boolean> {
+    static async updateIsConfirmed(userId: ObjectId, isConfirmed: boolean): Promise<Boolean> {
         try {
-            const res = await usersCollection.updateOne({_id: userId}, {$set: {'emailConfirmation.isConfirmed': true}});
+            const res = await usersCollection.updateOne({_id: userId}, {$set: {'emailConfirmation.isConfirmed': isConfirmed}});
             if (res && res.modifiedCount === 1) {
                 return true
             }

@@ -113,7 +113,7 @@ class AuthService {
                 }
                 catch (e) {
                     console.error(e);
-                    yield user_repository_1.UserRepository.deleteUser(userId);
+                    // await UserRepository.deleteUser(userId);
                 }
                 return {
                     status: 204,
@@ -152,7 +152,7 @@ class AuthService {
                         errorsMessages: [{ message: 'Code expired', field: 'Confirmation code' }],
                     };
                 }
-                const confirm = yield user_repository_1.UserRepository.updateIsConfirmed(user._id);
+                const confirm = yield user_repository_1.UserRepository.updateIsConfirmed(user._id, true);
                 if (!confirm) {
                     return {
                         status: 400,
@@ -174,10 +174,16 @@ class AuthService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const user = yield user_repository_1.UserRepository.getUserByLoginOrEmail(email);
-                if (!user || user.emailConfirmation.isConfirmed) {
+                if (!user) {
                     return {
                         status: 400,
                         errorsMessages: [{ message: 'User not found', field: 'Email' }]
+                    };
+                }
+                if (user.emailConfirmation.isConfirmed) {
+                    return {
+                        status: 400,
+                        errorsMessages: [{ message: 'User already confirmed', field: 'Email' }]
                     };
                 }
                 const newCode = yield user_repository_1.UserRepository.updateConfirmationCode((0, uuid_1.generateId)(), user._id);

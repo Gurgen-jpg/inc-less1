@@ -85,10 +85,10 @@ class UserRepository {
             }
         });
     }
-    static updateIsConfirmed(userId) {
+    static updateIsConfirmed(userId, isConfirmed) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const res = yield db_1.usersCollection.updateOne({ _id: userId }, { $set: { 'emailConfirmation.isConfirmed': true } });
+                const res = yield db_1.usersCollection.updateOne({ _id: userId }, { $set: { 'emailConfirmation.isConfirmed': isConfirmed } });
                 if (res && res.modifiedCount === 1) {
                     return true;
                 }

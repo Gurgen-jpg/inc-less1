@@ -136,7 +136,7 @@ export class AuthService {
                 }
             }
 
-            const confirm = await UserRepository.updateIsConfirmed(user._id);
+            const confirm = await UserRepository.updateIsConfirmed(user._id, true);
 
             if (!confirm) {
                 return {
