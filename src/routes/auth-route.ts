@@ -9,6 +9,7 @@ import {
     resendEmailValidation
 } from "../validators/registration-validation";
 import {cookie} from "express-validator";
+import {refreshTokenMiddleware} from "../middlewares/authValidation/refresh-token-validation";
 
 export const authRoute = express.Router({});
 
@@ -26,7 +27,7 @@ authRoute.post('/login', async (req: RequestBodyType<LoginInputModel>, res: Resp
 
 });
 
-authRoute.post('/logout', tokenAuthorizationMiddleware, tokenAuthorizationMiddleware, async (req: Request, res: Response) => {
+authRoute.post('/logout', tokenAuthorizationMiddleware, refreshTokenMiddleware, async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
         return res.sendStatus(UNAUTHORIZED)
@@ -37,7 +38,7 @@ authRoute.post('/logout', tokenAuthorizationMiddleware, tokenAuthorizationMiddle
         : res.status(UNAUTHORIZED).send(result?.errors);
 })
 
-authRoute.post('/refresh-token', tokenAuthorizationMiddleware, async (req: Request, res: Response) => {
+authRoute.post('/refresh-token', refreshTokenMiddleware, async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
         return res.sendStatus(UNAUTHORIZED)
