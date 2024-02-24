@@ -27,6 +27,7 @@ describe('auth', () => {
             expect(response.status).toBe(200);
             expect(response.body.accessToken).toBeDefined();
             const token = response.body.accessToken;
+            // console.log('token', token);
             const authedUser = await request(app)
                 .get('/auth/me')
                 .set({
