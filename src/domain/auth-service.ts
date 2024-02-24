@@ -53,14 +53,14 @@ export class AuthService {
 
     static async logout(refreshToken: string): Promise<StatusResultType> {
         try {
-            if (!refreshToken) {
-                throw new Error('Invalid token')
-            }
-            const userId = await JwtService.verifyJWT(refreshToken);
-            const isTokenExpired = JwtService.isTokenExpired(refreshToken);
-            if (!userId || !isTokenExpired) {
-                throw new Error('Invalid token')
-            }
+            // if (!refreshToken) {
+            //     throw new Error('Invalid token')
+            // }
+            // const userId = await JwtService.verifyJWT(refreshToken);
+            // const isTokenExpired = JwtService.isTokenExpired(refreshToken);
+            // if (!userId || !isTokenExpired) {
+            //     throw new Error('Invalid token')
+            // }
             await AuthRepository.addTokenToBlackList(refreshToken);
             return {
                 status: 204,

@@ -58,14 +58,14 @@ class AuthService {
     static logout(refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!refreshToken) {
-                    throw new Error('Invalid token');
-                }
-                const userId = yield jwt_service_1.JwtService.verifyJWT(refreshToken);
-                const isTokenExpired = jwt_service_1.JwtService.isTokenExpired(refreshToken);
-                if (!userId || !isTokenExpired) {
-                    throw new Error('Invalid token');
-                }
+                // if (!refreshToken) {
+                //     throw new Error('Invalid token')
+                // }
+                // const userId = await JwtService.verifyJWT(refreshToken);
+                // const isTokenExpired = JwtService.isTokenExpired(refreshToken);
+                // if (!userId || !isTokenExpired) {
+                //     throw new Error('Invalid token')
+                // }
                 yield auth_repository_1.AuthRepository.addTokenToBlackList(refreshToken);
                 return {
                     status: 204,
