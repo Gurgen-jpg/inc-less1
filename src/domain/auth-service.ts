@@ -121,7 +121,12 @@ export class AuthService {
             if (!user) {
                 throw new Error('bad user id maybe deleted user')
             }
-            return user
+            return {
+                login: user.login,
+                email: user.email,
+                id: user.id,
+                createdAt: user.createdAt
+            }
         } catch (e) {
             console.error(e);
             return null
