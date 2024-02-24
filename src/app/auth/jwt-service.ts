@@ -25,7 +25,7 @@ export class JwtService {
     static isTokenExpired(token: string) {
         try {
             const jwtPayload: any = jwt.verify(token, process.env.SECRET_WORD!);
-            console.log('jwtPayload', jwtPayload);
+            // console.log('jwtPayload', jwtPayload);
             const expirationTime = jwtPayload.exp * 1000; // Преобразование времени истечения в миллисекунды
             const currentTime = Date.now(); // Текущее время в миллисекундах
             return expirationTime < currentTime;

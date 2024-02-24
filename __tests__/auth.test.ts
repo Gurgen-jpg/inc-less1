@@ -103,5 +103,39 @@ describe('auth', () => {
         await Promise.all(authPromise);
     })
 
+    it('-get auth/me, expired token', async () => {
+        await request(app).delete('/testing/all-data');
+        const user = await request(app).post('/users')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                login: 'login',
+                password: 'password',
+                email: 'user.email@mail.com'
+            })
+        const response = await request(app).post('/auth/login').send({
+            loginOrEmail: 'login',
+            password: 'password',
+        })
+        console.log(response.body);
+
+        const [header, payload, signature] = response.body.accessToken.split('.');
+        const decodedPayload = JSON.parse(Buffer.from(payload, 'base64').toString());
+        const exp = decodedPayload.exp;
+
+        // console.log(exp * 1000 - Date.now());
+
+        await new Promise(resolve => setTimeout(resolve, 15000));
+
+
+        const authedUser = await request(app)
+            .get('/auth/me')
+            .set({
+                Authorization: `Bearer ${response.body.accessToken}`
+            });
+
+        expect(authedUser.status).toBe(401);
+
+    })
+
 
 })
