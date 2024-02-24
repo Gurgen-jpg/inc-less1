@@ -101,10 +101,10 @@ describe('registration Service', () => {
         const res = await request(app).post('/auth/registration-email-resending').send({email});
         expect(res.status).toBe(400);
         console.log(res.body.errorsMessages)
-        expect(res.body.errorsMessages).toEqual({
+        expect(res.body.errorsMessages).toEqual([{
             message: 'Email already confirmed',
             field: 'email'
-        })
+        }])
     })
 })
 
