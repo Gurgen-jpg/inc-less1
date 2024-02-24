@@ -21,6 +21,11 @@ export const tokenAuthorizationMiddleware = (req: Request, res: Response, next: 
         res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
         return
     }
+    const isTokenExpired = JwtService.isTokenExpired(token);
+    if (isTokenExpired) {
+        res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
+        return
+    }
     req.context = {
         user: {
             id: userId

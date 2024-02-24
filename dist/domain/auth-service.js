@@ -108,6 +108,7 @@ class AuthService {
                     throw new Error('wrong token');
                 }
                 const newRefreshToken = yield jwt_service_1.JwtService.createJWT(userId, '20s');
+                yield auth_repository_1.AuthRepository.addTokenToBlackList(refreshToken);
                 return ({
                     accessToken,
                     refreshToken: newRefreshToken

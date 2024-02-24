@@ -112,7 +112,7 @@ export class AuthService {
         }
     }
 
-    static async me(userId: string): Promise<UserViewModel | null> {
+    static async me(userId: string,): Promise<UserViewModel | null> {
         try {
             if (!userId) {
                 throw new Error('Invalid token')
