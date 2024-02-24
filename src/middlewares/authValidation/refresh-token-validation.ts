@@ -5,32 +5,18 @@ import {JwtService} from "../../app/auth/jwt-service";
 
 export const tokenAuthorizationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     dotenv.config();
-    const auth = req.headers['authorization'];
-    if (!auth) {
+    const cookie = req.cookies.refreshToken;
+    if (!cookie) {
         res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
         return
     }
 
-    const [authType, token] = auth.split(' ');
-    if (authType !== AUTH_TYPES.BEARER) {
-        res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
-        return
-    }
-    const userId = JwtService.verifyJWT(token);
-    if (!userId) {
-        res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
-        return
-    }
-    const isTokenExpired = JwtService.isTokenExpired(token);
+    const isTokenExpired = JwtService.isTokenExpired(cookie);
     if (isTokenExpired) {
         res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
         return
     }
-    req.context = {
-        user: {
-            id: userId
-        }
-    };
+
     return next();
 
 }

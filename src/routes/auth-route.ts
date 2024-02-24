@@ -26,8 +26,8 @@ authRoute.post('/login', async (req: RequestBodyType<LoginInputModel>, res: Resp
 
 });
 
-authRoute.post('/logout', tokenAuthorizationMiddleware, async (req: Request, res: Response) => {
-    const refreshToken= req.cookies.refreshToken;
+authRoute.post('/logout', tokenAuthorizationMiddleware, tokenAuthorizationMiddleware, async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
         return res.sendStatus(UNAUTHORIZED)
     }
@@ -37,7 +37,7 @@ authRoute.post('/logout', tokenAuthorizationMiddleware, async (req: Request, res
         : res.status(UNAUTHORIZED).send(result?.errors);
 })
 
-authRoute.post('/refresh-token', async (req: Request, res: Response) => {
+authRoute.post('/refresh-token', tokenAuthorizationMiddleware, async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
         return res.sendStatus(UNAUTHORIZED)
