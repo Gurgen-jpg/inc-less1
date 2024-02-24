@@ -22,12 +22,13 @@ authRoute.post('/login', async (req: RequestBodyType<LoginInputModel>, res: Resp
     }
     return res
         .cookie('refreshToken', token?.refreshToken, {httpOnly: true, secure: true})
+        .header('Cache-Control', 'no-cache')
         .status(OK).send({accessToken: token?.accessToken})
 
 
 });
 
-authRoute.post('/logout', tokenAuthorizationMiddleware, refreshTokenMiddleware, async (req: Request, res: Response) => {
+authRoute.post('/logout', refreshTokenMiddleware, async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
         return res.sendStatus(UNAUTHORIZED)

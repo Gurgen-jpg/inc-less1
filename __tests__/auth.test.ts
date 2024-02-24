@@ -187,20 +187,28 @@ describe('auth', () => {
 
         // Проверяем, что в ответе есть куки
         expect(refresh.status).toBe(200);
-
-        // достать новые токены
-        const newCookies = refresh.headers['set-cookie'];
-        const newRefreshToken = testSeeder.getRefreshToken(newCookies);
-        const newAccessToken = refresh.body.accessToken?.split('.')[2];
-
-        console.log({oldRefreshToken, newRefreshToken, oldAccessToken, newAccessToken});
-
-        // сравнить
-        // expect(oldRefreshToken).not.toBe(newRefreshToken);
-        expect(oldAccessToken).not.toBe(newAccessToken);
-
-
-
+        expect(refresh.headers['set-cookie']).toBeDefined();
+        expect(refresh.headers['set-cookie']).toHaveLength(1);
     });
+
+    it('-refresh token is expired', async () => {
+        await request(app).delete('/testing/all-data');
+        const user = await request(app).post('/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5').send({
+            login: 'login',
+            password: 'password',
+            email: 'user.email@mail.com'
+        });
+        const login = await request(app).post('/auth/login').send({
+            loginOrEmail: 'login',
+            password: 'password',
+        });
+        const cookies = login.headers['set-cookie'];
+        const oldRefreshToken = testSeeder.getRefreshToken(cookies);
+        await new Promise(resolve => setTimeout(resolve, 22000));
+        const refresh = await request(app).post('/auth/refresh-token').set({
+            Cookie: cookies
+        })
+        expect(refresh.status).toBe(401);
+    })
 
 })

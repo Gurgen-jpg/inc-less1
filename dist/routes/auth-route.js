@@ -18,6 +18,7 @@ const common_1 = require("../models/common");
 const auth_service_1 = require("../domain/auth-service");
 const token_authorization_1 = require("../middlewares/authValidation/token-authorization");
 const registration_validation_1 = require("../validators/registration-validation");
+const refresh_token_validation_1 = require("../middlewares/authValidation/refresh-token-validation");
 exports.authRoute = express_1.default.Router({});
 const { OK, NO_CONTENT, UNAUTHORIZED, NOT_FOUND, BAD_REQUEST } = common_1.HTTP_STATUSES;
 exports.authRoute.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -28,9 +29,10 @@ exports.authRoute.post('/login', (req, res) => __awaiter(void 0, void 0, void 0,
     }
     return res
         .cookie('refreshToken', token === null || token === void 0 ? void 0 : token.refreshToken, { httpOnly: true, secure: true })
+        .header('Cache-Control', 'no-cache')
         .status(OK).send({ accessToken: token === null || token === void 0 ? void 0 : token.accessToken });
 }));
-exports.authRoute.post('/logout', token_authorization_1.tokenAuthorizationMiddleware, token_authorization_1.tokenAuthorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authRoute.post('/logout', refresh_token_validation_1.refreshTokenMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
         return res.sendStatus(UNAUTHORIZED);
@@ -40,7 +42,7 @@ exports.authRoute.post('/logout', token_authorization_1.tokenAuthorizationMiddle
         ? res.status(NO_CONTENT).send(result === null || result === void 0 ? void 0 : result.message)
         : res.status(UNAUTHORIZED).send(result === null || result === void 0 ? void 0 : result.errors);
 }));
-exports.authRoute.post('/refresh-token', token_authorization_1.tokenAuthorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authRoute.post('/refresh-token', refresh_token_validation_1.refreshTokenMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
         return res.sendStatus(UNAUTHORIZED);
