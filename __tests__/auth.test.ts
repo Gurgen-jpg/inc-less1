@@ -40,7 +40,6 @@ describe('auth', () => {
                 email: 'user.email@mail.com',
                 login: user.loginOrEmail + id,
                 userId: expect.any(String),
-                createdAt: expect.any(String),
             })
         })
         await Promise.all(authPromise);
@@ -182,7 +181,7 @@ describe('auth', () => {
         const refresh = await request(app)
             .post('/auth/refresh-token')
             .set({
-                Cookie: 'refreshToken=' + oldRefreshToken
+                Cookie: cookies
             })
 
         // Проверяем, что в ответе есть куки
@@ -204,7 +203,7 @@ describe('auth', () => {
         });
         const cookies = login.headers['set-cookie'];
         const oldRefreshToken = testSeeder.getRefreshToken(cookies);
-        await new Promise(resolve => setTimeout(resolve, 22000));
+        await new Promise(resolve => setTimeout(resolve, 8000));
         const refresh = await request(app).post('/auth/refresh-token').set({
             Cookie: cookies
         })

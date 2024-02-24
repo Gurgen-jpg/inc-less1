@@ -25,11 +25,20 @@ export class JwtService {
     static isTokenExpired(token: string) {
         try {
             const jwtPayload: any = jwt.verify(token, process.env.SECRET_WORD!);
-            const expirationTime = jwtPayload.exp * 1000; // Преобразование времени истечения в миллисекунды
-            const currentTime = Date.now(); // Текущее время в миллисекундах
-            return expirationTime < currentTime;
-        } catch (e) {
-            return null;
+            // const expirationTime = jwtPayload.exp * 1000; // Преобразование времени истечения в миллисекунды
+            // const currentTime = Date.now(); // Текущее время в миллисекундах
+            // return expirationTime < currentTime;
+            return false;
+        } catch (error: any) {
+            if (error instanceof jwt.TokenExpiredError) {
+                // Если токен просрочен, выводим сообщение об ошибке
+                console.error('Токен просрочен');
+                console.error('Истекло время: ', error.expiredAt); // Время истечения токена
+            } else {
+                // Если произошла другая ошибка, выводим ее сообщение
+                console.error('Произошла ошибка при проверке токена:', error.message);
+            }
+            return true;
         }
     }
 }
