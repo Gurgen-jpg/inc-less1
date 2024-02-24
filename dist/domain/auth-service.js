@@ -133,8 +133,7 @@ class AuthService {
                 return {
                     login: user.login,
                     email: user.email,
-                    userId: user.userId,
-                    createdAt: user.createdAt
+                    userId: user.id,
                 };
             }
             catch (e) {

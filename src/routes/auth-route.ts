@@ -52,7 +52,7 @@ authRoute.post('/refresh-token', tokenAuthorizationMiddleware, async (req: Reque
 })
 
 authRoute.get('/me', tokenAuthorizationMiddleware, async (req: Request, res: Response) => {
-    const me = await AuthService.me(req.context.user?.userId!);
+    const me = await AuthService.me(req.context.user?.id!);
     return me ? res.status(OK).send(me) : res.sendStatus(NOT_FOUND);
 })
 

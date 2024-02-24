@@ -12,7 +12,7 @@ export class CommentService {
                 statusCode: 404,
                 message: "not found"
             };
-            const isCommentCanBeDeleted = await CommentRepository.getUserCommentById(id, user.userId!)
+            const isCommentCanBeDeleted = await CommentRepository.getUserCommentById(id, user.id!)
             if (!isCommentCanBeDeleted) return {
                 statusCode: 403,
                 message: "not found"
@@ -45,11 +45,11 @@ export class CommentService {
                 statusCode: 404,
                 message: "not found"
             };
-            if (user?.userId !== comment.commentatorInfo.userId) return {
+            if (user?.id !== comment.commentatorInfo.userId) return {
                 statusCode: 403,
                 message: "forbidden"
             };
-            const isCommentCanBeDeleted = await CommentRepository.updateComment(id, newComment, user.userId!);
+            const isCommentCanBeDeleted = await CommentRepository.updateComment(id, newComment, user.id!);
             // await CommentRepository.getUserCommentById(id, user.id!)
             if (!isCommentCanBeDeleted) {
                 return {

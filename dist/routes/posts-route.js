@@ -45,7 +45,7 @@ exports.postRoute.post("/:postId/comments", token_authorization_1.tokenAuthoriza
     if (!mongodb_1.ObjectId.isValid(req.params.postId)) {
         return res.sendStatus(NOT_FOUND);
     }
-    const comment = yield post_services_1.PostServices.createComment(req.params.postId, req.body.content, req.context.user.userId);
+    const comment = yield post_services_1.PostServices.createComment(req.params.postId, req.body.content, req.context.user.id);
     return comment ? res.status(CREATED).send(comment) : res.sendStatus(NOT_FOUND);
 }));
 exports.postRoute.get("/:postId/comments", input_validation_middleware_1.mongoIdValidation, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

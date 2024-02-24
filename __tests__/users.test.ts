@@ -27,12 +27,12 @@ describe('users', () => {
             })
         expect(response.status).toBe(201);
         expect(response.body).toEqual({
-            userId: expect.any(String),
+            id: expect.any(String),
             login: 'login',
             email: 'user.email@mail.ru',
             createdAt: expect.any(String),
         })
-        expect.setState({userId: response.body.userId});
+        expect.setState({userId: response.body.id});
     });
 
     it('-add user', async () => {
