@@ -28,7 +28,7 @@ export const tokenAuthorizationMiddleware = (req: Request, res: Response, next: 
     }
     req.context = {
         user: {
-            id: userId
+            userId: userId
         }
     };
     return next();

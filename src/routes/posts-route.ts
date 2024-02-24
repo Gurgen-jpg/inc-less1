@@ -52,7 +52,7 @@ postRoute.post("/:postId/comments",
         if (!ObjectId.isValid(req.params.postId)) {
             return res.sendStatus(NOT_FOUND);
         }
-        const comment = await PostServices.createComment(req.params.postId, req.body.content, req.context.user!.id!);
+        const comment = await PostServices.createComment(req.params.postId, req.body.content, req.context.user!.userId!);
         return comment ? res.status(CREATED).send(comment) : res.sendStatus(NOT_FOUND);
     })
 

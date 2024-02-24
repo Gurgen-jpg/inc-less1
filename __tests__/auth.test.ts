@@ -37,7 +37,7 @@ describe('auth', () => {
             expect(authedUser.body).toEqual({
                 email: 'user.email@mail.com',
                 login: user.loginOrEmail + id,
-                id: expect.any(String),
+                userId: expect.any(String),
                 createdAt: expect.any(String),
             })
         })
@@ -66,7 +66,7 @@ describe('auth', () => {
         expect(token.body.accessToken).toBeDefined();
         // удалил юзера
         const deleteStatus = await request(app)
-            .delete('/users/' + user.body.id)
+            .delete('/users/' + user.body.userId)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5');
         expect(deleteStatus.status).toBe(204);
         // пробую авторизоваться с токеном удаленного юзера

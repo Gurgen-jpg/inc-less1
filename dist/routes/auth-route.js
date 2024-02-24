@@ -55,7 +55,7 @@ exports.authRoute.post('/refresh-token', token_authorization_1.tokenAuthorizatio
 }));
 exports.authRoute.get('/me', token_authorization_1.tokenAuthorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const me = yield auth_service_1.AuthService.me((_a = req.context.user) === null || _a === void 0 ? void 0 : _a.id);
+    const me = yield auth_service_1.AuthService.me((_a = req.context.user) === null || _a === void 0 ? void 0 : _a.userId);
     return me ? res.status(OK).send(me) : res.sendStatus(NOT_FOUND);
 }));
 exports.authRoute.post('/registration', (0, registration_validation_1.registerValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {

@@ -124,7 +124,7 @@ export class AuthService {
             return {
                 login: user.login,
                 email: user.email,
-                id: user.id,
+                userId: user.userId,
                 createdAt: user.createdAt
             }
         } catch (e) {

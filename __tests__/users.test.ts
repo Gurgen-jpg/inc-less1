@@ -27,12 +27,12 @@ describe('users', () => {
             })
         expect(response.status).toBe(201);
         expect(response.body).toEqual({
-            id: expect.any(String),
+            userId: expect.any(String),
             login: 'login',
             email: 'user.email@mail.ru',
             createdAt: expect.any(String),
         })
-        expect.setState({userId: response.body.id});
+        expect.setState({userId: response.body.userId});
     });
 
     it('-add user', async () => {
@@ -51,9 +51,9 @@ describe('users', () => {
     })
 
     it('+delete user', async () => {
-        const id = expect.getState().userId;
+        const userId = expect.getState().userId;
         const res = await request(app)
-            .delete(`/users/${id}`)
+            .delete(`/users/${userId}`)
             .set('Authorization', `Basic YWRtaW46cXdlcnR5`);
 
         expect(res.status).toBe(204);
