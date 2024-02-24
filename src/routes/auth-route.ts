@@ -37,8 +37,8 @@ authRoute.post('/logout', tokenAuthorizationMiddleware, async (req: Request, res
         : res.status(UNAUTHORIZED).send(result?.errors);
 })
 
-authRoute.post('/refresh-token', tokenAuthorizationMiddleware, async (req: Request, res: Response) => {
-    const refreshToken= req.cookies.refreshToken;
+authRoute.post('/refresh-token', async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
         return res.sendStatus(UNAUTHORIZED)
     }
