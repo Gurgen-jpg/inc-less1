@@ -101,6 +101,7 @@ export class AuthService {
                 throw new Error('wrong token')
             }
             const newRefreshToken = await JwtService.createJWT(userId, '20s');
+            await AuthRepository.addTokenToBlackList(refreshToken);
             return ({
                 accessToken,
                 refreshToken: newRefreshToken
