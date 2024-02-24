@@ -137,5 +137,39 @@ describe('auth', () => {
 
     })
 
+    it('+refresh token', async () => {
+        await request(app).delete('/testing/all-data');
+        const user = await request(app)
+            .post('/users')
+            .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                login: 'login',
+                password: 'password',
+                email: 'user.email@mail.com'
+            });
+        const login = await request(app)
+            .post('/auth/login')
+            .send({
+                loginOrEmail: 'login',
+                password: 'password',
+            });
+
+        // Проверяем, что в ответе есть куки
+        expect(login.headers['set-cookie']).toBeDefined();
+
+        // Получаем массив кук из заголовка Set-Cookie
+        const cookies = login.headers['set-cookie'];
+
+        // Проверяем каждую куку на наличие refreshToken и флага HttpOnly
+        let refreshTokenCookieFound = false;
+        for (const cookie of cookies) {
+            if (cookie.startsWith('refreshToken') && cookie.includes('HttpOnly')) {
+                refreshTokenCookieFound = true;
+                break;
+            }
+        }
+
+        expect(refreshTokenCookieFound).toBe(true);
+    });
 
 })
