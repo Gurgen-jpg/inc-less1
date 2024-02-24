@@ -23,9 +23,35 @@ const { OK, NO_CONTENT, UNAUTHORIZED, NOT_FOUND, BAD_REQUEST } = common_1.HTTP_S
 exports.authRoute.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { loginOrEmail, password } = req.body;
     const token = yield auth_service_1.AuthService.login({ loginOrEmail, password });
-    return token
-        ? res.status(OK).send({ accessToken: token })
-        : res.sendStatus(UNAUTHORIZED);
+    if (!token || !token.accessToken || !token.refreshToken) {
+        return res.sendStatus(UNAUTHORIZED);
+    }
+    return res
+        .cookie('refreshToken', token === null || token === void 0 ? void 0 : token.refreshToken, { httpOnly: true, secure: true })
+        .status(OK).send({ accessToken: token === null || token === void 0 ? void 0 : token.accessToken });
+}));
+exports.authRoute.post('/logout', token_authorization_1.tokenAuthorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+        return res.sendStatus(UNAUTHORIZED);
+    }
+    const result = yield auth_service_1.AuthService.logout(refreshToken);
+    return result.status === 204
+        ? res.status(NO_CONTENT).send(result === null || result === void 0 ? void 0 : result.message)
+        : res.status(UNAUTHORIZED).send(result === null || result === void 0 ? void 0 : result.errors);
+}));
+exports.authRoute.post('/refresh-token', token_authorization_1.tokenAuthorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+        return res.sendStatus(UNAUTHORIZED);
+    }
+    const token = yield auth_service_1.AuthService.refreshToken(refreshToken);
+    if (!token || !token.accessToken || !token.refreshToken) {
+        return res.sendStatus(UNAUTHORIZED);
+    }
+    return res
+        .cookie('refreshToken', token === null || token === void 0 ? void 0 : token.refreshToken, { httpOnly: true, secure: true })
+        .status(OK).send({ accessToken: token === null || token === void 0 ? void 0 : token.accessToken });
 }));
 exports.authRoute.get('/me', token_authorization_1.tokenAuthorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;

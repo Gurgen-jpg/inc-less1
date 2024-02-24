@@ -9,10 +9,18 @@ import {BcryptService} from "../app/auth/bcrypt-service";
 import {StatusResultType} from "../models/common";
 import {add} from "date-fns/add";
 import {generateId} from "../adapters/uuid";
+import {AuthRepository} from "../repositories/auth-repository";
 
+type LoginResponseType = {
+    accessToken: string;
+    refreshToken: string;
+}
 
 export class AuthService {
-    static async login(payload: LoginInputModel): Promise<string | null> {
+    static async login(payload: LoginInputModel): Promise<{
+        accessToken: string,
+        refreshToken: string
+    } | null> {
         const {loginOrEmail, password} = payload;
         try {
             const user = await UserRepository.getUserByLoginOrEmail(loginOrEmail);
@@ -23,7 +31,17 @@ export class AuthService {
                 if (!isCredentialsCorrect) {
                     throw new Error('wrong password')
                 } else {
-                    return JwtService.createJWT(user._id.toString());
+                    const accessToken = await JwtService.createJWT(user._id.toString(), '10s');
+                    const refreshToken = await JwtService.createJWT(user._id.toString(), '20s');
+
+                    if (!accessToken || !refreshToken) {
+                        throw new Error('wrong token')
+                    }
+
+                    return ({
+                        accessToken,
+                        refreshToken,
+                    });
                 }
             }
         } catch (e) {
@@ -31,6 +49,66 @@ export class AuthService {
             return null
         }
 
+    }
+
+    static async logout(refreshToken: string): Promise<StatusResultType> {
+        try {
+            if (!refreshToken) {
+                throw new Error('Invalid token')
+            }
+            const userId = await JwtService.verifyJWT(refreshToken);
+            const isTokenExpired = JwtService.isTokenExpired(refreshToken);
+            if (!userId || !isTokenExpired) {
+                throw new Error('Invalid token')
+            }
+            await AuthRepository.addTokenToBlackList(refreshToken);
+            return {
+                status: 204,
+                message: 'Logout success'
+            }
+        } catch (e) {
+            console.error(e);
+            return {
+                status: 401,
+                errors: {
+                    errorsMessages: [
+                        {
+                            message: 'Invalid token',
+                            field: 'refreshToken'
+                        }
+                    ]
+                }
+            }
+        }
+    }
+
+    static async refreshToken(refreshToken: string) {
+        try {
+            if (!refreshToken) {
+                throw new Error('Invalid token')
+            }
+            const isTokenBlackList = await AuthRepository.isTokenBlacklisted(refreshToken);
+            if (isTokenBlackList) {
+                throw new Error('Invalid token')
+            }
+            const userId = await JwtService.verifyJWT(refreshToken);
+            const isTokenExpired = JwtService.isTokenExpired(refreshToken);
+            if (!userId || !isTokenExpired) {
+                throw new Error('Invalid token')
+            }
+            const accessToken = await JwtService.createJWT(userId, '10s');
+            if (!accessToken) {
+                throw new Error('wrong token')
+            }
+            const newRefreshToken = await JwtService.createJWT(userId, '20s');
+            return ({
+                accessToken,
+                refreshToken: newRefreshToken
+            });
+        } catch (e) {
+            console.error(e);
+            return null
+        }
     }
 
     static async me(userId: string): Promise<UserViewModel | null> {
@@ -169,12 +247,14 @@ export class AuthService {
             }
         } catch (e) {
             console.error(e);
-            return {status: 400, errors: {
+            return {
+                status: 400, errors: {
                     errorsMessages: [{
                         message: 'Bad confirmation code',
                         field: 'code'
                     }]
-                }}
+                }
+            }
         }
     }
 

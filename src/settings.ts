@@ -5,9 +5,11 @@ import {testingRoute} from "./routes/testing-route";
 import {authRoute} from "./routes/auth-route";
 import {usersRoute} from "./routes/users-route";
 import {commentsRoute} from "./routes/comments-route";
+import cookieParser from "cookie-parser";
 
 export const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 app.use('/blogs', blogRoute);
 app.use('/posts', postRoute);

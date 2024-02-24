@@ -21,6 +21,7 @@ const email_adapter_1 = require("../adapters/email-adapter");
 const bcrypt_service_1 = require("../app/auth/bcrypt-service");
 const add_1 = require("date-fns/add");
 const uuid_1 = require("../adapters/uuid");
+const auth_repository_1 = require("../repositories/auth-repository");
 class AuthService {
     static login(payload) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -36,9 +37,81 @@ class AuthService {
                         throw new Error('wrong password');
                     }
                     else {
-                        return jwt_service_1.JwtService.createJWT(user._id.toString());
+                        const accessToken = yield jwt_service_1.JwtService.createJWT(user._id.toString(), '10s');
+                        const refreshToken = yield jwt_service_1.JwtService.createJWT(user._id.toString(), '20s');
+                        if (!accessToken || !refreshToken) {
+                            throw new Error('wrong token');
+                        }
+                        return ({
+                            accessToken,
+                            refreshToken,
+                        });
                     }
                 }
+            }
+            catch (e) {
+                console.error(e);
+                return null;
+            }
+        });
+    }
+    static logout(refreshToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!refreshToken) {
+                    throw new Error('Invalid token');
+                }
+                const userId = yield jwt_service_1.JwtService.verifyJWT(refreshToken);
+                const isTokenExpired = jwt_service_1.JwtService.isTokenExpired(refreshToken);
+                if (!userId || !isTokenExpired) {
+                    throw new Error('Invalid token');
+                }
+                yield auth_repository_1.AuthRepository.addTokenToBlackList(refreshToken);
+                return {
+                    status: 204,
+                    message: 'Logout success'
+                };
+            }
+            catch (e) {
+                console.error(e);
+                return {
+                    status: 401,
+                    errors: {
+                        errorsMessages: [
+                            {
+                                message: 'Invalid token',
+                                field: 'refreshToken'
+                            }
+                        ]
+                    }
+                };
+            }
+        });
+    }
+    static refreshToken(refreshToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!refreshToken) {
+                    throw new Error('Invalid token');
+                }
+                const isTokenBlackList = yield auth_repository_1.AuthRepository.isTokenBlacklisted(refreshToken);
+                if (isTokenBlackList) {
+                    throw new Error('Invalid token');
+                }
+                const userId = yield jwt_service_1.JwtService.verifyJWT(refreshToken);
+                const isTokenExpired = jwt_service_1.JwtService.isTokenExpired(refreshToken);
+                if (!userId || !isTokenExpired) {
+                    throw new Error('Invalid token');
+                }
+                const accessToken = yield jwt_service_1.JwtService.createJWT(userId, '10s');
+                if (!accessToken) {
+                    throw new Error('wrong token');
+                }
+                const newRefreshToken = yield jwt_service_1.JwtService.createJWT(userId, '20s');
+                return ({
+                    accessToken,
+                    refreshToken: newRefreshToken
+                });
             }
             catch (e) {
                 console.error(e);
@@ -183,12 +256,14 @@ class AuthService {
             }
             catch (e) {
                 console.error(e);
-                return { status: 400, errors: {
+                return {
+                    status: 400, errors: {
                         errorsMessages: [{
                                 message: 'Bad confirmation code',
                                 field: 'code'
                             }]
-                    } };
+                    }
+                };
             }
         });
     }

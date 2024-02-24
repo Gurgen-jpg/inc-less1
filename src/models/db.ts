@@ -3,6 +3,8 @@ import {Posts, PostViewModel} from "./posts/output";
 import {Users, UserViewModel} from "./users/output";
 import {CommentVewModel} from "./comments/output";
 
+export type TokenData = { token: string }
+
 export type OutputViewModel = {
     blogs: Blogs,
     posts: Posts,

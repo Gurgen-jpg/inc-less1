@@ -8,17 +8,48 @@ import {
     registerValidation,
     resendEmailValidation
 } from "../validators/registration-validation";
+import {cookie} from "express-validator";
 
 export const authRoute = express.Router({});
 
 const {OK, NO_CONTENT, UNAUTHORIZED, NOT_FOUND, BAD_REQUEST} = HTTP_STATUSES;
 authRoute.post('/login', async (req: RequestBodyType<LoginInputModel>, res: Response) => {
     const {loginOrEmail, password} = req.body;
-    const token = await AuthService.login({loginOrEmail, password});
-    return token
-        ? res.status(OK).send({accessToken: token})
-        : res.sendStatus(UNAUTHORIZED);
+    const token = await AuthService.login({loginOrEmail, password})
+    if (!token || !token.accessToken || !token.refreshToken) {
+        return res.sendStatus(UNAUTHORIZED)
+    }
+    return res
+        .cookie('refreshToken', token?.refreshToken, {httpOnly: true, secure: true})
+        .status(OK).send({accessToken: token?.accessToken})
+
+
 });
+
+authRoute.post('/logout', tokenAuthorizationMiddleware, async (req: Request, res: Response) => {
+    const refreshToken= req.cookies.refreshToken;
+    if (!refreshToken) {
+        return res.sendStatus(UNAUTHORIZED)
+    }
+    const result = await AuthService.logout(refreshToken);
+    return result.status === 204
+        ? res.status(NO_CONTENT).send(result?.message)
+        : res.status(UNAUTHORIZED).send(result?.errors);
+})
+
+authRoute.post('/refresh-token', tokenAuthorizationMiddleware, async (req: Request, res: Response) => {
+    const refreshToken= req.cookies.refreshToken;
+    if (!refreshToken) {
+        return res.sendStatus(UNAUTHORIZED)
+    }
+    const token = await AuthService.refreshToken(refreshToken);
+    if (!token || !token.accessToken || !token.refreshToken) {
+        return res.sendStatus(UNAUTHORIZED)
+    }
+    return res
+        .cookie('refreshToken', token?.refreshToken, {httpOnly: true, secure: true})
+        .status(OK).send({accessToken: token?.accessToken})
+})
 
 authRoute.get('/me', tokenAuthorizationMiddleware, async (req: Request, res: Response) => {
     const me = await AuthService.me(req.context.user?.id!);
