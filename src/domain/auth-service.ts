@@ -93,17 +93,16 @@ export class AuthService {
             }
             const userId = await JwtService.verifyJWT(refreshToken);
             const isTokenExpired = JwtService.isTokenExpired(refreshToken);
-            if (!userId || !isTokenExpired) {
-                throw new Error('Invalid token')
+
+            if (isTokenExpired) {
+                throw new Error('refresh token expired')
             }
             const accessToken = await JwtService.createJWT(userId, '10s');
-            if (!accessToken) {
-                throw new Error('wrong token')
-            }
             const newRefreshToken = await JwtService.createJWT(userId, '20s');
+
             await AuthRepository.addTokenToBlackList(refreshToken);
             return ({
-                accessToken,
+                accessToken: accessToken,
                 refreshToken: newRefreshToken
             });
         } catch (e) {

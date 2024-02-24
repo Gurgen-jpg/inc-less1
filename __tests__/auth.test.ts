@@ -1,6 +1,8 @@
 import request from "supertest";
 import {app} from "../src/settings";
 import {createUsers} from "./utils/createData";
+import {testSeeder} from "./utils/test.seeder";
+import {cookie} from "express-validator";
 
 describe('auth', () => {
     beforeAll(async () => {
@@ -164,12 +166,41 @@ describe('auth', () => {
         let refreshTokenCookieFound = false;
         for (const cookie of cookies) {
             if (cookie.startsWith('refreshToken') && cookie.includes('HttpOnly')) {
+
                 refreshTokenCookieFound = true;
                 break;
             }
         }
 
         expect(refreshTokenCookieFound).toBe(true);
+
+        // достать рефреш токен и аксес токен
+        const oldRefreshToken = testSeeder.getRefreshToken(cookies);
+        const oldAccessToken = login.body.accessToken?.split('.')[2];
+
+        // обновим токены
+        const refresh = await request(app)
+            .post('/auth/refresh-token')
+            .set({
+                Cookie: 'refreshToken=' + oldRefreshToken
+            })
+
+        // Проверяем, что в ответе есть куки
+        expect(refresh.status).toBe(200);
+
+        // достать новые токены
+        const newCookies = refresh.headers['set-cookie'];
+        const newRefreshToken = testSeeder.getRefreshToken(newCookies);
+        const newAccessToken = refresh.body.accessToken?.split('.')[2];
+
+        console.log({oldRefreshToken, newRefreshToken, oldAccessToken, newAccessToken});
+
+        // сравнить
+        // expect(oldRefreshToken).not.toBe(newRefreshToken);
+        expect(oldAccessToken).not.toBe(newAccessToken);
+
+
+
     });
 
 })

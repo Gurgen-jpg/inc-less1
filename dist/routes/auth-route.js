@@ -51,6 +51,7 @@ exports.authRoute.post('/refresh-token', (req, res) => __awaiter(void 0, void 0,
     }
     return res
         .cookie('refreshToken', token === null || token === void 0 ? void 0 : token.refreshToken, { httpOnly: true, secure: true })
+        .header('Cache-Control', 'no-cache')
         .status(OK).send({ accessToken: token === null || token === void 0 ? void 0 : token.accessToken });
 }));
 exports.authRoute.get('/me', token_authorization_1.tokenAuthorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

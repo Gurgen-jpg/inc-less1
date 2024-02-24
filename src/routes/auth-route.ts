@@ -48,6 +48,7 @@ authRoute.post('/refresh-token', async (req: Request, res: Response) => {
     }
     return res
         .cookie('refreshToken', token?.refreshToken, {httpOnly: true, secure: true})
+        .header('Cache-Control', 'no-cache')
         .status(OK).send({accessToken: token?.accessToken})
 })
 

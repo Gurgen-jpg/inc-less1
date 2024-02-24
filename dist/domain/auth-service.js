@@ -100,17 +100,14 @@ class AuthService {
                 }
                 const userId = yield jwt_service_1.JwtService.verifyJWT(refreshToken);
                 const isTokenExpired = jwt_service_1.JwtService.isTokenExpired(refreshToken);
-                if (!userId || !isTokenExpired) {
-                    throw new Error('Invalid token');
+                if (isTokenExpired) {
+                    throw new Error('refresh token expired');
                 }
                 const accessToken = yield jwt_service_1.JwtService.createJWT(userId, '10s');
-                if (!accessToken) {
-                    throw new Error('wrong token');
-                }
                 const newRefreshToken = yield jwt_service_1.JwtService.createJWT(userId, '20s');
                 yield auth_repository_1.AuthRepository.addTokenToBlackList(refreshToken);
                 return ({
-                    accessToken,
+                    accessToken: accessToken,
                     refreshToken: newRefreshToken
                 });
             }
