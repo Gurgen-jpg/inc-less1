@@ -61,6 +61,10 @@ export class AuthService {
             // if (!userId || !isTokenExpired) {
             //     throw new Error('Invalid token')
             // }
+            const isTokenBlackList = await AuthRepository.isTokenBlacklisted(refreshToken);
+            if (isTokenBlackList) {
+                throw new Error('Token in blacklist')
+            }
             await AuthRepository.addTokenToBlackList(refreshToken);
             return {
                 status: 204,
@@ -89,7 +93,7 @@ export class AuthService {
             }
             const isTokenBlackList = await AuthRepository.isTokenBlacklisted(refreshToken);
             if (isTokenBlackList) {
-                throw new Error('Invalid token')
+                throw new Error('Token in blacklist')
             }
             const userId = await JwtService.verifyJWT(refreshToken);
             const isTokenExpired = JwtService.isTokenExpired(refreshToken);
@@ -111,7 +115,7 @@ export class AuthService {
         }
     }
 
-    static async me(userId: string,): Promise<{login: string, email: string, userId: string} | null> {
+    static async me(userId: string,): Promise<{ login: string, email: string, userId: string } | null> {
         try {
             if (!userId) {
                 throw new Error('Invalid token')
