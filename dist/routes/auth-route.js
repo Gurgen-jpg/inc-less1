@@ -40,7 +40,7 @@ exports.authRoute.post('/logout', token_authorization_1.tokenAuthorizationMiddle
         ? res.status(NO_CONTENT).send(result === null || result === void 0 ? void 0 : result.message)
         : res.status(UNAUTHORIZED).send(result === null || result === void 0 ? void 0 : result.errors);
 }));
-exports.authRoute.post('/refresh-token', token_authorization_1.tokenAuthorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authRoute.post('/refresh-token', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
         return res.sendStatus(UNAUTHORIZED);
