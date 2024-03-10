@@ -8,9 +8,9 @@ export class JwtService {
             dotenv.config();
             return jwt.sign({
                 userId: userid,
-                iat: Math.floor(Date.now() / 1000),
+                iat: new Date().toISOString(),
                 deviceId: deviceId,
-            },  process.env.SECRET_WORD!, {expiresIn: expiresIn});
+            },  process.env.SECRET_WORD!, {expiresIn: Math.floor(Date.now() / 1000) + expiresIn});
         } catch (e) {
             console.error('Error creating JWT:', e);
             return null
