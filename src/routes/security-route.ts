@@ -8,8 +8,9 @@ export const securityRoute = Router({});
 
 const {OK, UNAUTHORIZED, NO_CONTENT} = HTTP_STATUSES;
 
-securityRoute.get('/devices', tokenAuthorizationMiddleware, async (req, res) => {
-    const result = await SessionService.getAllSessions(req.context!.user!.id!);
+securityRoute.get('/devices', async (req, res) => {
+    const cookies = req.cookies;
+    const result = await SessionService.getAllSessions(cookies['refreshToken']!);
     if (result.status !== 200) {
         return res.sendStatus(UNAUTHORIZED)
     }
@@ -17,7 +18,7 @@ securityRoute.get('/devices', tokenAuthorizationMiddleware, async (req, res) => 
     return res.status(OK).send(devices);
 });
 
-securityRoute.delete('/devices', tokenAuthorizationMiddleware, async (req, res) => {
+securityRoute.delete('/devices', async (req, res) => {
     const result = await SessionService.deleteAllSessions(req.context!.session?.deviceId!);
     if (result.status !== 204) {
         return res.sendStatus(UNAUTHORIZED)
@@ -25,7 +26,7 @@ securityRoute.delete('/devices', tokenAuthorizationMiddleware, async (req, res) 
     return res.sendStatus(NO_CONTENT);
 });
 
-securityRoute.delete('/devices/:deviceId', tokenAuthorizationMiddleware, async (req, res) => {
+securityRoute.delete('/devices/:deviceId', async (req, res) => {
     const result = await SessionService.deleteSession(req.params.deviceId);
     if (result.status !== 204) {
         return res.sendStatus(UNAUTHORIZED)

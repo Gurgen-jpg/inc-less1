@@ -2,9 +2,11 @@ import {SessionRepository} from "../repositories/session-repository";
 import {SessionDBModel} from "../models/session/session";
 import {StatusResultType} from "../models/common";
 import {SessionOutputType} from "../models/session/output";
+import {JwtService} from "../app/auth/jwt-service";
 
 export class SessionService {
-    static async getAllSessions(userId: string): Promise<StatusResultType<SessionOutputType[] | null>> {
+    static async getAllSessions(token: string): Promise<StatusResultType<SessionOutputType[] | null>> {
+        const {userId} = JwtService.getPayload(token);
         try {
             const result = await SessionRepository.getAllSessions(userId);
             return {

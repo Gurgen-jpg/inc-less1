@@ -23,4 +23,4 @@ exports.app.use('/testing', testing_route_1.testingRoute);
 exports.app.use('/auth', auth_route_1.authRoute);
 exports.app.use('/users', users_route_1.usersRoute);
 exports.app.use('/comments', comments_route_1.commentsRoute);
-exports.app.use('/session', security_route_1.securityRoute);
+exports.app.use('/security', security_route_1.securityRoute);
