@@ -112,7 +112,7 @@ class AuthService {
                     throw new Error('refresh token expired');
                 }
                 const tokenData = yield jwt_service_1.JwtService.getPayload(refreshToken);
-                yield session_repository_1.SessionRepository.updateSession(tokenData.deviceId, {
+                yield session_repository_1.SessionRepository.updateSession({ deviceId: tokenData.deviceId, title: sessionData.title }, {
                     ip: sessionData.ip,
                     userId: userId,
                     deviceId: tokenData.deviceId,

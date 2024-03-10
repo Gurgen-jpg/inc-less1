@@ -24,7 +24,8 @@ export class SessionRepository {
     static async updateSession(params: UpdateSearchParams, session: SessionDBModel) {
         try {
             const result = await sessionCollection.updateOne({
-                deviceId: session.deviceId
+                deviceId: params.deviceId,
+                title: params.title
             }, {$set: session});
         } catch (e) {
             console.log('Error in updateSession:', e);
