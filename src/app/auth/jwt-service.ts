@@ -8,7 +8,7 @@ export class JwtService {
             dotenv.config();
             return jwt.sign({
                 userId: userid,
-                iat: new Date().toISOString(),
+                iat: Math.floor(Date.now() / 1000),
                 deviceId: deviceId,
             },  process.env.SECRET_WORD!, {expiresIn: expiresIn});
         } catch (e) {
