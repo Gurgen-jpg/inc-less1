@@ -1,4 +1,11 @@
-import {blogCollection, commentsCollection, postCollection, tokenCollection, usersCollection} from "../db/db";
+import {
+    blogCollection,
+    commentsCollection,
+    postCollection,
+    sessionCollection,
+    tokenCollection,
+    usersCollection
+} from "../db/db";
 
 export class TestingRepository {
     static async deleteAllData() {
@@ -8,6 +15,7 @@ export class TestingRepository {
             await usersCollection.deleteMany({});
             await commentsCollection.deleteMany({});
             await tokenCollection.deleteMany({});
+            await sessionCollection.deleteMany({});
 
         } catch (e) {
             console.log('Error in deleteAllData:', e);

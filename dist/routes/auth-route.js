@@ -23,7 +23,10 @@ exports.authRoute = express_1.default.Router({});
 const { OK, NO_CONTENT, UNAUTHORIZED, NOT_FOUND, BAD_REQUEST } = common_1.HTTP_STATUSES;
 exports.authRoute.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { loginOrEmail, password } = req.body;
-    const token = yield auth_service_1.AuthService.login({ loginOrEmail, password });
+    const token = yield auth_service_1.AuthService.login({ loginOrEmail, password }, {
+        ip: req.ip,
+        title: req.headers['user-agent']
+    });
     if (!token || !token.accessToken || !token.refreshToken) {
         return res.sendStatus(UNAUTHORIZED);
     }
@@ -47,7 +50,10 @@ exports.authRoute.post('/refresh-token', refresh_token_validation_1.refreshToken
     if (!refreshToken) {
         return res.sendStatus(UNAUTHORIZED);
     }
-    const token = yield auth_service_1.AuthService.refreshToken(refreshToken);
+    const token = yield auth_service_1.AuthService.refreshToken(refreshToken, {
+        ip: req.ip,
+        title: req.headers['user-agent']
+    });
     if (!token || !token.accessToken || !token.refreshToken) {
         return res.sendStatus(UNAUTHORIZED);
     }

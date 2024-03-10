@@ -16,7 +16,10 @@ export const authRoute = express.Router({});
 const {OK, NO_CONTENT, UNAUTHORIZED, NOT_FOUND, BAD_REQUEST} = HTTP_STATUSES;
 authRoute.post('/login', async (req: RequestBodyType<LoginInputModel>, res: Response) => {
     const {loginOrEmail, password} = req.body;
-    const token = await AuthService.login({loginOrEmail, password})
+    const token = await AuthService.login({loginOrEmail, password}, {
+        ip: req.ip! as string,
+        title: req.headers['user-agent'] as string
+    })
     if (!token || !token.accessToken || !token.refreshToken) {
         return res.sendStatus(UNAUTHORIZED)
     }
@@ -44,7 +47,10 @@ authRoute.post('/refresh-token', refreshTokenMiddleware, async (req: Request, re
     if (!refreshToken) {
         return res.sendStatus(UNAUTHORIZED)
     }
-    const token = await AuthService.refreshToken(refreshToken);
+    const token = await AuthService.refreshToken(refreshToken, {
+        ip: req.ip! as string,
+        title: req.headers['user-agent'] as string
+    });
     if (!token || !token.accessToken || !token.refreshToken) {
         return res.sendStatus(UNAUTHORIZED)
     }

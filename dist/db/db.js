@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.tokenCollection = exports.commentsCollection = exports.usersCollection = exports.postCollection = exports.blogCollection = exports.client = exports.connectDB = exports.database = void 0;
+exports.sessionCollection = exports.tokenCollection = exports.commentsCollection = exports.usersCollection = exports.postCollection = exports.blogCollection = exports.client = exports.connectDB = exports.database = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 const mongodb_1 = require("mongodb");
 dotenv_1.default.config();
@@ -31,6 +31,8 @@ const commentsCollection = exports.database.collection('comments');
 exports.commentsCollection = commentsCollection;
 const tokenCollection = exports.database.collection('tokens-blacklist');
 exports.tokenCollection = tokenCollection;
+const sessionCollection = exports.database.collection('session');
+exports.sessionCollection = sessionCollection;
 function connectDB() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

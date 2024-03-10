@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
-import {MongoClient, WithId} from "mongodb";
+import {MongoClient} from "mongodb";
 import {BlogDBModel, CommentDBModel, PostDBModel, TokenData, UserDBModel} from "../models/db";
+import {SessionDBModel} from "../models/session/session";
 
 dotenv.config();
 const PORT = 80;
@@ -16,6 +17,7 @@ const postCollection = database.collection<PostDBModel>('posts');
 const usersCollection = database.collection<UserDBModel>('users');
 const commentsCollection = database.collection<CommentDBModel>('comments');
 const tokenCollection = database.collection<TokenData>('tokens-blacklist');
+const sessionCollection = database.collection<SessionDBModel>('session');
 
 async function connectDB() {
     try {
@@ -29,4 +31,13 @@ async function connectDB() {
     }
 }
 
-export {connectDB, client, blogCollection, postCollection, usersCollection, commentsCollection, tokenCollection};
+export {
+    connectDB,
+    client,
+    blogCollection,
+    postCollection,
+    usersCollection,
+    commentsCollection,
+    tokenCollection,
+    sessionCollection
+};

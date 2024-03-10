@@ -16,7 +16,7 @@ export const tokenAuthorizationMiddleware = (req: Request, res: Response, next: 
         res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
         return
     }
-    const userId = JwtService.verifyJWT(token);
+    const {userId, deviceId, iat, exp} = JwtService.verifyJWT(token);
     if (!userId) {
         res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
         return
@@ -29,6 +29,11 @@ export const tokenAuthorizationMiddleware = (req: Request, res: Response, next: 
     req.context = {
         user: {
             id: userId
+        },
+        session: {
+            deviceId,
+            lastActiveDate: iat,
+            expirationDate: exp
         }
     };
     return next();
