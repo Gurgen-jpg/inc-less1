@@ -21,4 +21,4 @@ app.use('/testing', testingRoute);
 app.use('/auth', authRoute);
 app.use('/users', usersRoute);
 app.use('/comments', commentsRoute);
-app.use('/session', securityRoute);
+app.use('/security', securityRoute);
