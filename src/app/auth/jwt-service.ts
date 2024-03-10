@@ -10,7 +10,7 @@ export class JwtService {
                 userId: userid,
                 iat: new Date().toISOString(),
                 deviceId: deviceId,
-            },  process.env.SECRET_WORD!, {expiresIn: Math.floor(Date.now() / 1000) + expiresIn});
+            },  process.env.SECRET_WORD!, {expiresIn: expiresIn});
         } catch (e) {
             console.error('Error creating JWT:', e);
             return null
