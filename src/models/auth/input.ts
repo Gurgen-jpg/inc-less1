@@ -3,6 +3,11 @@ export type LoginInputModel = {
     password: string;
 }
 
+export type LoginSessionData = {
+    ip: string;
+    title: string;
+}
+
 export type RegisterInputModel = {
     login: string;
     email: string;

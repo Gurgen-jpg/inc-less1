@@ -38,10 +38,11 @@ export type VideoType = {
     availableResolutions: EAvailableResolutions[]
 }
 
-export type StatusResultType = {
+export type StatusResultType<D = undefined> = {
     status: number
     message?: string
-    errors?: {errorsMessages: ErrorsMessageType}
+    errors?: { errorsMessages: ErrorsMessageType } | null
+    data?: D
 }
 
 export interface idKeys {
@@ -86,7 +87,7 @@ export type PaginationType<I> = {
     "items": Array<I>
 }
 export type RequestParamType<P> = Request<P, unknown, unknown, unknown>;
-export type RequestParamAndQueryType<P,Q> = Request<P, unknown, unknown, Q>;
+export type RequestParamAndQueryType<P, Q> = Request<P, unknown, unknown, Q>;
 export type RequestBodyType<B> = Request<unknown, unknown, B, unknown>;
 export type RequestWithQueryType<Q> = Request<unknown, unknown, unknown, Q>;
 

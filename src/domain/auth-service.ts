@@ -1,15 +1,15 @@
-import {LoginInputModel, RegisterInputModel} from "../models/auth/input";
+import {LoginInputModel, LoginSessionData, RegisterInputModel} from "../models/auth/input";
 import bcrypt from "bcrypt";
 import {JwtService} from "../app/auth/jwt-service";
 import {UserRepository} from "../repositories/users/user-repository";
 import {UserQueryRepository} from "../repositories/users/user-query-repository";
-import {UserViewModel} from "../models/users/output";
 import {EmailAdapter} from "../adapters/email-adapter";
 import {BcryptService} from "../app/auth/bcrypt-service";
 import {StatusResultType} from "../models/common";
 import {add} from "date-fns/add";
 import {generateId} from "../adapters/uuid";
 import {AuthRepository} from "../repositories/auth-repository";
+import {SessionRepository} from "../repositories/session-repository";
 
 type LoginResponseType = {
     accessToken: string;
@@ -17,7 +17,7 @@ type LoginResponseType = {
 }
 
 export class AuthService {
-    static async login(payload: LoginInputModel): Promise<{
+    static async login(payload: LoginInputModel, sessionData: LoginSessionData): Promise<{
         accessToken: string,
         refreshToken: string
     } | null> {
@@ -32,7 +32,20 @@ export class AuthService {
                     throw new Error('wrong password')
                 } else {
                     const accessToken = await JwtService.createJWT(user._id.toString(), '10s');
-                    const refreshToken = await JwtService.createJWT(user._id.toString(), '20s');
+                    const {userId, iat, exp,} = JwtService.getPayload(accessToken!);
+                    console.log('1111 -> ',JwtService.getPayload(accessToken!))
+                    const {ip, title} = sessionData;
+                    const currentDeviceId = generateId();
+                    await SessionRepository.createSession({
+                        ip,
+                        userId,
+                        deviceId: generateId(),
+                        title,
+                        lastActiveDate: iat,
+                        expirationDate: exp
+                    });
+
+                    const refreshToken = await JwtService.createJWT(user._id.toString(), '20s', currentDeviceId);
 
                     if (!accessToken || !refreshToken) {
                         throw new Error('wrong token')
@@ -53,14 +66,6 @@ export class AuthService {
 
     static async logout(refreshToken: string): Promise<StatusResultType> {
         try {
-            // if (!refreshToken) {
-            //     throw new Error('Invalid token')
-            // }
-            // const userId = await JwtService.verifyJWT(refreshToken);
-            // const isTokenExpired = JwtService.isTokenExpired(refreshToken);
-            // if (!userId || !isTokenExpired) {
-            //     throw new Error('Invalid token')
-            // }
             const isTokenBlackList = await AuthRepository.isTokenBlacklisted(refreshToken);
             if (isTokenBlackList) {
                 throw new Error('Token in blacklist')
@@ -86,7 +91,7 @@ export class AuthService {
         }
     }
 
-    static async refreshToken(refreshToken: string) {
+    static async refreshToken(refreshToken: string, sessionData: LoginSessionData) {
         try {
             if (!refreshToken) {
                 throw new Error('Invalid token')
@@ -101,8 +106,20 @@ export class AuthService {
             if (isTokenExpired) {
                 throw new Error('refresh token expired')
             }
+            const tokenData = await JwtService.getPayload(refreshToken);
+            await SessionRepository.updateSession(
+                tokenData.deviceId,
+                {
+                    ip: sessionData.ip,
+                    userId: userId,
+                    deviceId: tokenData.deviceId,
+                    title: sessionData.title,
+                    lastActiveDate: tokenData.iat,
+                    expirationDate: tokenData.exp
+                }
+            )
             const accessToken = await JwtService.createJWT(userId, '10s');
-            const newRefreshToken = await JwtService.createJWT(userId, '20s');
+            const newRefreshToken = await JwtService.createJWT(userId, '20s', tokenData.deviceId);
 
             await AuthRepository.addTokenToBlackList(refreshToken);
             return ({

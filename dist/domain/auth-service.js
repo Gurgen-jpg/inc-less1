@@ -22,8 +22,9 @@ const bcrypt_service_1 = require("../app/auth/bcrypt-service");
 const add_1 = require("date-fns/add");
 const uuid_1 = require("../adapters/uuid");
 const auth_repository_1 = require("../repositories/auth-repository");
+const session_repository_1 = require("../repositories/session-repository");
 class AuthService {
-    static login(payload) {
+    static login(payload, sessionData) {
         return __awaiter(this, void 0, void 0, function* () {
             const { loginOrEmail, password } = payload;
             try {
@@ -38,7 +39,19 @@ class AuthService {
                     }
                     else {
                         const accessToken = yield jwt_service_1.JwtService.createJWT(user._id.toString(), '10s');
-                        const refreshToken = yield jwt_service_1.JwtService.createJWT(user._id.toString(), '20s');
+                        const { userId, iat, exp, } = jwt_service_1.JwtService.getPayload(accessToken);
+                        console.log('1111 -> ', jwt_service_1.JwtService.getPayload(accessToken));
+                        const { ip, title } = sessionData;
+                        const currentDeviceId = (0, uuid_1.generateId)();
+                        yield session_repository_1.SessionRepository.createSession({
+                            ip,
+                            userId,
+                            deviceId: (0, uuid_1.generateId)(),
+                            title,
+                            lastActiveDate: iat,
+                            expirationDate: exp
+                        });
+                        const refreshToken = yield jwt_service_1.JwtService.createJWT(user._id.toString(), '20s', currentDeviceId);
                         if (!accessToken || !refreshToken) {
                             throw new Error('wrong token');
                         }
@@ -58,14 +71,6 @@ class AuthService {
     static logout(refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // if (!refreshToken) {
-                //     throw new Error('Invalid token')
-                // }
-                // const userId = await JwtService.verifyJWT(refreshToken);
-                // const isTokenExpired = JwtService.isTokenExpired(refreshToken);
-                // if (!userId || !isTokenExpired) {
-                //     throw new Error('Invalid token')
-                // }
                 const isTokenBlackList = yield auth_repository_1.AuthRepository.isTokenBlacklisted(refreshToken);
                 if (isTokenBlackList) {
                     throw new Error('Token in blacklist');
@@ -92,7 +97,7 @@ class AuthService {
             }
         });
     }
-    static refreshToken(refreshToken) {
+    static refreshToken(refreshToken, sessionData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 if (!refreshToken) {
@@ -107,8 +112,17 @@ class AuthService {
                 if (isTokenExpired) {
                     throw new Error('refresh token expired');
                 }
+                const tokenData = yield jwt_service_1.JwtService.getPayload(refreshToken);
+                yield session_repository_1.SessionRepository.updateSession(tokenData.deviceId, {
+                    ip: sessionData.ip,
+                    userId: userId,
+                    deviceId: tokenData.deviceId,
+                    title: sessionData.title,
+                    lastActiveDate: tokenData.iat,
+                    expirationDate: tokenData.exp
+                });
                 const accessToken = yield jwt_service_1.JwtService.createJWT(userId, '10s');
-                const newRefreshToken = yield jwt_service_1.JwtService.createJWT(userId, '20s');
+                const newRefreshToken = yield jwt_service_1.JwtService.createJWT(userId, '20s', tokenData.deviceId);
                 yield auth_repository_1.AuthRepository.addTokenToBlackList(refreshToken);
                 return ({
                     accessToken: accessToken,
