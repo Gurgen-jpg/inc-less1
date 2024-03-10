@@ -40,13 +40,12 @@ class AuthService {
                     else {
                         const accessToken = yield jwt_service_1.JwtService.createJWT(user._id.toString(), '10s');
                         const { userId, iat, exp, } = jwt_service_1.JwtService.getPayload(accessToken);
-                        console.log('1111 -> ', jwt_service_1.JwtService.getPayload(accessToken));
                         const { ip, title } = sessionData;
                         const currentDeviceId = (0, uuid_1.generateId)();
                         yield session_repository_1.SessionRepository.createSession({
                             ip,
                             userId,
-                            deviceId: (0, uuid_1.generateId)(),
+                            deviceId: currentDeviceId,
                             title,
                             lastActiveDate: iat,
                             expirationDate: exp

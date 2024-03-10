@@ -33,13 +33,13 @@ export class AuthService {
                 } else {
                     const accessToken = await JwtService.createJWT(user._id.toString(), '10s');
                     const {userId, iat, exp,} = JwtService.getPayload(accessToken!);
-                    console.log('1111 -> ',JwtService.getPayload(accessToken!))
+
                     const {ip, title} = sessionData;
                     const currentDeviceId = generateId();
                     await SessionRepository.createSession({
                         ip,
                         userId,
-                        deviceId: generateId(),
+                        deviceId: currentDeviceId,
                         title,
                         lastActiveDate: iat,
                         expirationDate: exp
