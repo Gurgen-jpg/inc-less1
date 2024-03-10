@@ -41,7 +41,7 @@ export class AuthService {
                         userId,
                         deviceId: currentDeviceId,
                         title,
-                        lastActiveDate: iat,
+                        lastActiveDate: new Date().toISOString(),
                         expirationDate: exp
                     });
 

@@ -4,12 +4,11 @@ import jwt from "jsonwebtoken";
 
 export class JwtService {
     static async createJWT(userid: string, expiresIn: string, deviceId?: string): Promise<string | null> {
-        const createdAt = new Date().toISOString();
         try {
             dotenv.config();
             return jwt.sign({
                 userId: userid,
-                iat: createdAt,
+                iat: Math.floor(Date.now() / 1000),
                 deviceId: deviceId,
             },  process.env.SECRET_WORD!, {expiresIn: expiresIn});
         } catch (e) {
