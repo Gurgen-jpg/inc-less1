@@ -47,4 +47,14 @@ export class SessionRepository {
             console.log('Error in deleteSession:', e);
         }
     }
+
+    static async findSession(deviceId: string) {
+        try {
+            const result = await sessionCollection.findOne({deviceId});
+            return result
+        } catch (e) {
+            console.log('Error in findSession:', e);
+            return null
+        }
+    }
 }

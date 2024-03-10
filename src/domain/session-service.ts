@@ -1,14 +1,15 @@
 import {SessionRepository} from "../repositories/session-repository";
 import {SessionDBModel} from "../models/session/session";
 import {StatusResultType} from "../models/common";
+import {SessionOutputType} from "../models/session/output";
 
 export class SessionService {
-    static async getAllSessions(userId: string): Promise<StatusResultType<SessionDBModel[] | null>> {
+    static async getAllSessions(userId: string): Promise<StatusResultType<SessionOutputType[] | null>> {
         try {
             const result = await SessionRepository.getAllSessions(userId);
             return {
                 status: 200,
-                data: result,
+                data: result ? result : null,
                 message: 'sessions found',
                 errors: null
             }
@@ -46,6 +47,15 @@ export class SessionService {
 
     static async deleteSession(deviceId: string): Promise<StatusResultType<null>> {
         try {
+            const isSessionExist = await SessionRepository.findSession(deviceId);
+            if (!isSessionExist) {
+                return {
+                    status: 404,
+                    data: null,
+                    message: 'session not found',
+                    errors: null
+                }
+            }
             const result = await SessionRepository.deleteSession(deviceId);
             return {
                 status: 204,
