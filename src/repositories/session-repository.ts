@@ -1,5 +1,5 @@
 import {sessionCollection} from "../db/db";
-import {SessionDBModel} from "../models/session/session";
+import {SessionDBModel, UpdateSearchParams} from "../models/session/session";
 import {mapper} from "../models/session/napper/mapper";
 import {SessionOutputType} from "../models/session/output";
 
@@ -21,7 +21,7 @@ export class SessionRepository {
         }
     }
 
-    static async updateSession(deviceId: string,session: SessionDBModel) {
+    static async updateSession(params: UpdateSearchParams, session: SessionDBModel) {
         try {
             const result = await sessionCollection.updateOne({
                 deviceId: session.deviceId

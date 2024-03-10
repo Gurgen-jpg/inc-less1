@@ -108,7 +108,7 @@ export class AuthService {
             }
             const tokenData = await JwtService.getPayload(refreshToken);
             await SessionRepository.updateSession(
-                tokenData.deviceId,
+                {deviceId: tokenData.deviceId, title: sessionData.title},
                 {
                     ip: sessionData.ip,
                     userId: userId,

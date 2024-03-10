@@ -19,4 +19,6 @@ export type SessionDBModel = {
     expirationDate: string
     deviceId: string
 }
+
+export type UpdateSearchParams = { deviceId: string, title: string }
 export type SecurityRepository = SessionDBModel[]
