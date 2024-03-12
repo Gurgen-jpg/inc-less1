@@ -18,7 +18,7 @@ export class SessionService {
         } catch (e) {
             console.log('Error in getAllSessions:', e);
             return {
-                status: 500,
+                status: 401,
                 data: null,
                 message: 'sessions not found',
                 errors: null
@@ -39,7 +39,7 @@ export class SessionService {
         } catch (e) {
             console.log('Error in deleteAllSessions:', e);
             return {
-                status: 500,
+                status: 401,
                 data: null,
                 message: 'sessions not deleted',
                 errors: null
