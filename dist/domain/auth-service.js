@@ -47,7 +47,7 @@ class AuthService {
                             userId,
                             deviceId: currentDeviceId,
                             title,
-                            lastActiveDate: iat,
+                            lastActiveDate: new Date().toISOString(),
                             expirationDate: exp
                         });
                         const refreshToken = yield jwt_service_1.JwtService.createJWT(user._id.toString(), '20s', currentDeviceId);

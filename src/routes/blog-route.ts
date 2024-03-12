@@ -14,7 +14,6 @@ import {BlogViewModel} from "../models/blogs/output";
 import {BlogQueryRepoInputModel} from "../models/blogs/blogQueryRepoInputModel";
 import {PostInputModel} from "../models/posts/input";
 import {createPostFromBlogValidation} from "../validators/post-validators";
-import {ObjectId} from "mongodb";
 import {PostQueryRepoInputModel} from "../models/posts/postQueryRepoInputModel";
 import {basicAuthorizationMiddleware} from "../middlewares/authValidation/basic-authorization";
 
