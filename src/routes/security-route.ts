@@ -9,7 +9,7 @@ export const securityRoute = Router({});
 
 const {OK, UNAUTHORIZED, NO_CONTENT, NOT_FOUND} = HTTP_STATUSES;
 
-securityRoute.get('/devices', async (req, res) => {
+securityRoute.get('/devices', refreshTokenMiddleware, async (req, res) => {
     const cookies = req.cookies;
     const result = await SessionService.getAllSessions(cookies['refreshToken']!);
     if (result.status !== 200) {
