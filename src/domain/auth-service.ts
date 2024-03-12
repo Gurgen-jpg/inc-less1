@@ -113,7 +113,7 @@ export class AuthService {
                 {deviceId: tokenData.deviceId, title: sessionData.title},
                 {
                     ip: sessionData.ip,
-                    userId: userId,
+                    userId: tokenData.userId,
                     deviceId: tokenData.deviceId,
                     title: sessionData.title,
                     lastActiveDate: tokenData.iat,
