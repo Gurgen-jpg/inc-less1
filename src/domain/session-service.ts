@@ -56,6 +56,16 @@ export class SessionService {
         const tokenData = JwtService.getPayload(refreshToken);
         const deviceToDelete = deviceId ?? tokenData.deviceId;
         try {
+            const checkSession = SessionRepository.checkSessionDevice({deviceId: deviceToDelete, userId: tokenData.userId});
+            console.log('checkSession', checkSession)
+            if (!checkSession) {
+                return {
+                    status: 403,
+                    data: null,
+                    message: 'forbidden',
+                    errors: null
+                }
+            }
             const isSessionExist = await SessionRepository.findSession(deviceToDelete);
             if (!isSessionExist) {
                 return {

@@ -8,6 +8,7 @@ type DeleteSessionsPayload = {
     deviceId: string;
     userId?: string;
 }
+
 export class SessionRepository {
     static async getAllSessions(userId: string): Promise<SessionOutputType[] | null> {
         try {
@@ -18,6 +19,7 @@ export class SessionRepository {
             return null
         }
     }
+
     static async createSession(session: SessionDBModel) {
         try {
             const result = await sessionCollection.insertOne(session);
@@ -47,16 +49,18 @@ export class SessionRepository {
 
     static async deleteSession({deviceId, userId}: DeleteSessionsPayload): Promise<DeleteResult | null> {
         try {
-            const checkSession = await sessionCollection.findOne({deviceId, userId});
-            if (!checkSession) {
-                return null
-            }
             const result = await sessionCollection.deleteOne({deviceId});
             return result
         } catch (e) {
             console.log('Error in deleteSession:', e);
             return null;
         }
+    }
+
+    static async checkSessionDevice({deviceId, userId}: DeleteSessionsPayload) {
+        const checkSession = await sessionCollection.findOne({deviceId, userId});
+        return checkSession;
+
     }
 
     static async findSession(deviceId: string) {

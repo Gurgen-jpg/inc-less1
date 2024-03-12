@@ -7,7 +7,7 @@ import {refreshTokenMiddleware} from "../middlewares/authValidation/refresh-toke
 
 export const securityRoute = Router({});
 
-const {OK, UNAUTHORIZED, NO_CONTENT, NOT_FOUND} = HTTP_STATUSES;
+const {OK, UNAUTHORIZED, NO_CONTENT, NOT_FOUND, FORBIDDEN} = HTTP_STATUSES;
 
 securityRoute.get('/devices', refreshTokenMiddleware, async (req, res) => {
     const cookies = req.cookies;
@@ -29,11 +29,14 @@ securityRoute.delete('/devices', refreshTokenMiddleware, async (req, res) => {
 
 securityRoute.delete('/devices/:deviceId', refreshTokenMiddleware, async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
-    const result = await SessionService.deleteSession({deviceId:req.params.deviceId, refreshToken});
+    const result = await SessionService.deleteSession({deviceId: req.params.deviceId, refreshToken});
+    if (result.status === 403) {
+        return res.sendStatus(FORBIDDEN);
+    }
     if (result.status === 404) {
-        return res.sendStatus(NOT_FOUND)
+        return res.sendStatus(NOT_FOUND);
     } else if (result.status !== 204) {
-        return res.sendStatus(UNAUTHORIZED)
+        return res.sendStatus(UNAUTHORIZED);
     }
     return res.sendStatus(NO_CONTENT);
 })
