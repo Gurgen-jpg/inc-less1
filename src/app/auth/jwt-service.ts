@@ -26,7 +26,7 @@ export class JwtService {
         }
     }
 
-    static getPayload(token: string) {
+static getPayload(token: string) {
         try {
             const jwtPayload: any = jwt.verify(token, process.env.SECRET_WORD!);
             return jwtPayload;

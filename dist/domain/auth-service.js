@@ -75,6 +75,8 @@ class AuthService {
                     throw new Error('Token in blacklist');
                 }
                 yield auth_repository_1.AuthRepository.addTokenToBlackList(refreshToken);
+                const tokenData = yield jwt_service_1.JwtService.getPayload(refreshToken);
+                yield session_repository_1.SessionRepository.deleteSession({ userId: tokenData.userId, deviceId: tokenData.deviceId });
                 return {
                     status: 204,
                     message: 'Logout success'

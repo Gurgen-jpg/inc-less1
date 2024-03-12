@@ -2,7 +2,12 @@ import {sessionCollection} from "../db/db";
 import {SessionDBModel, UpdateSearchParams} from "../models/session/session";
 import {mapper} from "../models/session/napper/mapper";
 import {SessionOutputType} from "../models/session/output";
+import {DeleteResult} from "mongodb";
 
+type DeleteSessionsPayload = {
+    deviceId: string;
+    userId?: string;
+}
 export class SessionRepository {
     static async getAllSessions(userId: string): Promise<SessionOutputType[] | null> {
         try {
@@ -40,11 +45,17 @@ export class SessionRepository {
         }
     }
 
-    static async deleteSession(deviceId: string) {
+    static async deleteSession({deviceId, userId}: DeleteSessionsPayload): Promise<DeleteResult | null> {
         try {
+            const checkSession = await sessionCollection.findOne({deviceId, userId});
+            if (!checkSession) {
+                return null
+            }
             const result = await sessionCollection.deleteOne({deviceId});
+            return result
         } catch (e) {
             console.log('Error in deleteSession:', e);
+            return null;
         }
     }
 

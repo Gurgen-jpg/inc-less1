@@ -28,7 +28,8 @@ securityRoute.delete('/devices', refreshTokenMiddleware, async (req, res) => {
 });
 
 securityRoute.delete('/devices/:deviceId', refreshTokenMiddleware, async (req, res) => {
-    const result = await SessionService.deleteSession(req.params.deviceId);
+    const refreshToken = req.cookies.refreshToken;
+    const result = await SessionService.deleteSession({deviceId:req.params.deviceId, refreshToken});
     if (result.status === 404) {
         return res.sendStatus(NOT_FOUND)
     } else if (result.status !== 204) {

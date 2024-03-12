@@ -4,6 +4,11 @@ import {StatusResultType} from "../models/common";
 import {SessionOutputType} from "../models/session/output";
 import {JwtService} from "../app/auth/jwt-service";
 
+type DeleteSessionsPayload = {
+    deviceId?: string;
+    refreshToken: string;
+}
+
 export class SessionService {
     static async getAllSessions(token: string): Promise<StatusResultType<SessionOutputType[] | null>> {
         const {userId} = JwtService.getPayload(token);
@@ -47,9 +52,11 @@ export class SessionService {
         }
     }
 
-    static async deleteSession(deviceId: string): Promise<StatusResultType<null>> {
+    static async deleteSession({deviceId, refreshToken}: DeleteSessionsPayload): Promise<StatusResultType<null>> {
+        const tokenData = JwtService.getPayload(refreshToken);
+        const deviceToDelete = deviceId ?? tokenData.deviceId;
         try {
-            const isSessionExist = await SessionRepository.findSession(deviceId);
+            const isSessionExist = await SessionRepository.findSession(deviceToDelete);
             if (!isSessionExist) {
                 return {
                     status: 404,
@@ -58,7 +65,7 @@ export class SessionService {
                     errors: null
                 }
             }
-            const result = await SessionRepository.deleteSession(deviceId);
+            const result = await SessionRepository.deleteSession({deviceId: deviceToDelete, userId: tokenData.userId});
             return {
                 status: 204,
                 data: null,
