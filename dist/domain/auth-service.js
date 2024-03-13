@@ -116,7 +116,7 @@ class AuthService {
                 const tokenData = yield jwt_service_1.JwtService.getPayload(refreshToken);
                 yield session_repository_1.SessionRepository.updateSession({ deviceId: tokenData.deviceId, title: sessionData.title }, {
                     ip: sessionData.ip,
-                    userId: userId,
+                    userId: tokenData.userId,
                     deviceId: tokenData.deviceId,
                     title: sessionData.title,
                     lastActiveDate: tokenData.iat,

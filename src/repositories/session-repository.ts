@@ -47,7 +47,7 @@ export class SessionRepository {
         }
     }
 
-    static async deleteSession({deviceId, userId}: DeleteSessionsPayload): Promise<DeleteResult | null> {
+    static async deleteSession({deviceId}: DeleteSessionsPayload): Promise<DeleteResult | null> {
         try {
             const result = await sessionCollection.deleteOne({deviceId});
             return result

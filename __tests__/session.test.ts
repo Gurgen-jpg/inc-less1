@@ -1,6 +1,7 @@
 import {testSeeder} from "./utils/test.seeder";
 import request from "supertest";
 import {app} from "../src/settings";
+import exp = require("node:constants");
 
 describe('check sessions flow', () => {
 
@@ -155,5 +156,52 @@ describe('check sessions flow', () => {
             Cookie: cookies1
         });
         expect(devices1Check.body).toHaveLength(1)
+    });
+
+    test('refresh-token, don`t update deviceId', async () => {
+        const response1 = await request(app)
+            .post('/users')
+            .set('Authorization', `Basic YWRtaW46cXdlcnR5`)
+            .send({
+                login: 'login1',
+                email: 'user1.email@mail.ru',
+                password: 'password',
+                createdAt: new Date().toISOString()
+            })
+        const auth1 = await request(app)
+            .post('/auth/login')
+            .set({
+                "user-agent": "jest1",
+            })
+            .send({
+                loginOrEmail: 'login1',
+                password: 'password'
+            });
+        const cookies1 = auth1.headers['set-cookie'];
+        const devices1 = await request(app).get('/security/devices').set({
+            Cookie: cookies1
+        });
+        expect(devices1.status).toBe(200);
+        const device1Id = devices1.body[0].deviceId;
+
+        const ref2 = await request(app).post('/auth/refresh-token').set({
+            Cookie: cookies1
+        });
+
+        expect(ref2.status).toBe(200);
+        const cookies2 = ref2.headers['set-cookie'];
+
+
+
+        const sameDeviceId = await request(app).get('/security/devices').set({
+            Cookie: cookies2
+        });
+
+        // expect(sameDeviceId.status).toBe(200)
+
+
+
     })
+
+
 })
