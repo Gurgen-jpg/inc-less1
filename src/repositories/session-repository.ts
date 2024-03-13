@@ -32,7 +32,8 @@ export class SessionRepository {
         try {
             const result = await sessionCollection.updateOne({
                 deviceId: params.deviceId,
-                title: params.title
+                title: params.title,
+                lastActiveDate: String(Math.floor(Date.now() / 1000)),
             }, {$set: session});
         } catch (e) {
             console.log('Error in updateSession:', e);
