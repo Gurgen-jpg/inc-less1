@@ -235,4 +235,46 @@ describe('check sessions flow', () => {
         expect(devicesAfterDelete.body).toHaveLength(1);
     })
 
+    test('logout after delete device', async () => {
+        const {login, password} = await testSeeder.createUsers({
+            login: 'login', email: 'user.email@gmail.com', password: 'password'
+        });
+
+        const auth = await testSeeder.authUser({
+            loginOrEmail: login,
+            password,
+        });
+        const auth2 = await testSeeder.authUser({
+            loginOrEmail: login,
+            password,
+            userAgent: 'jest2'
+        });
+
+        const devices = await request(app).get('/security/devices').set({
+            Cookie: auth.refreshToken[0],
+        })
+
+        const deviceId = devices.body[0].deviceId;
+        await request(app).delete(`/security/devices/${deviceId}`).set({
+            Cookie: auth2.refreshToken[0],
+        })
+
+
+        const devicesAfterDelete = await request(app).get('/security/devices').set({
+            Cookie: auth2.refreshToken[0],
+        })
+
+        expect(devicesAfterDelete.body).toHaveLength(1);
+        expect(devicesAfterDelete.body[0].deviceId).not.toBe(deviceId);
+
+        const logout = await request(app).post('/auth/logout').set({
+            Cookie: auth.refreshToken[0]
+        });
+
+        // expect(logout.status).toBe(401);
+
+
+
+    })
+
 })
