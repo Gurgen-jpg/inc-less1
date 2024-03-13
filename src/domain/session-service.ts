@@ -56,7 +56,27 @@ export class SessionService {
         const tokenData = JwtService.getPayload(refreshToken);
         const deviceToDelete = deviceId ?? tokenData.deviceId;
         try {
-            const checkSession =  await SessionRepository.checkSessionDevice({deviceId: deviceToDelete, userId: tokenData.userId});
+            if (!deviceId) {
+                return {
+                    status: 404,
+                    data: null,
+                    message: '',
+                    errors: {errorsMessages: [{message: 'deviceId not found', field: 'deviceId'}]},
+                }
+            }
+            const checkId = await SessionRepository.getSessionByDeviceId(deviceId);
+            if (!checkId) {
+                return {
+                    status: 404,
+                    data: null,
+                    message: '',
+                    errors: {errorsMessages: [{message: 'deviceId not found', field: 'deviceId'}]},
+                }
+            }
+            const checkSession = await SessionRepository.checkSessionDevice({
+                deviceId: deviceToDelete,
+                userId: tokenData.userId
+            });
             if (!checkSession) {
                 return {
                     status: 403,

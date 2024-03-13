@@ -60,7 +60,10 @@ export class SessionRepository {
     static async checkSessionDevice({deviceId, userId}: DeleteSessionsPayload) {
         const checkSession = await sessionCollection.findOne({deviceId, userId});
         return checkSession;
+    }
 
+    static async getSessionByDeviceId(deviceId: string) {
+       return await sessionCollection.findOne({deviceId});
     }
 
     static async findSession(deviceId: string) {
