@@ -97,7 +97,9 @@ export class SessionService {
                 }
             }
             const result = await SessionRepository.deleteSession({deviceId: deviceToDelete, userId: tokenData.userId});
-            await AuthRepository.addTokenToBlackList(refreshToken);
+            if (tokenData.deviceId === deviceId) {
+                await AuthRepository.addTokenToBlackList(refreshToken);
+            }
             return {
                 status: 204,
                 data: null,
