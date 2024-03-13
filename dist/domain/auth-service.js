@@ -118,17 +118,11 @@ class AuthService {
                 if (!isDeviceExist) {
                     throw new Error('device token not valid');
                 }
-                yield session_repository_1.SessionRepository.updateSession({ deviceId: tokenData.deviceId, title: sessionData.title }, {
-                    ip: sessionData.ip,
-                    userId: tokenData.userId,
-                    deviceId: tokenData.deviceId,
-                    title: sessionData.title,
-                    lastActiveDate: tokenData.iat,
-                    expirationDate: tokenData.exp
-                });
                 const accessToken = yield jwt_service_1.JwtService.createJWT(userId, '10s');
                 const newRefreshToken = yield jwt_service_1.JwtService.createJWT(userId, '20s', tokenData.deviceId);
                 yield auth_repository_1.AuthRepository.addTokenToBlackList(refreshToken);
+                const newRefreshTokenData = yield jwt_service_1.JwtService.getPayload(newRefreshToken);
+                yield session_repository_1.SessionRepository.updateSession(tokenData.deviceId, newRefreshTokenData.exp);
                 return ({
                     accessToken: accessToken,
                     refreshToken: newRefreshToken

@@ -3,6 +3,7 @@ import {SessionDBModel} from "../models/session/session";
 import {StatusResultType} from "../models/common";
 import {SessionOutputType} from "../models/session/output";
 import {JwtService} from "../app/auth/jwt-service";
+import {AuthRepository} from "../repositories/auth-repository";
 
 type DeleteSessionsPayload = {
     deviceId?: string;
@@ -96,6 +97,7 @@ export class SessionService {
                 }
             }
             const result = await SessionRepository.deleteSession({deviceId: deviceToDelete, userId: tokenData.userId});
+            await AuthRepository.addTokenToBlackList(refreshToken);
             return {
                 status: 204,
                 data: null,
