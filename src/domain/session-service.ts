@@ -31,8 +31,9 @@ export class SessionService {
         }
     }
 
-    static async deleteAllSessions(deviceId: string): Promise<StatusResultType<null>> {
+    static async deleteAllSessions(refreshToken: string): Promise<StatusResultType<null>> {
         try {
+            const {deviceId, userId} = await JwtService.getPayload(refreshToken);
             const result = await SessionRepository.deleteAllSessions(deviceId);
             return {
                 status: 204,

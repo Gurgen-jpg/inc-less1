@@ -41,7 +41,7 @@ export class SessionRepository {
 
     static async deleteAllSessions(deviceId: string) {
         try {
-            const result = await sessionCollection.deleteMany({$ne: deviceId});
+            const result = await sessionCollection.deleteMany({deviceId: {$ne: deviceId}});
         } catch (e) {
             console.log('Error in deleteAllSessions:', e);
         }
@@ -63,7 +63,7 @@ export class SessionRepository {
     }
 
     static async getSessionByDeviceId(deviceId: string) {
-       return await sessionCollection.findOne({deviceId});
+        return await sessionCollection.findOne({deviceId});
     }
 
     static async findSession(deviceId: string) {

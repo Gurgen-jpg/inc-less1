@@ -36,8 +36,8 @@ export const testSeeder = {
             .post('/users')
             .set('Authorization', `Basic YWRtaW46cXdlcnR5`)
             .send({
-                login: 'login',
-                email: 'user.email@mail.ru',
+                login,
+                email,
                 password: 'password',
                 createdAt: new Date().toISOString()
             })

@@ -192,7 +192,6 @@ describe('check sessions flow', () => {
         const cookies2 = ref2.headers['set-cookie'];
 
 
-
         const sameDeviceId = await request(app).get('/security/devices').set({
             Cookie: cookies2
         });
@@ -200,8 +199,40 @@ describe('check sessions flow', () => {
         // expect(sameDeviceId.status).toBe(200)
 
 
-
     })
+    test('delete other devices', async () => {
+        const {login, password} = await testSeeder.createUsers({
+            login: 'login', email: 'user.email@gmail.com', password: 'password'
+        });
 
+        const auth = await testSeeder.authUser({
+            loginOrEmail: login,
+            password,
+        });
+        const auth1 = await testSeeder.authUser({
+            loginOrEmail: login,
+            password,
+            userAgent: 'jest2',
+        });
+        const auth2 = await testSeeder.authUser({
+            loginOrEmail: login,
+            password,
+            userAgent: 'jest3',
+        });
+
+        const devices = await request(app).get('/security/devices').set({
+            Cookie: auth1.refreshToken[0],
+        })
+        expect(devices.status).toBe(200);
+        expect(devices.body).toHaveLength(3);
+
+        const deleteAll = await request(app).delete('/security/devices').set({
+            Cookie: auth2.refreshToken[0],
+        })
+        const devicesAfterDelete = await request(app).get('/security/devices').set({
+            Cookie: auth2.refreshToken[0],
+        })
+        expect(devicesAfterDelete.body).toHaveLength(1);
+    })
 
 })
