@@ -20,5 +20,5 @@ export type SessionDBModel = {
     deviceId: string
 }
 
-export type UpdateSearchParams = { deviceId: string, title: string }
+// export type UpdateSearchParams = { deviceId: string, title: string }
 export type SecurityRepository = SessionDBModel[]

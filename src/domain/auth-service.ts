@@ -115,21 +115,18 @@ export class AuthService {
                 throw new Error('device token not valid');
             }
 
-            await SessionRepository.updateSession(
-                {deviceId: tokenData.deviceId, title: sessionData.title},
-                {
-                    ip: sessionData.ip,
-                    userId: tokenData.userId,
-                    deviceId: tokenData.deviceId,
-                    title: sessionData.title,
-                    lastActiveDate: tokenData.iat,
-                    expirationDate: tokenData.exp
-                }
-            )
             const accessToken = await JwtService.createJWT(userId, '10s');
             const newRefreshToken = await JwtService.createJWT(userId, '20s', tokenData.deviceId);
 
             await AuthRepository.addTokenToBlackList(refreshToken);
+
+            const newRefreshTokenData = await JwtService.getPayload(newRefreshToken!);
+
+            await SessionRepository.updateSession(
+                tokenData.deviceId,
+                newRefreshTokenData.exp
+            )
+
             return ({
                 accessToken: accessToken,
                 refreshToken: newRefreshToken

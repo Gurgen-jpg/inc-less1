@@ -1,8 +1,9 @@
 import {sessionCollection} from "../db/db";
-import {SessionDBModel, UpdateSearchParams} from "../models/session/session";
+import {SessionDBModel} from "../models/session/session";
 import {mapper} from "../models/session/napper/mapper";
 import {SessionOutputType} from "../models/session/output";
 import {DeleteResult} from "mongodb";
+import exp from "node:constants";
 
 type DeleteSessionsPayload = {
     deviceId: string;
@@ -28,13 +29,17 @@ export class SessionRepository {
         }
     }
 
-    static async updateSession(params: UpdateSearchParams, session: SessionDBModel) {
+    static async updateSession(deviceId: string, exp: string) {
         try {
             const result = await sessionCollection.updateOne({
-                deviceId: params.deviceId,
-                title: params.title,
-                lastActiveDate: String(Math.floor(Date.now() / 1000)),
-            }, {$set: session});
+                    deviceId,
+                },
+                {
+                    $set: {
+                        lastActiveDate: new Date().toISOString(),
+                        expirationDate: exp,
+                    }
+                });
         } catch (e) {
             console.log('Error in updateSession:', e);
         }
