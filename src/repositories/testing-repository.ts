@@ -1,7 +1,7 @@
 import {
     blogCollection,
     commentsCollection,
-    postCollection,
+    postCollection, rateLimitCollection,
     sessionCollection,
     tokenCollection,
     usersCollection
@@ -16,7 +16,7 @@ export class TestingRepository {
             await commentsCollection.deleteMany({});
             await tokenCollection.deleteMany({});
             await sessionCollection.deleteMany({});
-
+            await rateLimitCollection.deleteMany({});
         } catch (e) {
             console.log('Error in deleteAllData:', e);
         }
