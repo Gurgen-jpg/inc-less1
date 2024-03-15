@@ -8,6 +8,9 @@ import {SessionRepository} from "../../repositories/session-repository";
 export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     dotenv.config();
     const cookie = req.cookies.refreshToken;
+    if (!cookie) {
+        return res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
+    }
     const isTokenExpired = JwtService.isTokenExpired(cookie);
     const tokenData = JwtService.getPayload(cookie)
     const isTokenInBlackList = await AuthRepository.isTokenBlacklisted(cookie);
