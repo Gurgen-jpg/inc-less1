@@ -21,7 +21,9 @@ securityRoute.get('/devices', refreshTokenMiddleware, async (req, res) => {
 
 securityRoute.delete('/devices', refreshTokenMiddleware, async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
-
+    if (!refreshToken) {
+        return res.sendStatus(UNAUTHORIZED)
+    }
     const result = await SessionService.deleteAllSessions(refreshToken);
     if (result.status !== 204) {
         return res.sendStatus(UNAUTHORIZED)
