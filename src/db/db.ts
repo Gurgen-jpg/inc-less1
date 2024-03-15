@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import {MongoClient} from "mongodb";
 import {BlogDBModel, CommentDBModel, PostDBModel, TokenData, UserDBModel} from "../models/db";
 import {SessionDBModel} from "../models/session/session";
+import {RateLimitModel} from "../models/rateLimit/RateLimitModel";
 
 dotenv.config();
 const PORT = 80;
@@ -18,7 +19,7 @@ const usersCollection = database.collection<UserDBModel>('users');
 const commentsCollection = database.collection<CommentDBModel>('comments');
 const tokenCollection = database.collection<TokenData>('tokens-blacklist');
 const sessionCollection = database.collection<SessionDBModel>('session');
-
+const rateLimitCollection = database.collection<RateLimitModel>('rate-limit');
 async function connectDB() {
     try {
         await client.connect();
@@ -39,5 +40,6 @@ export {
     usersCollection,
     commentsCollection,
     tokenCollection,
-    sessionCollection
+    sessionCollection,
+    rateLimitCollection
 };

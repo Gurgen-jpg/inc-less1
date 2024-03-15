@@ -270,11 +270,18 @@ describe('check sessions flow', () => {
         const logout = await request(app).post('/auth/logout').set({
             Cookie: auth.refreshToken[0]
         });
-
-        // expect(logout.status).toBe(401);
-
-
-
     })
+    test('-bad credentials', async () => {
+        await testSeeder.createUsers({
+            login: 'login', email: 'user.email@gmail.com', password: 'password'
+        });
 
+        const auth = await testSeeder.authUser({
+            loginOrEmail: 'login',
+            password: 'password2',
+        })
+        const deleteDevice = await request(app).delete('/security/devices').set({})
+        expect(deleteDevice.status).toBe(401);
+    })
 })
+

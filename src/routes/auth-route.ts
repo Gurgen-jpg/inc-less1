@@ -10,11 +10,12 @@ import {
 } from "../validators/registration-validation";
 import {cookie} from "express-validator";
 import {refreshTokenMiddleware} from "../middlewares/authValidation/refresh-token-validation";
+import {rateLimitMiddleware} from "../middlewares/rateLimit/rate-limit-middleware";
 
 export const authRoute = express.Router({});
 
 const {OK, NO_CONTENT, UNAUTHORIZED, NOT_FOUND, BAD_REQUEST} = HTTP_STATUSES;
-authRoute.post('/login', async (req: RequestBodyType<LoginInputModel>, res: Response) => {
+authRoute.post('/login', rateLimitMiddleware, async (req: RequestBodyType<LoginInputModel>, res: Response) => {
     const {loginOrEmail, password} = req.body;
     const token = await AuthService.login({loginOrEmail, password}, {
         ip: req.ip! as string,
@@ -65,7 +66,7 @@ authRoute.get('/me', tokenAuthorizationMiddleware, async (req: Request, res: Res
     return me ? res.status(OK).send(me) : res.sendStatus(NOT_FOUND);
 })
 
-authRoute.post('/registration', registerValidation(), async (req: RequestBodyType<RegisterInputModel>, res: Response) => {
+authRoute.post('/registration', rateLimitMiddleware, registerValidation(), async (req: RequestBodyType<RegisterInputModel>, res: Response) => {
     const {login, email, password} = req.body;
     const result = await AuthService.register({login, email, password});
     return result?.status === 204
@@ -73,7 +74,7 @@ authRoute.post('/registration', registerValidation(), async (req: RequestBodyTyp
         : res.status(BAD_REQUEST).send(result?.errors);
 })
 
-authRoute.post('/registration-confirmation', emailConfirmationValidation(), async (req: RequestBodyType<{
+authRoute.post('/registration-confirmation', rateLimitMiddleware, emailConfirmationValidation(), async (req: RequestBodyType<{
     code: string
 }>, res: Response) => {
     const result = await AuthService.confirmEmail(req.body.code);
