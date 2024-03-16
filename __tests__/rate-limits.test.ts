@@ -16,12 +16,7 @@ describe('rete limit in login', () => {
             loginOrEmail: 'login5',
             password: 'password',
         })
-
-        const count  = await RateLimitRepository.count('::ffff:127.0.0.1', '/auth');
-        console.log('COUNT, ', count);
         expect(res.status).toBe(429);
-
-
     });
 
 })
