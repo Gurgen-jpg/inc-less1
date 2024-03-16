@@ -6,6 +6,6 @@ export const rateLimitMiddleware = async (request: Request, response: Response, 
     if (count !== null && count > 5) {
         return response.sendStatus(429);
     }
-    await RateLimitRepository.createRateLimit({ip: request.ip!, url: request.url, date: new Date().toISOString()});
+    await RateLimitRepository.createRateLimit({ip: request.ip!, url: request.baseUrl, date: new Date().toString()});
     return next();
 }

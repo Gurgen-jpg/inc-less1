@@ -16,7 +16,7 @@ export class RateLimitRepository {
         const currentDateMinus10Seconds = new Date(Date.now() - 10000);
 
         try {
-            return await rateLimitCollection.countDocuments({ip, url, date: {$lte: currentDateMinus10Seconds.toISOString()}});
+            return await rateLimitCollection.countDocuments({ip, url, date: {$lte: currentDateMinus10Seconds}});
         } catch (e) {
             return null
         }
