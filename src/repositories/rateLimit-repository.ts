@@ -13,7 +13,7 @@ export class RateLimitRepository {
     }
 
     static async count(ip: string, url: string): Promise<number | null> {
-        const currentDateMinus10Seconds = new Date(Date.now() - 10000);
+        const currentDateMinus10Seconds = new Date().getTime() - 10000;
 
         try {
             return await rateLimitCollection.countDocuments({ip, url, date: {$gte: currentDateMinus10Seconds}});

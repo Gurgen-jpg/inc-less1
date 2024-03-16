@@ -3,6 +3,7 @@ import {app} from "../src/settings";
 import {createUsers} from "./utils/createData";
 import {testSeeder} from "./utils/test.seeder";
 import {cookie} from "express-validator";
+import {describe} from "node:test";
 
 describe('auth', () => {
     beforeAll(async () => {
@@ -208,6 +209,7 @@ describe('auth', () => {
             Cookie: cookies
         })
         expect(refresh.status).toBe(401);
-    })
+    });
 
-})
+
+});

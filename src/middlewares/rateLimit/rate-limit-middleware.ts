@@ -7,6 +7,6 @@ export const rateLimitMiddleware = async (request: Request, response: Response, 
         return response.sendStatus(429);
     }
     console.log('count --> ', count)
-    await RateLimitRepository.createRateLimit({ip: request.ip!, url: request.baseUrl, date: new Date()});
+    await RateLimitRepository.createRateLimit({ip: request.ip!, url: request.baseUrl, date: new Date().getTime()});
     return next();
 }
