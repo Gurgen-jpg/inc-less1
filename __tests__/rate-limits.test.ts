@@ -17,7 +17,12 @@ describe('rete limit in login', () => {
             password: 'password',
         })
         expect(res.status).toBe(429);
-
+        await new Promise(resolve => setTimeout(resolve, 11000));
+        const res2 = await request(app).post('/auth/login').send({
+            loginOrEmail: 'login5',
+            password: 'password',
+        })
+        expect(res2.status).toBe(401);
     });
 
 })
