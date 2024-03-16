@@ -142,22 +142,23 @@ describe('Registration Controller rateLimit', () => {
 
     test('-should send 429 if limit', async () => {
         const {login, email, password} = testSeeder.createUserDto();
-        const counts = Array.from({length: 5}, (el, index) => ({
+        const counts = Array.from({length: 6}, (el, index) => ({
             login: login + index,
             email: email + index,
             password
         }))
-        const promiseArray = counts.map(async (user) => {
-            await request(app)
-                .post('/auth/registration')
-                .send({login: user.login, email: user.email, password: user.password});
-        })
-        const promises = await Promise.all(promiseArray);
-        console.log(promises)
-        const res = await request(app).post('/auth/registration').send({login: login+5, email: email+5, password});
+        const promiseArray = [];
+        for (const user of counts) {
+            promiseArray.push(
+                request(app)
+                    .post('/auth/registration')
+                    .send({login: user.login, email: user.email, password: user.password})
+            );
+        }
+
+        await Promise.all(promiseArray);
+        const res = await request(app).post('/auth/registration').send({login: login+6, email: email+6, password});
         expect(res.status).toBe(429);
 
     })
-
-
 })
