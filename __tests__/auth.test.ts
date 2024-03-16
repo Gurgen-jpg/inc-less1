@@ -2,8 +2,6 @@ import request from "supertest";
 import {app} from "../src/settings";
 import {createUsers} from "./utils/createData";
 import {testSeeder} from "./utils/test.seeder";
-import {cookie} from "express-validator";
-import {describe} from "node:test";
 
 describe('auth', () => {
     beforeAll(async () => {
@@ -204,7 +202,7 @@ describe('auth', () => {
         });
         const cookies = login.headers['set-cookie'];
         const oldRefreshToken = testSeeder.getRefreshToken(cookies);
-        await new Promise(resolve => setTimeout(resolve, 8000));
+        await new Promise(resolve => setTimeout(resolve, 11000));
         const refresh = await request(app).post('/auth/refresh-token').set({
             Cookie: cookies
         })
