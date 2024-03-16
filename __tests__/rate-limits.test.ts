@@ -1,12 +1,13 @@
 import request from "supertest";
 import {app} from "../src/settings";
+import {RateLimitRepository} from "../src/repositories/rateLimit-repository";
 
 describe('rete limit in login', () => {
     beforeAll(async () => {
         await request(app).delete('/testing/all-data');
     })
     it('-should return 429 if too many requests', async () => {
-        const users = Array.from({length: 6}, (el, index) => ({
+        const users = Array.from({length: 5}, (el, index) => ({
             loginOrEmail: 'login' + index,
             password: 'password',
         }));
@@ -15,6 +16,9 @@ describe('rete limit in login', () => {
             loginOrEmail: 'login5',
             password: 'password',
         })
+
+        const count  = await RateLimitRepository.count('::ffff:127.0.0.1', '/auth');
+        console.log('COUNT, ', count);
         expect(res.status).toBe(429);
 
 
