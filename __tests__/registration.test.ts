@@ -125,13 +125,38 @@ describe('Registration Controller', () => {
             .send({login, email, password});
 
         expect(newUser.status).toBe(400);
-        console.log(newUser.body.errorsMessages)
         expect(newUser.body).toEqual({
             errorsMessages: [{
                 message: 'User already exists',
                 field: 'login'
             }]
         })
+    })
+})
+
+describe('Registration Controller rateLimit', () => {
+    beforeAll(async () => {
+        await request(app).delete('/testing/all-data');
+    })
+    EmailAdapter.sendMail = jest.fn().mockResolvedValue((login: string, email: string, subject: string, code: string) => true);
+
+    test('-should send 429 if limit', async () => {
+        const {login, email, password} = testSeeder.createUserDto();
+        const counts = Array.from({length: 5}, (el, index) => ({
+            login: login + index,
+            email: email + index,
+            password
+        }))
+        const promiseArray = counts.map(async (user) => {
+            await request(app)
+                .post('/auth/registration')
+                .send({login: user.login, email: user.email, password: user.password});
+        })
+        const promises = await Promise.all(promiseArray);
+        console.log(promises)
+        const res = await request(app).post('/auth/registration').send({login: login+5, email: email+5, password});
+        expect(res.status).toBe(429);
+
     })
 
 

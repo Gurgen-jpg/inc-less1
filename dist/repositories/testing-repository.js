@@ -21,6 +21,7 @@ class TestingRepository {
                 yield db_1.commentsCollection.deleteMany({});
                 yield db_1.tokenCollection.deleteMany({});
                 yield db_1.sessionCollection.deleteMany({});
+                yield db_1.rateLimitCollection.deleteMany({});
             }
             catch (e) {
                 console.log('Error in deleteAllData:', e);
