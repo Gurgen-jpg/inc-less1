@@ -17,6 +17,7 @@ describe('rete limit in login', () => {
             password: 'password',
         })
         expect(res.status).toBe(429);
+
     });
 
 })
