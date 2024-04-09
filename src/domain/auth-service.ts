@@ -333,27 +333,29 @@ export class AuthService {
 
     static async passwordRecovery(email: string): Promise<StatusResultType> {
         try {
-            const user = await UserRepository.getUserByLoginOrEmail(email);
-            if (!user) {
-                return {
-                    status: 400,
-                    errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
-                }
-            }
-            if (!user.emailConfirmation.isConfirmed) {
-                return {
-                    status: 400,
-                    errors: {errorsMessages: [{message: 'Email not confirmed', field: 'email'}]}
-                }
-            }
-            const recoveryCode = await UserRepository.updateRecoveryCode(generateId(), user._id);
-            if (!recoveryCode) {
-                return {
-                    status: 400,
-                    errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
-                }
-            }
-            const isMailSend = await EmailAdapter.sendRecoveryCode(email, 'recovery', recoveryCode);
+            debugger
+            // const user = await UserRepository.getUserByLoginOrEmail(email);
+            // if (!user) {
+            //     return {
+            //         status: 400,
+            //         errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
+            //     }
+            // }
+            // if (!user.emailConfirmation.isConfirmed) {
+            //     return {
+            //         status: 400,
+            //         errors: {errorsMessages: [{message: 'Email not confirmed', field: 'email'}]}
+            //     }
+            // }
+            // const recoveryCode = await UserRepository.updateRecoveryCode(generateId(), user._id);
+            // console.log(recoveryCode);
+            // if (!recoveryCode) {
+            //     return {
+            //         status: 400,
+            //         errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
+            //     }
+            // }
+            const isMailSend = await EmailAdapter.sendRecoveryCode(email, 'recovery', generateId());
             if (isMailSend) {
                 return {
                     status: 204,
