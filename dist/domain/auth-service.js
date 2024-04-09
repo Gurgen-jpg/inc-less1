@@ -328,5 +328,75 @@ class AuthService {
             }
         });
     }
+    static passwordRecovery(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield user_repository_1.UserRepository.getUserByLoginOrEmail(email);
+                if (!user) {
+                    return {
+                        status: 400,
+                        errors: { errorsMessages: [{ message: 'User not found', field: 'email' }] }
+                    };
+                }
+                if (!user.emailConfirmation.isConfirmed) {
+                    return {
+                        status: 400,
+                        errors: { errorsMessages: [{ message: 'Email not confirmed', field: 'email' }] }
+                    };
+                }
+                const recoveryCode = yield user_repository_1.UserRepository.updateRecoveryCode((0, uuid_1.generateId)(), user._id);
+                if (!recoveryCode) {
+                    return {
+                        status: 400,
+                        errors: { errorsMessages: [{ message: 'User not found', field: 'email' }] }
+                    };
+                }
+                const isMailSend = yield email_adapter_1.EmailAdapter.sendRecoveryCode(email, 'recovery', recoveryCode);
+                if (isMailSend) {
+                    return {
+                        status: 204,
+                        message: 'Input data is accepted. Email with confirmation code will be send to passed email address'
+                    };
+                }
+                else {
+                    return {
+                        status: 400,
+                        errors: { errorsMessages: [{ message: 'User not found', field: 'email' }] }
+                    };
+                }
+            }
+            catch (e) {
+                return { status: 400, errors: { errorsMessages: [{ message: 'User not found', field: 'email' }] } };
+            }
+        });
+    }
+    static newPassword(password, recoveryCode) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield user_repository_1.UserRepository.getUserByRecoveryCode(recoveryCode);
+                if (!user) {
+                    return {
+                        status: 400,
+                        errors: { errorsMessages: [{ message: 'User not found', field: 'recoveryCode' }] }
+                    };
+                }
+                const hash = yield bcrypt_service_1.BcryptService.createHash(password);
+                const result = yield user_repository_1.UserRepository.updatePassword(user._id, hash);
+                if (!result) {
+                    return {
+                        status: 400,
+                        errors: { errorsMessages: [{ message: 'User not found', field: 'recoveryCode' }] }
+                    };
+                }
+                return {
+                    status: 204,
+                    message: 'Input data is accepted. Password was changed'
+                };
+            }
+            catch (e) {
+                return { status: 400, errors: { errorsMessages: [{ message: 'User not found', field: 'recoveryCode' }] } };
+            }
+        });
+    }
 }
 exports.AuthService = AuthService;

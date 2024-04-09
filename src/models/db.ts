@@ -21,6 +21,10 @@ export type UserDBModel = {
         confirmationCode: string,
         expirationDate: Date,
         isConfirmed: boolean
+    },
+    passwordRecovery?: {
+        recoveryCode: string,
+        expirationDate: Date
     }
 };
 export type PostDBModel = Omit<PostViewModel, 'id'>;

@@ -4,7 +4,7 @@ import {HTTP_STATUSES, RequestBodyType} from "../models/common";
 import {AuthService} from "../domain/auth-service";
 import {tokenAuthorizationMiddleware} from "../middlewares/authValidation/token-authorization";
 import {
-    emailConfirmationValidation,
+    emailConfirmationValidation, passwordValidationMiddleware,
     registerValidation,
     resendEmailValidation
 } from "../validators/registration-validation";
@@ -91,3 +91,18 @@ authRoute.post('/registration-email-resending', rateLimitMiddleware, resendEmail
         ? res.status(NO_CONTENT).send(result?.message)
         : res.status(BAD_REQUEST).send(result?.errors);
 })
+
+authRoute.post('/password-recovery', resendEmailValidation(), rateLimitMiddleware, async (req: RequestBodyType<{email: string}>, res: Response) => {
+    const result = await AuthService.passwordRecovery(req.body.email);
+    return result.status === 204
+        ? res.status(NO_CONTENT).send(result?.message)
+        : res.status(BAD_REQUEST).send(result?.errors);
+})
+
+authRoute.post('/new-password', passwordValidationMiddleware(), rateLimitMiddleware, async (req: RequestBodyType<{recoveryCode: string, newPassword: string}>, res: Response) => {
+    const result = await AuthService.newPassword(req.body.recoveryCode, req.body.newPassword);
+    return result.status === 204
+        ? res.status(NO_CONTENT).send(result?.message)
+        : res.status(BAD_REQUEST).send(result?.errors);
+})
+

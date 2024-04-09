@@ -91,4 +91,45 @@ export class UserRepository {
             return null
         }
     }
+
+    static async updateRecoveryCode(code: string, userId: ObjectId) {
+        try {
+            const result = await usersCollection.updateOne({_id: userId}, {$set: {'passwordRecovery.recoveryCode': code}});
+            if (result.modifiedCount === 1) {
+                return code;
+            }
+            return null
+        } catch (e) {
+            console.log(e)
+            return null
+        }
+    }
+
+    static async getUserByRecoveryCode(code: string): Promise<WithId<UserDBModel> | null> {
+        try {
+            return await usersCollection
+                .findOne({'passwordRecovery.recoveryCode': code})
+                .then((user) => {
+                    return user ? user : null
+                })
+                .catch((err) => {
+                    throw err
+                });
+        } catch (e) {
+            console.log('can not find user', e);
+            return null
+        }
+    }
+
+    static async updatePassword(userId: ObjectId, passwordHash: string): Promise<Boolean> {
+        try {
+            const result = await usersCollection.updateOne({_id: userId}, {$set: {'accountData.passwordHash': passwordHash}});
+            if (result.modifiedCount === 1) {
+                return true
+            }
+            return false
+        } catch (e) {
+            return false
+        }
+    }
 }

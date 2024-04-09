@@ -44,3 +44,7 @@ export const resendEmailValidation = () => {
     return [emailValidation, inputValidationMiddleware];
 }
 
+export const passwordValidationMiddleware = () => {
+    return [passwordValidation, inputValidationMiddleware];
+}
+

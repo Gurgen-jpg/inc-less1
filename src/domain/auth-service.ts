@@ -72,7 +72,7 @@ export class AuthService {
             }
             await AuthRepository.addTokenToBlackList(refreshToken);
             const tokenData = await JwtService.getPayload(refreshToken);
-            await SessionRepository.deleteSession({userId: tokenData.userId, deviceId:tokenData.deviceId});
+            await SessionRepository.deleteSession({userId: tokenData.userId, deviceId: tokenData.deviceId});
             await AuthRepository.addTokenToBlackList(refreshToken);
             return {
                 status: 204,
@@ -328,6 +328,71 @@ export class AuthService {
         } catch (e) {
             console.error(e);
             return {status: 400, errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}}
+        }
+    }
+
+    static async passwordRecovery(email: string): Promise<StatusResultType> {
+        try {
+            const user = await UserRepository.getUserByLoginOrEmail(email);
+            if (!user) {
+                return {
+                    status: 400,
+                    errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
+                }
+            }
+            if (!user.emailConfirmation.isConfirmed) {
+                return {
+                    status: 400,
+                    errors: {errorsMessages: [{message: 'Email not confirmed', field: 'email'}]}
+                }
+            }
+            const recoveryCode = await UserRepository.updateRecoveryCode(generateId(), user._id);
+            if (!recoveryCode) {
+                return {
+                    status: 400,
+                    errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
+                }
+            }
+            const isMailSend = await EmailAdapter.sendRecoveryCode(email, 'recovery', recoveryCode);
+            if (isMailSend) {
+                return {
+                    status: 204,
+                    message: 'Input data is accepted. Email with confirmation code will be send to passed email address'
+                }
+            } else {
+                return {
+                    status: 400,
+                    errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
+                }
+            }
+        } catch (e) {
+            return {status: 400, errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}}
+        }
+    }
+
+    static async newPassword(password: string, recoveryCode: string): Promise<StatusResultType> {
+        try {
+            const user = await UserRepository.getUserByRecoveryCode(recoveryCode);
+            if (!user) {
+                return {
+                    status: 400,
+                    errors: {errorsMessages: [{message: 'User not found', field: 'recoveryCode'}]}
+                }
+            }
+            const hash = await BcryptService.createHash(password);
+            const result = await UserRepository.updatePassword(user._id, hash!);
+            if (!result) {
+                return {
+                    status: 400,
+                    errors: {errorsMessages: [{message: 'User not found', field: 'recoveryCode'}]}
+                }
+            }
+            return {
+                status: 204,
+                message: 'Input data is accepted. Password was changed'
+            }
+        } catch (e) {
+            return {status: 400, errors: {errorsMessages: [{message: 'User not found', field: 'recoveryCode'}]}}
         }
     }
 }

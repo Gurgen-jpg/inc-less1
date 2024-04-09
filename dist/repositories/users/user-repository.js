@@ -114,5 +114,52 @@ class UserRepository {
             }
         });
     }
+    static updateRecoveryCode(code, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const result = yield db_1.usersCollection.updateOne({ _id: userId }, { $set: { 'passwordRecovery.recoveryCode': code } });
+                if (result.modifiedCount === 1) {
+                    return code;
+                }
+                return null;
+            }
+            catch (e) {
+                console.log(e);
+                return null;
+            }
+        });
+    }
+    static getUserByRecoveryCode(code) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield db_1.usersCollection
+                    .findOne({ 'passwordRecovery.recoveryCode': code })
+                    .then((user) => {
+                    return user ? user : null;
+                })
+                    .catch((err) => {
+                    throw err;
+                });
+            }
+            catch (e) {
+                console.log('can not find user', e);
+                return null;
+            }
+        });
+    }
+    static updatePassword(userId, passwordHash) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const result = yield db_1.usersCollection.updateOne({ _id: userId }, { $set: { 'accountData.passwordHash': passwordHash } });
+                if (result.modifiedCount === 1) {
+                    return true;
+                }
+                return false;
+            }
+            catch (e) {
+                return false;
+            }
+        });
+    }
 }
 exports.UserRepository = UserRepository;

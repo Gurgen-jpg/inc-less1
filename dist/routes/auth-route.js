@@ -87,3 +87,15 @@ exports.authRoute.post('/registration-email-resending', rate_limit_middleware_1.
         ? res.status(NO_CONTENT).send(result === null || result === void 0 ? void 0 : result.message)
         : res.status(BAD_REQUEST).send(result === null || result === void 0 ? void 0 : result.errors);
 }));
+exports.authRoute.post('/password-recovery', (0, registration_validation_1.resendEmailValidation)(), rate_limit_middleware_1.rateLimitMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield auth_service_1.AuthService.passwordRecovery(req.body.email);
+    return result.status === 204
+        ? res.status(NO_CONTENT).send(result === null || result === void 0 ? void 0 : result.message)
+        : res.status(BAD_REQUEST).send(result === null || result === void 0 ? void 0 : result.errors);
+}));
+exports.authRoute.post('/new-password', (0, registration_validation_1.passwordValidationMiddleware)(), rate_limit_middleware_1.rateLimitMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield auth_service_1.AuthService.newPassword(req.body.recoveryCode, req.body.newPassword);
+    return result.status === 204
+        ? res.status(NO_CONTENT).send(result === null || result === void 0 ? void 0 : result.message)
+        : res.status(BAD_REQUEST).send(result === null || result === void 0 ? void 0 : result.errors);
+}));
