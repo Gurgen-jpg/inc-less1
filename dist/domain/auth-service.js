@@ -331,27 +331,29 @@ class AuthService {
     static passwordRecovery(email) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const user = yield user_repository_1.UserRepository.getUserByLoginOrEmail(email);
-                if (!user) {
-                    return {
-                        status: 400,
-                        errors: { errorsMessages: [{ message: 'User not found', field: 'email' }] }
-                    };
-                }
-                if (!user.emailConfirmation.isConfirmed) {
-                    return {
-                        status: 400,
-                        errors: { errorsMessages: [{ message: 'Email not confirmed', field: 'email' }] }
-                    };
-                }
-                const recoveryCode = yield user_repository_1.UserRepository.updateRecoveryCode((0, uuid_1.generateId)(), user._id);
-                if (!recoveryCode) {
-                    return {
-                        status: 400,
-                        errors: { errorsMessages: [{ message: 'User not found', field: 'email' }] }
-                    };
-                }
-                const isMailSend = yield email_adapter_1.EmailAdapter.sendRecoveryCode(email, 'recovery', recoveryCode);
+                debugger;
+                // const user = await UserRepository.getUserByLoginOrEmail(email);
+                // if (!user) {
+                //     return {
+                //         status: 400,
+                //         errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
+                //     }
+                // }
+                // if (!user.emailConfirmation.isConfirmed) {
+                //     return {
+                //         status: 400,
+                //         errors: {errorsMessages: [{message: 'Email not confirmed', field: 'email'}]}
+                //     }
+                // }
+                // const recoveryCode = await UserRepository.updateRecoveryCode(generateId(), user._id);
+                // console.log(recoveryCode);
+                // if (!recoveryCode) {
+                //     return {
+                //         status: 400,
+                //         errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
+                //     }
+                // }
+                const isMailSend = yield email_adapter_1.EmailAdapter.sendRecoveryCode(email, 'recovery', (0, uuid_1.generateId)());
                 if (isMailSend) {
                     return {
                         status: 204,

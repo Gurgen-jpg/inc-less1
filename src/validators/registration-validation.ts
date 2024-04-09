@@ -27,7 +27,11 @@ const passwordValidation = body(fields.password)
     .trim()
     .isLength({min: 6, max: 20})
     .withMessage('field must be between 6 and 20 characters');
-
+const recoveryPassword = body("recoveryPassword")
+    .isString()
+    .trim()
+    .isLength({min: 6, max: 20})
+    .withMessage('field must be between 6 and 20 characters');
 export const registerValidation = () => {
     return [loginValidation, emailValidation, passwordValidation, inputValidationMiddleware];
 }
@@ -44,7 +48,7 @@ export const resendEmailValidation = () => {
     return [emailValidation, inputValidationMiddleware];
 }
 
-export const passwordValidationMiddleware = () => {
-    return [passwordValidation, inputValidationMiddleware];
+export const recoveryPasswordValidationMiddleware = () => {
+    return [recoveryPassword, inputValidationMiddleware];
 }
 
