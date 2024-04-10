@@ -107,14 +107,7 @@ export class UserRepository {
 
     static async getUserByRecoveryCode(code: string): Promise<WithId<UserDBModel> | null> {
         try {
-            return await usersCollection
-                .findOne({'passwordRecovery.recoveryCode': code})
-                .then((user) => {
-                    return user ? user : null
-                })
-                .catch((err) => {
-                    throw err
-                });
+            return await usersCollection.findOne({'passwordRecovery.recoveryCode': code})
         } catch (e) {
             console.log('can not find user', e);
             return null
