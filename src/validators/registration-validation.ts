@@ -27,7 +27,7 @@ const passwordValidation = body(fields.password)
     .trim()
     .isLength({min: 6, max: 20})
     .withMessage('field must be between 6 and 20 characters');
-const recoveryPassword = body("recoveryPassword")
+const recoveryPassword = body("newPassword")
     .isString()
     .trim()
     .isLength({min: 6, max: 20})
