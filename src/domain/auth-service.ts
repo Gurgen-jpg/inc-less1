@@ -333,28 +333,10 @@ export class AuthService {
 
     static async passwordRecovery(email: string): Promise<StatusResultType> {
         try {
-            debugger
-            // const user = await UserRepository.getUserByLoginOrEmail(email);
-            // if (!user) {
-            //     return {
-            //         status: 400,
-            //         errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
-            //     }
-            // }
-            // if (!user.emailConfirmation.isConfirmed) {
-            //     return {
-            //         status: 400,
-            //         errors: {errorsMessages: [{message: 'Email not confirmed', field: 'email'}]}
-            //     }
-            // }
-            // const recoveryCode = await UserRepository.updateRecoveryCode(generateId(), user._id);
-            // console.log(recoveryCode);
-            // if (!recoveryCode) {
-            //     return {
-            //         status: 400,
-            //         errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
-            //     }
-            // }
+            const user = await UserRepository.getUserByLoginOrEmail(email);
+            if (user) {
+                const recoveryCode = await UserRepository.updateRecoveryCode(generateId(), user._id);
+            }
             const isMailSend = await EmailAdapter.sendRecoveryCode(email, 'recovery', generateId());
             if (isMailSend) {
                 return {
@@ -372,7 +354,7 @@ export class AuthService {
         }
     }
 
-    static async newPassword(password: string, recoveryCode: string): Promise<StatusResultType> {
+    static async newPassword(newPassword: string, recoveryCode: string): Promise<StatusResultType> {
         try {
             const user = await UserRepository.getUserByRecoveryCode(recoveryCode);
             if (!user) {
@@ -381,7 +363,7 @@ export class AuthService {
                     errors: {errorsMessages: [{message: 'User not found', field: 'recoveryCode'}]}
                 }
             }
-            const hash = await BcryptService.createHash(password);
+            const hash = await BcryptService.createHash(newPassword);
             const result = await UserRepository.updatePassword(user._id, hash!);
             if (!result) {
                 return {

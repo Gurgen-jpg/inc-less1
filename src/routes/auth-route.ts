@@ -105,7 +105,7 @@ authRoute.post('/new-password', recoveryPasswordValidationMiddleware(), rateLimi
     recoveryCode: string,
     newPassword: string
 }>, res: Response) => {
-    const result = await AuthService.newPassword(req.body.recoveryCode, req.body.newPassword);
+    const result = await AuthService.newPassword(req.body.newPassword, req.body.recoveryCode);
     return result.status === 204
         ? res.status(NO_CONTENT).send(result?.message)
         : res.status(BAD_REQUEST).send(result?.errors);
