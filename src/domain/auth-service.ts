@@ -332,12 +332,14 @@ export class AuthService {
     }
 
     static async passwordRecovery(email: string): Promise<StatusResultType> {
+        let isMailSend = false
         try {
             const user = await UserRepository.getUserByLoginOrEmail(email);
             if (user) {
                 const recoveryCode = await UserRepository.updateRecoveryCode(generateId(), user._id);
+                isMailSend = await EmailAdapter.sendRecoveryCode(email, 'recovery', recoveryCode!);
+
             }
-            const isMailSend = await EmailAdapter.sendRecoveryCode(email, 'recovery', generateId());
             if (isMailSend) {
                 return {
                     status: 204,
