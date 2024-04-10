@@ -38,7 +38,7 @@ export class EmailAdapter {
     }
 
     static async sendRecoveryCode(email: string, subject: string, code: string): Promise<boolean> {
-        const link = `https://inc-less1.vercel.app/confirm-email?code=${code}`
+        const link = `https://inc-less1.vercel.app/password-recovery?recoveryCode=${code}`
 
         try {
             await this._transport.sendMail({
