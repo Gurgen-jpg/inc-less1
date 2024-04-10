@@ -338,7 +338,11 @@ export class AuthService {
             if (user) {
                 const recoveryCode = await UserRepository.updateRecoveryCode(generateId(), user._id);
                 isMailSend = await EmailAdapter.sendRecoveryCode(email, 'recovery', recoveryCode!);
-
+            } else {
+                return {
+                    status: 204,
+                    message: 'Input data is accepted. Email with confirmation code will be send to passed email address'
+                }
             }
             if (isMailSend) {
                 return {
