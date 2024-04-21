@@ -29,7 +29,7 @@ export class CommentQueryRepository {
         }
     }
 
-    static async getCommentById(id: ObjectId | string, userId?: string): Promise<Omit<CommentVewModel, "likes"> | null> {
+    static async getCommentById(id: ObjectId | string, userId?: string): Promise<CommentVewModel | null> {
         try {
             const comment = await commentsCollection.findOne({_id: new ObjectId(id)});
             if (!comment) {

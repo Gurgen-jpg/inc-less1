@@ -38,7 +38,7 @@ class AuthService {
                         throw new Error('wrong password');
                     }
                     else {
-                        const accessToken = yield jwt_service_1.JwtService.createJWT(user._id.toString(), '10s');
+                        const accessToken = yield jwt_service_1.JwtService.createJWT(user._id.toString(), '10m');
                         const { userId, iat, exp, } = jwt_service_1.JwtService.getPayload(accessToken);
                         const { ip, title } = sessionData;
                         const currentDeviceId = (0, uuid_1.generateId)();
@@ -50,7 +50,7 @@ class AuthService {
                             lastActiveDate: new Date().toISOString(),
                             expirationDate: exp
                         });
-                        const refreshToken = yield jwt_service_1.JwtService.createJWT(user._id.toString(), '20s', currentDeviceId);
+                        const refreshToken = yield jwt_service_1.JwtService.createJWT(user._id.toString(), '20m', currentDeviceId);
                         if (!accessToken || !refreshToken) {
                             throw new Error('wrong token');
                         }
@@ -119,8 +119,8 @@ class AuthService {
                 if (!isDeviceExist) {
                     throw new Error('device token not valid');
                 }
-                const accessToken = yield jwt_service_1.JwtService.createJWT(userId, '10s');
-                const newRefreshToken = yield jwt_service_1.JwtService.createJWT(userId, '20s', tokenData.deviceId);
+                const accessToken = yield jwt_service_1.JwtService.createJWT(userId, '10m');
+                const newRefreshToken = yield jwt_service_1.JwtService.createJWT(userId, '20m', tokenData.deviceId);
                 yield auth_repository_1.AuthRepository.addTokenToBlackList(refreshToken);
                 const newRefreshTokenData = yield jwt_service_1.JwtService.getPayload(newRefreshToken);
                 yield session_repository_1.SessionRepository.updateSession(tokenData.deviceId, newRefreshTokenData.exp);
@@ -330,30 +330,19 @@ class AuthService {
     }
     static passwordRecovery(email) {
         return __awaiter(this, void 0, void 0, function* () {
+            let isMailSend = false;
             try {
-                debugger;
-                // const user = await UserRepository.getUserByLoginOrEmail(email);
-                // if (!user) {
-                //     return {
-                //         status: 400,
-                //         errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
-                //     }
-                // }
-                // if (!user.emailConfirmation.isConfirmed) {
-                //     return {
-                //         status: 400,
-                //         errors: {errorsMessages: [{message: 'Email not confirmed', field: 'email'}]}
-                //     }
-                // }
-                // const recoveryCode = await UserRepository.updateRecoveryCode(generateId(), user._id);
-                // console.log(recoveryCode);
-                // if (!recoveryCode) {
-                //     return {
-                //         status: 400,
-                //         errors: {errorsMessages: [{message: 'User not found', field: 'email'}]}
-                //     }
-                // }
-                const isMailSend = yield email_adapter_1.EmailAdapter.sendRecoveryCode(email, 'recovery', (0, uuid_1.generateId)());
+                const user = yield user_repository_1.UserRepository.getUserByLoginOrEmail(email);
+                if (user) {
+                    const recoveryCode = yield user_repository_1.UserRepository.updateRecoveryCode((0, uuid_1.generateId)(), user._id);
+                    isMailSend = yield email_adapter_1.EmailAdapter.sendRecoveryCode(email, 'recovery', recoveryCode);
+                }
+                else {
+                    return {
+                        status: 204,
+                        message: 'Input data is accepted. Email with confirmation code will be send to passed email address'
+                    };
+                }
                 if (isMailSend) {
                     return {
                         status: 204,
@@ -372,7 +361,7 @@ class AuthService {
             }
         });
     }
-    static newPassword(password, recoveryCode) {
+    static newPassword(newPassword, recoveryCode) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const user = yield user_repository_1.UserRepository.getUserByRecoveryCode(recoveryCode);
@@ -382,7 +371,7 @@ class AuthService {
                         errors: { errorsMessages: [{ message: 'User not found', field: 'recoveryCode' }] }
                     };
                 }
-                const hash = yield bcrypt_service_1.BcryptService.createHash(password);
+                const hash = yield bcrypt_service_1.BcryptService.createHash(newPassword);
                 const result = yield user_repository_1.UserRepository.updatePassword(user._id, hash);
                 if (!result) {
                     return {

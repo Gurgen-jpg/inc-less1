@@ -69,7 +69,7 @@ postRoute.get("/:postId/comments",
             pageSize: req.query.pageSize ? +req.query.pageSize : 10,
             pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
         }
-        const comments = await PostServices.getCommentsByPostId(req.params.postId, sortData, req.context.user!.id!);
+        const comments = await PostServices.getCommentsByPostId(req.params.postId, sortData, req?.context?.user?.id);
         return comments ? res.status(OK).send(comments) : res.sendStatus(NOT_FOUND);
     });
 

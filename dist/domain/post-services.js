@@ -126,14 +126,14 @@ class PostServices {
             }
         });
     }
-    static getCommentsByPostId(postId, sortData) {
+    static getCommentsByPostId(postId, sortData, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const isIdValid = yield post_repository_1.PostRepository.isPostExist(postId);
                 if (!isIdValid) {
                     return null;
                 }
-                return yield comment_query_repository_1.CommentQueryRepository.getCommentsByPostId(postId, sortData);
+                return yield comment_query_repository_1.CommentQueryRepository.getCommentsByPostId(postId, sortData, userId);
             }
             catch (e) {
                 return null;

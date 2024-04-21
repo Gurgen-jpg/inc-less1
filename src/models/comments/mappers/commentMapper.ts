@@ -2,7 +2,7 @@ import {CommentDBModel} from "../../db";
 import {ObjectId, WithId} from "mongodb";
 import {CommentVewModel} from "../output";
 
-export const commentMapper = (comment: WithId<CommentDBModel>, userId?: string): Omit<CommentVewModel, "likes"> => {
+export const commentMapper = (comment: WithId<CommentDBModel>, userId?: string): CommentVewModel => {
     return {
         likesInfo: {
             dislikesCount: comment.likesInfo.dislikesCount,
@@ -18,6 +18,7 @@ export const commentMapper = (comment: WithId<CommentDBModel>, userId?: string):
             userId: new ObjectId(comment.commentatorInfo.userId).toString(),
             userLogin: comment.commentatorInfo.userLogin
         },
-        createdAt: comment.createdAt
+        createdAt: comment.createdAt,
+        likes: comment.likes
     }
 }

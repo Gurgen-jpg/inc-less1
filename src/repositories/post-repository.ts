@@ -59,7 +59,13 @@ export class PostRepository {
                     userId: new ObjectId(user._id).toString(),
                     userLogin: user.login
                 },
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                likesInfo: {
+                    likesCount: 0,
+                    dislikesCount: 0,
+                    myStatus: null
+                },
+                likes: []
             }
             const commentId = await commentsCollection.insertOne(newComment);
 

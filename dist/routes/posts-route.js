@@ -19,6 +19,7 @@ const mongodb_1 = require("mongodb");
 const basic_authorization_1 = require("../middlewares/authValidation/basic-authorization");
 const token_authorization_1 = require("../middlewares/authValidation/token-authorization");
 const comment_validation_1 = require("../validators/comment-validation");
+const addUserInfoFromToken_1 = require("../middlewares/addUserInfoFromToken");
 exports.postRoute = (0, express_1.Router)({});
 const { OK, CREATED, NO_CONTENT, NOT_FOUND } = common_1.HTTP_STATUSES;
 exports.postRoute.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -48,14 +49,16 @@ exports.postRoute.post("/:postId/comments", token_authorization_1.tokenAuthoriza
     const comment = yield post_services_1.PostServices.createComment(req.params.postId, req.body.content, req.context.user.id);
     return comment ? res.status(CREATED).send(comment) : res.sendStatus(NOT_FOUND);
 }));
-exports.postRoute.get("/:postId/comments", input_validation_middleware_1.mongoIdValidation, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+exports.postRoute.get("/:postId/comments", 
+// @ts-ignore
+input_validation_middleware_1.mongoIdValidation, addUserInfoFromToken_1.addUserInfoFromToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c, _d;
     const sortData = {
         sortBy: (_a = req.query.sortBy) !== null && _a !== void 0 ? _a : 'createdAt',
         sortDirection: (_b = req.query.sortDirection) !== null && _b !== void 0 ? _b : 'desc',
         pageSize: req.query.pageSize ? +req.query.pageSize : 10,
         pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
     };
-    const comments = yield post_services_1.PostServices.getCommentsByPostId(req.params.postId, sortData);
+    const comments = yield post_services_1.PostServices.getCommentsByPostId(req.params.postId, sortData, (_d = (_c = req === null || req === void 0 ? void 0 : req.context) === null || _c === void 0 ? void 0 : _c.user) === null || _d === void 0 ? void 0 : _d.id);
     return comments ? res.status(OK).send(comments) : res.sendStatus(NOT_FOUND);
 }));
