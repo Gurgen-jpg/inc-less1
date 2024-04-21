@@ -31,7 +31,7 @@ export class AuthService {
                 if (!isCredentialsCorrect) {
                     throw new Error('wrong password')
                 } else {
-                    const accessToken = await JwtService.createJWT(user._id.toString(), '10m');
+                    const accessToken = await JwtService.createJWT(user._id.toString(), '1h');
                     const {userId, iat, exp,} = JwtService.getPayload(accessToken!);
 
                     const {ip, title} = sessionData;
@@ -45,7 +45,7 @@ export class AuthService {
                         expirationDate: exp
                     });
 
-                    const refreshToken = await JwtService.createJWT(user._id.toString(), '20m', currentDeviceId);
+                    const refreshToken = await JwtService.createJWT(user._id.toString(), '1h', currentDeviceId);
 
                     if (!accessToken || !refreshToken) {
                         throw new Error('wrong token')

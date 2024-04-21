@@ -4,6 +4,18 @@ import {app} from "../src/settings";
 describe("comment-like", () => {
     const auth = 'YWRtaW46cXdlcnR5';
     test("вернуть массив с комментариями, который содержит лайки",async () => {
+        await request(app).post('/users').set('Authorization', `Basic ${auth}`).send({
+            login: 'login',
+            password: 'password',
+            email: 'email@mail.ru'
+        })
+
+        const login = await request(app).post('/auth/login').send({
+            loginOrEmail: 'login',
+            password: 'password'
+        });
+
+
         const addNewBlog = await request(app).post('/blogs')
             .set('Authorization', `Basic ${auth}`)
             .send({

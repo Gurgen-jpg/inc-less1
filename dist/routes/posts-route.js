@@ -19,7 +19,6 @@ const mongodb_1 = require("mongodb");
 const basic_authorization_1 = require("../middlewares/authValidation/basic-authorization");
 const token_authorization_1 = require("../middlewares/authValidation/token-authorization");
 const comment_validation_1 = require("../validators/comment-validation");
-const addUserInfoFromToken_1 = require("../middlewares/addUserInfoFromToken");
 exports.postRoute = (0, express_1.Router)({});
 const { OK, CREATED, NO_CONTENT, NOT_FOUND } = common_1.HTTP_STATUSES;
 exports.postRoute.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -51,7 +50,9 @@ exports.postRoute.post("/:postId/comments", token_authorization_1.tokenAuthoriza
 }));
 exports.postRoute.get("/:postId/comments", 
 // @ts-ignore
-input_validation_middleware_1.mongoIdValidation, addUserInfoFromToken_1.addUserInfoFromToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+input_validation_middleware_1.mongoIdValidation, 
+// addUserInfoFromToken,
+(req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     const sortData = {
         sortBy: (_a = req.query.sortBy) !== null && _a !== void 0 ? _a : 'createdAt',

@@ -38,7 +38,7 @@ class AuthService {
                         throw new Error('wrong password');
                     }
                     else {
-                        const accessToken = yield jwt_service_1.JwtService.createJWT(user._id.toString(), '10m');
+                        const accessToken = yield jwt_service_1.JwtService.createJWT(user._id.toString(), '1h');
                         const { userId, iat, exp, } = jwt_service_1.JwtService.getPayload(accessToken);
                         const { ip, title } = sessionData;
                         const currentDeviceId = (0, uuid_1.generateId)();
@@ -50,7 +50,7 @@ class AuthService {
                             lastActiveDate: new Date().toISOString(),
                             expirationDate: exp
                         });
-                        const refreshToken = yield jwt_service_1.JwtService.createJWT(user._id.toString(), '20m', currentDeviceId);
+                        const refreshToken = yield jwt_service_1.JwtService.createJWT(user._id.toString(), '1h', currentDeviceId);
                         if (!accessToken || !refreshToken) {
                             throw new Error('wrong token');
                         }
