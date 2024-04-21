@@ -26,7 +26,7 @@ export const tokenAuthorizationMiddleware = (req: Request, res: Response, next: 
                 expirationDate: Date.now().toString() + 5000
             }
         };
-
+        return next();
     }
 
     if (authType !== AUTH_TYPES.BEARER) {
