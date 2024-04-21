@@ -50,9 +50,9 @@ postRoute.post("/:postId/comments",
     async (req: RequestBodyWithParamsType<{
         postId: string
     }, CommentInputModel>, res: Response) => {
-        if (!ObjectId.isValid(req.params.postId)) {
-            return res.sendStatus(NOT_FOUND);
-        }
+        // if (!ObjectId.isValid(req.params.postId)) {
+        //     return res.sendStatus(NOT_FOUND);
+        // }
         const comment = await PostServices.createComment(req.params.postId, req.body.content, req.context.user!.id!);
         return comment ? res.status(CREATED).send(comment) : res.sendStatus(NOT_FOUND);
     })
