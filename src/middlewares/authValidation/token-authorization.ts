@@ -15,20 +15,6 @@ export const tokenAuthorizationMiddleware = (req: Request, res: Response, next: 
 
     const [authType, token] = auth.split(' ');
 
-    if (authType === AUTH_TYPES.BASIC) {
-        req.context = {
-            user: {
-                id: 'admin'
-            },
-            session: {
-                deviceId: "admin device",
-                lastActiveDate: Date.now().toString(),
-                expirationDate: Date.now().toString() + 5000
-            }
-        };
-        return next();
-    }
-
     if (authType !== AUTH_TYPES.BEARER) {
         res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
         return
