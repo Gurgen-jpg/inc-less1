@@ -15,6 +15,7 @@ import {basicAuthorizationMiddleware} from "../middlewares/authValidation/basic-
 import {tokenAuthorizationMiddleware} from "../middlewares/authValidation/token-authorization";
 import {commentInputValidation} from "../validators/comment-validation";
 import {CommentInputModel} from "../models/comments/input";
+import {addUserInfoFromToken} from "../middlewares/addUserInfoFromToken";
 
 export const postRoute = Router({});
 
@@ -39,7 +40,7 @@ postRoute.put("/:id", mongoIdValidation, basicAuthorizationMiddleware, postInput
     return postIsUpdate ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 });
 
-postRoute.delete("/:id", mongoIdValidation,basicAuthorizationMiddleware, async (req: Request, res: Response) => {
+postRoute.delete("/:id", mongoIdValidation, basicAuthorizationMiddleware, async (req: Request, res: Response) => {
     const postIsDelete = await PostServices.deletePost(req.params.id);
     return postIsDelete ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 })
@@ -57,17 +58,18 @@ postRoute.post("/:postId/comments",
     })
 
 postRoute.get("/:postId/comments",
-    mongoIdValidation,
-    async (req: RequestParamAndQueryType<{
+// @ts-ignore
+    mongoIdValidation, addUserInfoFromToken, async (req: RequestParamAndQueryType<{
         postId: string
     }, CommentsSortDataType>, res: Response) => {
+
         const sortData = {
             sortBy: req.query.sortBy ?? 'createdAt',
             sortDirection: req.query.sortDirection ?? 'desc',
             pageSize: req.query.pageSize ? +req.query.pageSize : 10,
             pageNumber: req.query.pageNumber ? +req.query.pageNumber : 1,
         }
-        const comments = await PostServices.getCommentsByPostId(req.params.postId, sortData);
+        const comments = await PostServices.getCommentsByPostId(req.params.postId, sortData, req.context.user!.id!);
         return comments ? res.status(OK).send(comments) : res.sendStatus(NOT_FOUND);
     });
 

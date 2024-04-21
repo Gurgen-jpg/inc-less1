@@ -1,4 +1,4 @@
-import {CommentVewModel} from "../models/comments/output";
+import {CommentVewModel, LikeViewModel} from "../models/comments/output";
 import {commentsCollection} from "../db/db";
 import {ObjectId, WithId} from "mongodb";
 import {CommentInputModel} from "../models/comments/input";
@@ -70,6 +70,32 @@ export class CommentRepository {
         } catch (e) {
             console.error('Error in getCommentById:', e);
             return null
+        }
+
+    }
+
+    static async changeUserLikeToComment({
+                                             status,
+                                             authorId,
+                                             createdAt
+                                         }: LikeViewModel): Promise<boolean> {
+        try {
+            const result = await commentsCollection.updateOne({
+                    'likes.authorId': authorId
+                },
+                {
+                    $set: {
+                        'likes.$.status': status,
+                        'likes.$.createdAt': createdAt
+                    }
+                });
+            if (result.modifiedCount === 1) {
+                return true
+            }
+            return false
+        } catch (e) {
+            console.log(e)
+            return false
         }
 
     }

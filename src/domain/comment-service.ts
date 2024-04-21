@@ -2,6 +2,14 @@ import {CommentRepository} from "../repositories/comment-repository";
 import {CommentInputModel} from "../models/comments/input";
 import {CommentQueryRepository} from "../repositories/comment-query-repository";
 import {UserViewModel} from "../models/users/output";
+import {LikeStatus, LikeViewModel} from "../models/comments/output";
+
+
+type updateCommentLikeStatusConfig = {
+    userId: string
+    commentId: string
+    likeStatus: LikeStatus
+}
 
 export class CommentService {
     static async deleteComment(id: string, user: Partial<UserViewModel>) {
@@ -79,4 +87,30 @@ export class CommentService {
         }
     }
 
+    static async updateCommentLikeStatus({
+                                             commentId,
+                                             userId,
+                                             likeStatus
+                                         }: updateCommentLikeStatusConfig) {
+        try {
+            const commentItem = await CommentQueryRepository.getCommentById(commentId);
+            if (commentItem) {
+                const likesArr = commentItem.likes;
+                const like = likesArr.find(like => like.authorId === userId);
+                // const currentLikeStatus = like?.status;
+                const newUserLike: LikeViewModel = {
+                    createdAt: new Date().toISOString(),
+                    status: likeStatus,
+                    authorId: userId
+                }
+                return await CommentRepository.changeUserLikeToComment(newUserLike)
+            }
+            return null
+        } catch (e) {
+            return null
+        }
+    }
+
 }
+
+

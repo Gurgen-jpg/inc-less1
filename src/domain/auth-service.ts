@@ -31,7 +31,7 @@ export class AuthService {
                 if (!isCredentialsCorrect) {
                     throw new Error('wrong password')
                 } else {
-                    const accessToken = await JwtService.createJWT(user._id.toString(), '10s');
+                    const accessToken = await JwtService.createJWT(user._id.toString(), '10m');
                     const {userId, iat, exp,} = JwtService.getPayload(accessToken!);
 
                     const {ip, title} = sessionData;
@@ -45,7 +45,7 @@ export class AuthService {
                         expirationDate: exp
                     });
 
-                    const refreshToken = await JwtService.createJWT(user._id.toString(), '20s', currentDeviceId);
+                    const refreshToken = await JwtService.createJWT(user._id.toString(), '20m', currentDeviceId);
 
                     if (!accessToken || !refreshToken) {
                         throw new Error('wrong token')
@@ -116,8 +116,8 @@ export class AuthService {
                 throw new Error('device token not valid');
             }
 
-            const accessToken = await JwtService.createJWT(userId, '10s');
-            const newRefreshToken = await JwtService.createJWT(userId, '20s', tokenData.deviceId);
+            const accessToken = await JwtService.createJWT(userId, '10m');
+            const newRefreshToken = await JwtService.createJWT(userId, '20m', tokenData.deviceId);
 
             await AuthRepository.addTokenToBlackList(refreshToken);
 

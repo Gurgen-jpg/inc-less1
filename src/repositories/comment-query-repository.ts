@@ -5,7 +5,7 @@ import {commentMapper} from "../models/comments/mappers/commentMapper";
 import {CommentsSortDataType, PaginationType} from "../models/common";
 
 export class CommentQueryRepository {
-    static async getCommentsByPostId(postId: string, sortData: CommentsSortDataType): Promise<PaginationType<CommentVewModel> | null> {
+    static async getCommentsByPostId(postId: string, sortData: CommentsSortDataType, userId?: string): Promise<PaginationType<Omit<CommentVewModel, "likes">> | null> {
         try {
             const totalCount = await commentsCollection.countDocuments({postId});
             const pagesCount = Math.ceil(totalCount / sortData.pageSize);
@@ -21,7 +21,7 @@ export class CommentQueryRepository {
                 page: sortData.pageNumber,
                 pageSize: sortData.pageSize,
                 totalCount,
-                items: comments.map(commentMapper)
+                items: comments.map((comment) => commentMapper(comment, userId))
             }
 
         } catch (e) {
@@ -29,16 +29,13 @@ export class CommentQueryRepository {
         }
     }
 
-    static async getCommentById(id: ObjectId | string): Promise<CommentVewModel | null> {
+    static async getCommentById(id: ObjectId | string, userId?: string): Promise<Omit<CommentVewModel, "likes"> | null> {
         try {
-            // if (typeof id === 'string') {
-            //     id = new ObjectId(id)
-            // }
             const comment = await commentsCollection.findOne({_id: new ObjectId(id)});
             if (!comment) {
                 return null
             }
-            return commentMapper(comment)
+            return commentMapper(comment, userId)
         } catch (e) {
             console.error('Error in getCommentById:', e);
             return null

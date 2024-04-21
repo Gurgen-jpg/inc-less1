@@ -83,7 +83,7 @@ export class PostServices {
         }
     }
 
-    static async createComment(postId: string, content: string, userId: string): Promise<CommentVewModel | null> {
+    static async createComment(postId: string, content: string, userId: string): Promise<Omit<CommentVewModel, "likes"> | null> {
         try {
             const user = await UserRepository.getUserById(userId)
             if (!user) {
@@ -106,13 +106,13 @@ export class PostServices {
         }
     }
 
-    static async getCommentsByPostId(postId: string, sortData: CommentsSortDataType): Promise<PaginationType<CommentVewModel> | null> {
+    static async getCommentsByPostId(postId: string, sortData: CommentsSortDataType, userId?: string ): Promise<PaginationType<Omit<CommentVewModel, "likes">> | null> {
         try {
             const isIdValid = await PostRepository.isPostExist(postId);
             if (!isIdValid) {
                 return null;
             }
-            return await CommentQueryRepository.getCommentsByPostId(postId, sortData);
+            return await CommentQueryRepository.getCommentsByPostId(postId, sortData, userId);
         } catch (e) {
             return null;
         }
