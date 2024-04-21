@@ -1,9 +1,13 @@
 import request from "supertest";
 import {app} from "../src/settings";
+import jwt from "jsonwebtoken";
 
 describe("comment-like", () => {
+    beforeAll(async () => {
+        await request(app).delete('/testing/all-data');
+    })
     const auth = 'YWRtaW46cXdlcnR5';
-    test("вернуть массив с комментариями, который содержит лайки",async () => {
+    test("вернуть массив с комментариями, который содержит лайки", async () => {
         await request(app).post('/users').set('Authorization', `Basic ${auth}`).send({
             login: 'login',
             password: 'password',
@@ -14,6 +18,8 @@ describe("comment-like", () => {
             loginOrEmail: 'login',
             password: 'password'
         });
+        let tok = jwt.verify(login.body.accessToken, process.env.SECRET_WORD!)
+        console.log(tok)
 
 
         const addNewBlog = await request(app).post('/blogs')
@@ -27,17 +33,17 @@ describe("comment-like", () => {
         const newPost = await request(app).post('/posts')
             .set('Authorization', `Basic ${auth}`)
             .send({
-            "title": "string",
-            "shortDescription": "string",
-            "content": "string tut content",
-            "blogId": addNewBlog.body.id
-        })
+                "title": "string",
+                "shortDescription": "string",
+                "content": "string tut content",
+                "blogId": addNewBlog.body.id
+            })
 
-       const com = await request(app).post(`/posts/${newPost.body.id}/comments`)
-            // .set('Authorization', `Basic ${auth}`)
+        const com = await request(app).post(`/posts/${newPost.body.id}/comments`)
+            .set('Authorization', `Bearer ${login.body.accessToken}`)
             .send({
-            "content": "Content for comment"
-        })
+                "content": "Content for comment"
+            })
         console.log(com.status)
         const comments = await request(app).get(`/posts/${newPost.body.id}/comments`)
         console.log(comments.body)
