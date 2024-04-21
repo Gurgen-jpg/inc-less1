@@ -15,7 +15,6 @@ const common_1 = require("../models/common");
 const post_validators_1 = require("../validators/post-validators");
 const input_validation_middleware_1 = require("../middlewares/inputValidation/input-validation-middleware");
 const post_services_1 = require("../domain/post-services");
-const mongodb_1 = require("mongodb");
 const basic_authorization_1 = require("../middlewares/authValidation/basic-authorization");
 const token_authorization_1 = require("../middlewares/authValidation/token-authorization");
 const comment_validation_1 = require("../validators/comment-validation");
@@ -42,9 +41,9 @@ exports.postRoute.delete("/:id", input_validation_middleware_1.mongoIdValidation
     return postIsDelete ? res.sendStatus(NO_CONTENT) : res.sendStatus(NOT_FOUND);
 }));
 exports.postRoute.post("/:postId/comments", token_authorization_1.tokenAuthorizationMiddleware, (0, comment_validation_1.commentInputValidation)(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!mongodb_1.ObjectId.isValid(req.params.postId)) {
-        return res.sendStatus(NOT_FOUND);
-    }
+    // if (!ObjectId.isValid(req.params.postId)) {
+    //     return res.sendStatus(NOT_FOUND);
+    // }
     const comment = yield post_services_1.PostServices.createComment(req.params.postId, req.body.content, req.context.user.id);
     return comment ? res.status(CREATED).send(comment) : res.sendStatus(NOT_FOUND);
 }));

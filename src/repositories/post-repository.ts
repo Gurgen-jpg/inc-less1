@@ -50,13 +50,13 @@ export class PostRepository {
         }
     }
 
-    static async createComment(postId: string, content: string, user: {_id: ObjectId, login: string}): Promise<ObjectId | undefined> {
+    static async createComment(postId: string, content: string, user: {id: string, login: string}): Promise<ObjectId | undefined> {
         try {
             const newComment: CommentDBModel = {
                 postId,
                 content,
                 commentatorInfo: {
-                    userId: new ObjectId(user._id).toString(),
+                    userId: user.id,
                     userLogin: user.login
                 },
                 createdAt: new Date().toISOString(),

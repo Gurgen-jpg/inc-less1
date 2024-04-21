@@ -86,16 +86,16 @@ export class PostServices {
     static async createComment(postId: string, content: string, userId: string): Promise<Omit<CommentVewModel, "likes"> | null> {
         try {
             const user = await UserRepository.getUserById(userId)
-            if (!user) {
-                throw new Error('User not found');
-            }
-            const isPostExist = await PostRepository.isPostExist(postId);
-            if (!isPostExist) {
-                return null;
-            }
+            // if (!user) {
+            //     throw new Error('User not found');
+            // }
+            // const isPostExist = await PostRepository.isPostExist(postId);
+            // if (!isPostExist) {
+            //     return null;
+            // }
             const commentId = await PostRepository.createComment(postId, content, {
-                _id: user._id,
-                login: user.accountData.login
+                id: userId,
+                login: user?.accountData.login || ""
             })
             return commentId
                 ? await CommentQueryRepository.getCommentById(commentId)
