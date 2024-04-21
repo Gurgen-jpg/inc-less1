@@ -21,11 +21,12 @@ describe("comment-like", () => {
             "blogId": addNewBlog.body.id
         })
 
-        await request(app).post(`/posts/${newPost.body.id}/comments`)
-            .set('Authorization', `Basic ${auth}`)
+       const com = await request(app).post(`/posts/${newPost.body.id}/comments`)
+            // .set('Authorization', `Basic ${auth}`)
             .send({
             "content": "Content for comment"
         })
+        console.log(com.status)
         const comments = await request(app).get(`/posts/${newPost.body.id}/comments`)
         console.log(comments.body)
     })

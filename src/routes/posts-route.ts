@@ -59,7 +59,9 @@ postRoute.post("/:postId/comments",
 
 postRoute.get("/:postId/comments",
 // @ts-ignore
-    mongoIdValidation, addUserInfoFromToken, async (req: RequestParamAndQueryType<{
+    mongoIdValidation,
+    // addUserInfoFromToken,
+    async (req: RequestParamAndQueryType<{
         postId: string
     }, CommentsSortDataType>, res: Response) => {
 
