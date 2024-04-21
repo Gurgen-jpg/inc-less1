@@ -20,10 +20,10 @@ export const tokenAuthorizationMiddleware = (req: Request, res: Response, next: 
         return
     }
     const {userId, deviceId, iat, exp} = JwtService.verifyJWT(token);
-    if (!userId) {
-        res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
-        return
-    }
+    // if (!userId) {
+    //     res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
+    //     return
+    // }
     const isTokenExpired = JwtService.isTokenExpired(token);
     if (isTokenExpired) {
         res.sendStatus(HTTP_STATUSES.UNAUTHORIZED);
